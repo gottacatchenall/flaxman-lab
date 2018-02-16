@@ -1,0 +1,8 @@
+#define BOARD_SIZE 32
+#define N_MICROENV_FACTORS 16
+#define N_MACROENV_FACTORS 4
+
+
+#define ENV_FACTOR_RANDOM       0
+#define ENV_FACTOR_CLUSTERED    1
+#define ENV_FACTOR_GRADIENT     2
