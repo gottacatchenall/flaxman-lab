@@ -2,17 +2,15 @@ import numpy as np
 import heapq
 import matplotlib
 import scipy.spatial as spatial
+import copy
 from envfactor import EnvFactor
 from plot import setup, show
-from util import wav2RGB
 from matplotlib import pyplot as plt
 
 GRID_SIZE = 64
 NUM_OF_HOTSPOTS = 32
 
 np.set_printoptions(threshold=np.nan)
-
-orig_max_g = 0
 
 class Board():
 
@@ -32,6 +30,7 @@ class Board():
 
     def show_board(self, maps):
         show(self.figure, self.ax, maps)
+
 
 
     # ====================================
@@ -78,7 +77,7 @@ class Board():
 
 
 
-    def calc_lam(self, gen):
+    def gen_map(self):
 
         colors = np.zeros((GRID_SIZE, GRID_SIZE))
 
@@ -100,20 +99,44 @@ class Board():
                 ij_lam = int(ij_lam / n_nearest)
                 colors[i,j] = ij_lam
 
-        max_g = np.amax(sums_of_gauss)
-        global orig_max_g
-        if gen == 0:
-            orig_max_g = max_g
-        print max_g
-        for i in range(0, GRID_SIZE):
-            for j in range(0, GRID_SIZE):
-                if (sums_of_gauss[i,j] < .005 * orig_max_g):
-                    colors[i,j] = 0
+
 
         # Mark centers
         for envFactor in self.envFactors:
             i,j = envFactor.x0, envFactor.y0
             colors[i,j] = 0
 
+        # Seed fragments:
+        for i in range(self.size/2):
+            x,y = np.random.randint(0, self.size), np.random.randint(self.size)
+            colors[x,y] = -1
+
+
         return colors
         #plt.imshow(colors, interpolation='none', aspect='equal', cmap="gist_earth")
+
+    def next_gen(self, m0):
+        m = copy.deepcopy(m0)
+        def count_surroundings(i,j):
+            c = 0
+            if (m[i+1,j+1] == -1): c += 1
+            if (m[i+1,j] == -1): c += 1
+            if (m[i+1,j-1] == -1): c += 1
+            if (m[i,j-1] == -1): c += 1
+            if (m[i,j+1] == -1): c += 1
+            if (m[i-1,j+1] == -1): c += 1
+            if (m[i-1,j] == -1): c += 1
+            if (m[i-1,j-1] == -1): c += 1
+            return c
+
+        base_prob = 0.001
+
+        for i in range(1, self.size-1):
+            for j in range(1, self.size-1):
+                c = count_surroundings(i,j)
+                if (np.random.random() < c*base_prob):
+                    m[i,j] = -1
+                if (c > 5):
+                    m[i,j] = -1
+
+        return m

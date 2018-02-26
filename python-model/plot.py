@@ -34,7 +34,7 @@ def show(figure, ax, maps):
         return im,
 
     print len(maps)
-    ani = animation.FuncAnimation(figure, update, frames=[i for i in range(len(maps))], interval=250, blit=True)
+    ani = animation.FuncAnimation(figure, update, frames=[i for i in range(len(maps))], interval=5, blit=True)
     Writer = animation.writers['ffmpeg']
     writer = Writer(fps=30, metadata=dict(artist='Me'),)
     ani.save('map.mp4', dpi=300)

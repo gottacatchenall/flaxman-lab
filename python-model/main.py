@@ -2,21 +2,18 @@
 
 from board import Board
 
-NUM_GEN = 100
+NUM_GEN = 1000
 
 def main():
     board = Board()
     board.init_hotspots()
-
+    m0 = board.gen_map()
     maps = [None for i in range(0, NUM_GEN)]
-    for i in range(0, NUM_GEN):
-        m = board.calc_lam(i)
-        maps[i] = m
-        board.reduce_sigma()
+    maps[0] = m0
 
     for i in range(1, NUM_GEN):
-        if (maps[i].all() == maps[i-1].all()):
-            print 'same'
+        m = board.next_gen(maps[i-1])
+        maps[i] = m
 
     board.show_board(maps)
 
