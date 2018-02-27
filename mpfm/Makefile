@@ -1,33 +1,27 @@
-COMPILER = g++
-CPP_VERSION = c++11
+CC = gcc
+CFLAGS = -Wall
 
-# Output binary name
-OUTPUT = mpfm
-FLAGS =  -std=${CPP_VERSION}
+SRCS = 		src/Board/Board.cc			\
+		src/EnvFactor/EnvFactor.cc		\
+		src/Individual/Individual.cc		\
+		src/main.cc
 
+OBJS = $(SRCS:.c=.o)
+EXE = mpfm
 
-HEADER = src/Board/Board.h		\
-	 src/EnvFactor/EnvFactor.h	\
-	 src/Individual/Individual.h	\
-	 src/include.h
+.PHONY: clean run warn
 
-SRC = 	src/main.cc 			\
-      	src/Board/Board.cc		\
-	src/Individual/Individual.cc 	\
-	src/EnvFactor/Envfactor.cc
+all:    $(EXE)
+	@echo  Compiled successfully to $(EXE)
 
-# default target
-all: main
+$(EXE): $(OBJS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(EXE) $(OBJS)
 
-main: $(HEADER)
-	${COMPILER} ${FLAGS} ${SRC} -o ${OUTPUT}
+.c.o:
+	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
 
 clean:
-	rm -f ${TARGET}.o
-	rm ${OUTPUT}
+	$(RM) *.o *~ $(EXE)
 
-# Run exec
-run: clean all
-	./${OUTPUT}
-
-
+run: all
+	./${EXE}

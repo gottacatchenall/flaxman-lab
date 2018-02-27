@@ -2,7 +2,6 @@
 #include "../include.h"
 
 void Individual::get_initial_alleles(){
-
 }
 
 void Individual::migrate(){

@@ -25,7 +25,7 @@ def setup(GRID_SIZE):
 
     return figure, ax
 
-def show(figure, ax, maps):
+def show(figure, ax, maps, save=False):
     im = plt.imshow(maps[0], interpolation='none', aspect='equal', cmap="gist_earth")
 
     def update(i):
@@ -37,5 +37,6 @@ def show(figure, ax, maps):
     ani = animation.FuncAnimation(figure, update, frames=[i for i in range(len(maps))], interval=5, blit=True)
     Writer = animation.writers['ffmpeg']
     writer = Writer(fps=30, metadata=dict(artist='Me'),)
-    ani.save('map.mp4', dpi=300)
+    if save:
+        ani.save('map.mp4', dpi=300)
     plt.show()
