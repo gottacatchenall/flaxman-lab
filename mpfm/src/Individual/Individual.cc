@@ -1,5 +1,5 @@
 
-#include "../include.h"
+#include "Individual.h"
 
 void Individual::get_initial_alleles(){
 }
@@ -16,7 +16,6 @@ void Individual::choose_mate(){
 
 }
 
-void Individual::reproduce(Individual mate){
+void Individual::reproduce(Individual* mate){
 
 }
-

@@ -1,16 +1,6 @@
 
-#include "../include.h"
+#include "EnvFactor.h"
 
-double EnvFactor::get_random_sigma(){
-    return (double) NULL;
+EnvFactor::EnvFactor(){
+
 }
-
-double EnvFactor::Gaussian(point loc){
-    return (double) NULL;
-}
-
-double EnvFactor::reduce_sigma(){
-    return (double) NULL;
-}
-
-

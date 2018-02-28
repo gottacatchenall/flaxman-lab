@@ -2,16 +2,16 @@
 #ifndef ENVFACTOR_H
 #define ENVFACTOR_H
 
+#include <vector>
 
 class EnvFactor{
     private:
-        int sigma;
-        int x_0;
-        int y_0;
+        int x0;
+        int y0;
+        typedef std::vector< std::vector<uint8_t> > matrix;
+        matrix grid;
     public:
-        double get_random_sigma();
-        double Gaussian(point loc);
-        double reduce_sigma();
+      EnvFactor();
 };
 
 #endif
