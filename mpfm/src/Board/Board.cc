@@ -22,7 +22,7 @@ Board::Board (int BOARD_SIZE, int N_ENV_FACTORS){
 }
 
 void Board::init_envFactors(){
-  
+
 }
 
 void Board::allocate_individuals(){

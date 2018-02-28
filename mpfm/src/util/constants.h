@@ -1,0 +1,3 @@
+#define ENV_FACTOR_RANDOM       0
+#define ENV_FACTOR_CLUSTERED    1
+#define ENV_FACTOR_GRADIENT     2

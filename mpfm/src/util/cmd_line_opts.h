@@ -1,0 +1,24 @@
+#ifndef CMD_LINE_OPTS_H
+#define CMD_LINE_OPTS_H
+
+#include "params.h"
+#include <iostream>
+#include <unistd.h>
+
+// Struct with all possible parameters.
+// Takes on values from params.h by default,
+// but can be overridden with cmd line options
+
+typedef struct params_s{
+    params_s(){
+        BOARD_SIZE = BOARD_SIZE_DEFAULT;
+        N_ENV_FACTORS = N_ENV_FACTORS_DEFAULT;
+    }
+    int BOARD_SIZE;
+    int N_ENV_FACTORS;
+} params_s;
+
+void printUsage(char* name);
+params_s* get_options(int argc, char*argv[], params_s* opts);
+
+#endif
