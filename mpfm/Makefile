@@ -1,16 +1,17 @@
 
-SRCS = 		src/board/Board.cc						\
+SRCS = 		src/tile/Tile.cc							\
+					src/board/Board.cc						\
 					src/envFactor/EnvFactor.cc		\
 					src/individual/Individual.cc	\
+					src/logger/Logger.cc					\
 					src/util/cmd_line_opts.cc			\
-					src/cell/Cell.cc							\
 					src/main.cc
 
 DIRS = 		src/															\
 					src/board/												\
 					src/envFactor/										\
 					src/individual/										\
-					src/cell/													\
+					src/tile/													\
 					src/util/
 
 INC_PARAMS=$(foreach d, $(DIRS), -I$d)

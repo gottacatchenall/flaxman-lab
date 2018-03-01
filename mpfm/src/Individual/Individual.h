@@ -2,6 +2,7 @@
 #ifndef INDIVIDUAL_H
 #define INDIVIDUAL_H
 
+#include "include.h"
 
 class Individual{
     private:

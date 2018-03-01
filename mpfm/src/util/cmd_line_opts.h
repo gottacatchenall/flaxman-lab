@@ -1,7 +1,7 @@
 #ifndef CMD_LINE_OPTS_H
 #define CMD_LINE_OPTS_H
 
-#include "params.h"
+#include "include.h"
 #include <iostream>
 #include <unistd.h>
 
@@ -13,9 +13,11 @@ typedef struct params_s{
     params_s(){
         BOARD_SIZE = BOARD_SIZE_DEFAULT;
         N_ENV_FACTORS = N_ENV_FACTORS_DEFAULT;
+        ENV_FACTOR_MODE = ENV_FACTOR_MODE_DEFAULT;
     }
     int BOARD_SIZE;
     int N_ENV_FACTORS;
+    int ENV_FACTOR_MODE;
 } params_s;
 
 void printUsage(char* name);

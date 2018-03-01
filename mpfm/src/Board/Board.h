@@ -2,38 +2,35 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include "EnvFactor.h"
-#include "Cell.h"
 #include <assert.h>
+#include "include.h"
 
-struct point{
-            int x;
-            int y;
-};
+class Tile;
+class EnvFactor;
 
 class Board{
     private:
         int BOARD_SIZE;
         int N_ENV_FACTORS;
-        Board* self_addr;
+        int ENV_FACTOR_MODE;
 
         // Array of environmental factors
-        typedef std::vector<EnvFactor> vec_envFactor;
-        vec_envFactor envFactors;
+        EnvFactor** envFactors;
 
-        // Matrix of cells
-        typedef std::vector<std::vector<Cell>> matrix;
-        matrix grid;
+        // Matrix of Tiles
+        Tile ***grid;
+
     public:
-        Board(int BOARD_SIZE, int N_ENV_FACTORS);
-        void set_address(Board* addr);
-        void init_cells();
+        Board(Board* self, int BOARD_SIZE, int N_ENV_FACTORS, int ENV_FACTOR_MODE);
+        Tile* get_tile(int x, int y);
+        int** get_envFactor_points();
+        void get_random_envFactor_points(int **points);
+        void get_niche_envFactor_points(int **points);
+        void get_gradient_envFactor_points(int **points);
         void init_envFactors();
         void allocate_individuals();
         void migrate();
         void next_gen();
-        void print_hello();
-
 
 };
 
