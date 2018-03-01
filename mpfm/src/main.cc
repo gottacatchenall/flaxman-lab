@@ -9,6 +9,11 @@ int main(int argc, char* argv[]){
     get_options(argc, argv, params);
 
     Board board(params->BOARD_SIZE, params->N_ENV_FACTORS);
+    Board* board_addr = &board;
+
+    board.set_address(board_addr);
+    board.init_cells();
+
     board.init_envFactors();
 
     return 0;

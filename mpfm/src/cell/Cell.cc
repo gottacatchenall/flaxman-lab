@@ -4,6 +4,12 @@ Cell::Cell(){
   this->n_indiv = 0;
 }
 
+void Cell::set_parent_board(Board *parentBoard){
+  //this->Board = parentBoard;
+  //this->Board->print_hello();
+}
+
+
 void Cell::set_x(int x){
   this->x = x;
 }
