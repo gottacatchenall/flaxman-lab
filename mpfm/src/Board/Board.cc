@@ -64,53 +64,11 @@ Tile* Board::get_tile(int x, int y){
 
 
 void Board::init_envFactors(){
-
-  int** points = this->get_envFactor_points();
-
-  int x,y;
   for (int i = 0; i < this->N_ENV_FACTORS; i++){
-    x = points[i][0];
-    y = points[i][1];
-    this->envFactors[i] = new EnvFactor(i, x, y, this->BOARD_SIZE);
+    this->envFactors[i] = new EnvFactor(i, this->BOARD_SIZE);
   }
-
-  this->envFactors[3]->print_env_factor();
 }
 
-int** Board::get_envFactor_points(){
-  // Initialize a 2d array of points with dimensions (N_ENV_FACTORS x 2)
-  int** points = new int*[this->N_ENV_FACTORS];
-  for (int i = 0; i < this->N_ENV_FACTORS; i++){
-    points[i] = new int[2];
-    points[i][0] = 0;
-    points[i][1] = 0;
-  }
-
-  if(this->ENV_FACTOR_MODE == ENV_FACTOR_MODE_GRADIENT){
-
-  }
-
-  else if(this->ENV_FACTOR_MODE == ENV_FACTOR_MODE_NICHE){
-
-  }
-
-  else if(this->ENV_FACTOR_MODE == ENV_FACTOR_MODE_RANDOM){
-    this->get_random_envFactor_points(points);
-  }
-
-  return points;
-}
-
-void Board::get_random_envFactor_points(int **points){
-  std::default_random_engine generator;
-  generator.seed(time(0));
-  std::uniform_int_distribution<int> distribution(0,this->BOARD_SIZE);
-
-  for (int i = 0; i < this->N_ENV_FACTORS; i++){
-    points[i][0] = distribution(generator);
-    points[i][1] = distribution(generator);
-  }
-}
 
 void Board::allocate_individuals(){
     // TODO

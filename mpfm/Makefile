@@ -12,6 +12,7 @@ DIRS = 		src/															\
 					src/envFactor/										\
 					src/individual/										\
 					src/tile/													\
+					src/logger												\
 					src/util/
 
 INC_PARAMS=$(foreach d, $(DIRS), -I$d)

@@ -1,6 +1,17 @@
 
 #include "cmd_line_opts.h"
 
+void printHello(){
+  printf("\n");
+  printf("========================================================\n");
+  printf("=                                                      =\n");
+  printf("=       Metapopulation Fragmentation Model (mpfm)      =\n");
+  printf("=                                            v0.1      =\n");
+  printf("=                                                      =\n");
+  printf("========================================================\n");
+  printf("\n\n");
+}
+
 void printUsage(char *name){
     printf("\nUSAGE: %s [options]\n\n", name);
 
@@ -18,6 +29,7 @@ void printUsage(char *name){
 params_s* get_options(int argc, char *argv[], params_s* opts){
     int opt;
 
+
     while ((opt = getopt(argc, argv, "e:g:h:?")) != -1) {
         switch (opt) {
             case 'e':
@@ -33,5 +45,6 @@ params_s* get_options(int argc, char *argv[], params_s* opts){
                 exit(-1);
         }
     }
+    printHello();
     return opts;
 }

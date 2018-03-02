@@ -20,6 +20,8 @@ typedef struct params_s{
     int ENV_FACTOR_MODE;
 } params_s;
 
+
+void printHello();
 void printUsage(char* name);
 params_s* get_options(int argc, char*argv[], params_s* opts);
 
