@@ -14,18 +14,18 @@ Use `mpfm -h` for usage.
 ### `src`
 `src` contains all of the source code. It is structured as
 
-	|mpfm
-	  |--src/
-	      |--board/
-	      |--tile/
-		  |--individual/
-		  |--envFactor/
-		  |--logger/
-		  |--random/
-		  |--util/
-		  |--include.h
-		  |--params.h
-		  |--main.cc
+	|--mpfm
+	     |--src/
+		|--board/
+		|--tile/
+		|--individual/
+		|--envFactor/
+		|--logger/
+		|--random/
+		|--util/
+		|--include.h
+		|--params.h
+		|--main.cc
 
 ##### Core Classes
 `board` contains the source and header files for the `Board` class.
