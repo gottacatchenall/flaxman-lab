@@ -136,6 +136,13 @@ void EnvFactor::set_cell_value(int x, int y, int val){
   this->envFactor_grid[x][y] = val;
 }
 
+int EnvFactor::get_id(){
+  return this->id;
+}
+
+int EnvFactor::get_board_size(){
+  return this->BOARD_SIZE;
+}
 
 void EnvFactor::print_env_factor(){
   printf("\n\nENV_FACTOR #%d\n", this->id);

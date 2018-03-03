@@ -3,9 +3,10 @@
 #include "Tile.h"
 #include "EnvFactor.h"
 #include "Random.h"
+#include "Logger.h"
 #include <random>
 
-Board::Board (Board* self, Random* random, int BOARD_SIZE, int N_ENV_FACTORS, int ENV_FACTOR_MODE){
+Board::Board (Board* self, Random* random, Logger* logger, int BOARD_SIZE, int N_ENV_FACTORS){
   assert(BOARD_SIZE > 0);
   assert(N_ENV_FACTORS > 0);
   assert(self != NULL);
@@ -13,7 +14,6 @@ Board::Board (Board* self, Random* random, int BOARD_SIZE, int N_ENV_FACTORS, in
 
   this->BOARD_SIZE = BOARD_SIZE;
   this->N_ENV_FACTORS = N_ENV_FACTORS;
-  this->ENV_FACTOR_MODE = ENV_FACTOR_MODE;
   this->random = random;
 
   // =======================================
@@ -58,12 +58,10 @@ Board::Board (Board* self, Random* random, int BOARD_SIZE, int N_ENV_FACTORS, in
     this->envFactors[i] = new EnvFactor(this->random, i, this->BOARD_SIZE);
   }
 
-  /*
+  // Write EnvFactor
   for (int i = 0; i < this->N_ENV_FACTORS; i++){
-    this->envFactors[i]->print_env_factor();
+    logger->write_envFactor(this->envFactors[i]);
   }
-  */
-
 }
 
 Tile* Board::get_tile(int x, int y){

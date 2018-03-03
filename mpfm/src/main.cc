@@ -21,10 +21,10 @@ int main(int argc, char* argv[]){
     char dir_name[path_buffer_size];
     get_execuable_path(dir_name, path_buffer_size);
     std::string dir_name_str(dir_name);
-    Logger logger(dir_name_str);
+    Logger logger(dir_name_str, params);
 
     // Board initialization
-    Board board(&board, &random, params->BOARD_SIZE, params->N_ENV_FACTORS, params->ENV_FACTOR_MODE);
+    Board board(&board, &random, &logger, params->BOARD_SIZE, params->N_ENV_FACTORS);
 
     printf("\n");
     return 0;
