@@ -16,7 +16,7 @@ Logger::Logger(std::string dir, params_s* params){
   this->make_run_directory();
   this->write_metadata();
   this->make_envFactor_directory();
-
+  this->make_symlinks_to_vis_tools();
 }
 
 void Logger::make_data_directory(){
@@ -38,6 +38,18 @@ void Logger::make_run_directory(){
   mkdir(path.c_str(), 0700);
 }
 
+void Logger::make_envFactor_directory(){
+  std::string envFactor_path = this->run_dir_path + "envFactors/";
+  this->envFactor_dir_path = envFactor_path;
+  mkdir(envFactor_path.c_str(), 0700);
+}
+
+void Logger::make_symlinks_to_vis_tools(){
+  std::string view_env_factor_path = this->data_dir_path + "../vis-tools/view-env-factor.py";
+  std::string sym_link_path = this->run_dir_path + "view-env-factor.py";
+  symlink(view_env_factor_path.c_str(), sym_link_path.c_str());
+}
+
 void Logger::write_metadata(){
   std::ofstream metadata_file;
   std::string metadata_file_path = this->run_dir_path + "metadata.txt";
@@ -57,12 +69,6 @@ void Logger::write_metadata(){
   metadata_file.close();
 }
 
-void Logger::make_envFactor_directory(){
-  std::string envFactor_path = this->run_dir_path + "envFactors/";
-  this->envFactor_dir_path = envFactor_path;
-  mkdir(envFactor_path.c_str(), 0700);
-}
-
 void Logger::write_envFactor(EnvFactor* envFactor){
   std::ofstream envFactor_file;
   std::string envFactor_file_path = this->envFactor_dir_path + "envFactor" + std::to_string(envFactor->get_id()) + ".csv";
@@ -76,7 +82,10 @@ void Logger::write_envFactor(EnvFactor* envFactor){
     for (int i = 0; i < board_size; i++){
       val = envFactor->get_cell_value(i,j);
       val_str = std::to_string(val);
-      envFactor_file << val_str + ",";
+      envFactor_file << val_str;
+      if (i < board_size- 1){
+        envFactor_file << ",";
+      }
     }
     envFactor_file << "\n";
   }

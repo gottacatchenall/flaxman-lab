@@ -24,8 +24,9 @@ class Logger{
     Logger(std::string dir, params_s *params);
     void make_data_directory();
     void make_run_directory();
-    void write_metadata();
     void make_envFactor_directory();
+    void make_symlinks_to_vis_tools();
+    void write_metadata();
     void write_envFactor(EnvFactor* envFactor);
 };
 

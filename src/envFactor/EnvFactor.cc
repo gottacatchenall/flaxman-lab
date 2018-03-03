@@ -9,14 +9,6 @@ EnvFactor::EnvFactor(Random* random, int index, int BOARD_SIZE){
   this->BOARD_SIZE = BOARD_SIZE;
   this->random = random;
 
-  /*
-  // DEBUG
-  double xf = this->random->std_normal();
-  printf("envFactor: %d, xf: %f\n", this->id, xf);
-  return;
-  // END DEBUG
-  */
-
   // Initialize envFactor_grid
   int n = this->BOARD_SIZE;
 
@@ -37,9 +29,11 @@ EnvFactor::EnvFactor(Random* random, int index, int BOARD_SIZE){
 }
 
 void EnvFactor::generate_fractal(){
-  float X[this->BOARD_SIZE+1][this->BOARD_SIZE+1];
+  double X[this->BOARD_SIZE+1][this->BOARD_SIZE+1];
 
-  int delta = 1;
+
+
+  double delta = 1;
   int N = this->BOARD_SIZE;
   int maxlevel = log2(this->BOARD_SIZE);
 
@@ -55,7 +49,13 @@ void EnvFactor::generate_fractal(){
   X[N][N] = delta*this->random->std_normal();
 
   for (int stage = 0; stage < maxlevel; stage++){
-    delta = delta * pow(0.5, 0.5*H);
+    delta = delta * double(pow(0.5, 0.5*H));
+
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+      for (int j = 0; j < this->BOARD_SIZE; j++){
+        X[i][j] = 0.0;
+      }
+    }
 
     // interpolate and offset points
     for (int x = d; x < N-d; x+=D){
@@ -64,7 +64,7 @@ void EnvFactor::generate_fractal(){
       }
     }
 
-    delta = delta * pow(0.5, 0.5*H);
+    delta = delta * double(pow(0.5, 0.5*H));
 
     // boundary grid points
     for (int x = d; x < N-d; x+=D){
@@ -94,22 +94,25 @@ void EnvFactor::generate_fractal(){
 
   for (int i = 0; i < this->BOARD_SIZE; i++){
     for (int j = 0; j < this->BOARD_SIZE; j++){
-      if (X[i][j] > 0.1){
-        this->set_cell_value(i,j,0);
+      if (X[i][j] > 0 && X[i][j] < .2){
+        this->set_cell_value(i,j,1);
       }
       else{
-        this->set_cell_value(i,j,1);
+        this->set_cell_value(i,j,0);
       }
     }
   }
 }
 
-double EnvFactor::f4(int delta, int a, int b, int c, int d){
-  return (float(a+b+c+d)/float(4)) + delta * this->random->std_normal();
+double EnvFactor::f4(double delta, int a, int b, int c, int d){
+  double avg = double(double(a+b+c+d)/double(4.0));
+  double val =  avg + double(delta) * double(this->random->std_normal());
+  return val;
 }
 
-double EnvFactor::f3(int delta, int a, int b, int c){
-  return (float(a+b+c)/float(3)) + delta * this->random->std_normal();
+double EnvFactor::f3(double delta, int a, int b, int c){
+  double val = (float(a+b+c)/float(3)) + delta * this->random->std_normal();
+  return val;
 }
 
 

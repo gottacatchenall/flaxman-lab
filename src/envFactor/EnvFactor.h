@@ -21,8 +21,8 @@ class EnvFactor{
       int get_board_size();
       void run_random_walk();
       void generate_fractal();
-      double f4(int delta, int a, int b, int c, int d);
-      double f3(int delta, int a, int b, int c);
+      double f4(double delta, int a, int b, int c, int d);
+      double f3(double delta, int a, int b, int c);
       int count_surrounding_ones(int x, int y);
       void print_env_factor();
 };
