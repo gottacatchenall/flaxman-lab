@@ -14,18 +14,18 @@ Use `mpfm -h` for usage.
 ### `src`
 `src` contains all of the source code. It is structured as
 
-	|mpfm
-	  |--src/
-	      |--board/
-	      |--tile/
-		  |--individual/
-		  |--envFactor/
-		  |--logger/
-		  |--random/
-		  |--util/
-		  |--include.h
-		  |--params.h
-		  |--main.cc
+	|--mpfm
+	     |--src/
+		|--board/
+		|--tile/
+		|--individual/
+		|--envFactor/
+		|--logger/
+		|--random/
+		|--util/
+		|--include.h
+		|--params.h
+		|--main.cc
 
 ##### Core Classes
 `board` contains the source and header files for the `Board` class.
@@ -50,7 +50,7 @@ Use `mpfm -h` for usage.
 -----
 ### `data`
 
-Data contains directories from each run. Each run has its own directory within `data/`, with the directories name being the epoch time of the start of the run.
+Data contains directories from each run. Each run has its own directory within `data/`, with the directory's name being the epoch time of the start of the run.
 
 Each run data contains the following:
 `metadata.txt`: Includes `RANDOM_SEED` value, parameter values, and time of run.
