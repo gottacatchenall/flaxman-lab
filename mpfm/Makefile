@@ -4,6 +4,7 @@ SRCS = 		src/tile/Tile.cc							\
 					src/envFactor/EnvFactor.cc		\
 					src/individual/Individual.cc	\
 					src/logger/Logger.cc					\
+					src/random/Random.cc					\
 					src/util/cmd_line_opts.cc			\
 					src/main.cc
 
@@ -13,12 +14,13 @@ DIRS = 		src/															\
 					src/individual/										\
 					src/tile/													\
 					src/logger												\
+					src/random												\
 					src/util/
 
 INC_PARAMS=$(foreach d, $(DIRS), -I$d)
 
 CC = g++
-CFLAGS = -std=c++11 -Wall -g $(INC_PARAMS)
+CFLAGS = -std=c++11 -Wall -g -march=native $(INC_PARAMS)
 
 OBJS = $(SRCS:.c=.o)
 EXE = mpfm

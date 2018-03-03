@@ -1,6 +1,5 @@
 
 
-
 #define BOARD_SIZE_DEFAULT 64
 #define N_ENV_FACTORS_DEFAULT 16
 

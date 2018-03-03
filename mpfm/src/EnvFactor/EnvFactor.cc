@@ -1,10 +1,21 @@
 
 #include "EnvFactor.h"
-#include <random>
+#include "Random.h"
 
-EnvFactor::EnvFactor(int index, int BOARD_SIZE){
+EnvFactor::EnvFactor(Random* random, int index, int BOARD_SIZE){
+  assert(random != NULL);
+
   this->id = index;
   this->BOARD_SIZE = BOARD_SIZE;
+  this->random = random;
+
+  /*
+  // DEBUG
+  double xf = this->random->std_normal();
+  printf("envFactor: %d, xf: %f\n", this->id, xf);
+  return;
+  // END DEBUG
+  */
 
   // Initialize envFactor_grid
   int n = this->BOARD_SIZE;
@@ -26,10 +37,6 @@ EnvFactor::EnvFactor(int index, int BOARD_SIZE){
 }
 
 void EnvFactor::generate_fractal(){
-  std::default_random_engine generator;
-  generator.seed(RANDOM_SEED_VALUE);
-  std::normal_distribution<double> distribution(0,1);
-
   float X[this->BOARD_SIZE+1][this->BOARD_SIZE+1];
 
   int delta = 1;
@@ -42,10 +49,10 @@ void EnvFactor::generate_fractal(){
   int d = N/2;
 
   // Init corner values
-  X[0][0] = delta*distribution(generator);
-  X[0][N] = delta*distribution(generator);
-  X[N][0] = delta*distribution(generator);
-  X[N][N] = delta*distribution(generator);
+  X[0][0] = delta*this->random->std_normal();
+  X[0][N] = delta*this->random->std_normal();
+  X[N][0] = delta*this->random->std_normal();
+  X[N][N] = delta*this->random->std_normal();
 
   for (int stage = 0; stage < maxlevel; stage++){
     delta = delta * pow(0.5, 0.5*H);
@@ -98,17 +105,11 @@ void EnvFactor::generate_fractal(){
 }
 
 double EnvFactor::f4(int delta, int a, int b, int c, int d){
-  std::default_random_engine generator;
-  generator.seed(RANDOM_SEED_VALUE);
-  std::normal_distribution<double> distribution(0,1);
-  return (float(a+b+c+d)/float(4)) + delta * distribution(generator);
+  return (float(a+b+c+d)/float(4)) + delta * this->random->std_normal();
 }
 
 double EnvFactor::f3(int delta, int a, int b, int c){
-  std::default_random_engine generator;
-  generator.seed(RANDOM_SEED_VALUE);
-  std::normal_distribution<double> distribution(0,1);
-  return (float(a+b+c)/float(3)) + delta * distribution(generator);
+  return (float(a+b+c)/float(3)) + delta * this->random->std_normal();
 }
 
 
@@ -127,17 +128,17 @@ int EnvFactor::count_surrounding_ones(int x, int y){
   return c;
 }
 
+int EnvFactor::get_cell_value(int x, int y){
+  return this->envFactor_grid[x][y];
+}
 
 void EnvFactor::set_cell_value(int x, int y, int val){
   this->envFactor_grid[x][y] = val;
 }
 
-int EnvFactor::get_cell_value(int x, int y){
-  return this->envFactor_grid[x][y];
-}
 
 void EnvFactor::print_env_factor(){
-  printf("ENV_FACTOR #%d\n\n", this->id);
+  printf("\n\nENV_FACTOR #%d\n", this->id);
   for (int j = this->BOARD_SIZE-1; j >= 0; j--){
     for (int i = 0; i < this->BOARD_SIZE; i++){
       printf("%d ", this->get_cell_value(i,j));

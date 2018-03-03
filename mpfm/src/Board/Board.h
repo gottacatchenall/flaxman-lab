@@ -7,12 +7,16 @@
 
 class Tile;
 class EnvFactor;
+class Random;
 
 class Board{
     private:
         int BOARD_SIZE;
         int N_ENV_FACTORS;
         int ENV_FACTOR_MODE;
+
+        // Random generator
+        Random* random;
 
         // Array of environmental factors
         EnvFactor** envFactors;
@@ -21,7 +25,7 @@ class Board{
         Tile ***grid;
 
     public:
-        Board(Board* self, int BOARD_SIZE, int N_ENV_FACTORS, int ENV_FACTOR_MODE);
+        Board(Board* self, Random* random, int BOARD_SIZE, int N_ENV_FACTORS, int ENV_FACTOR_MODE);
         Tile* get_tile(int x, int y);
         int** get_envFactor_points();
         void get_random_envFactor_points(int **points);

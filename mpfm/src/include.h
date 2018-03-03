@@ -4,3 +4,4 @@
 #include "util/constants.h"
 #include "util/macros.h"
 #include <iostream>
+#include <assert.h>

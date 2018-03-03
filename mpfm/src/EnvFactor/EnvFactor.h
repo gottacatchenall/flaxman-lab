@@ -5,13 +5,16 @@
 #include <vector>
 #include "include.h"
 
+class Random;
+
 class EnvFactor{
     private:
       int id;
       int BOARD_SIZE;
       int** envFactor_grid;
+      Random* random;
     public:
-      EnvFactor(int index, int BOARD_SIZE);
+      EnvFactor(Random* random, int index, int BOARD_SIZE);
       void run_random_walk();
       void generate_fractal();
       double f4(int delta, int a, int b, int c, int d);

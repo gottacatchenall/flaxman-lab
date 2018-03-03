@@ -2,16 +2,19 @@
 #include "Board.h"
 #include "Tile.h"
 #include "EnvFactor.h"
+#include "Random.h"
 #include <random>
 
-Board::Board (Board* self, int BOARD_SIZE, int N_ENV_FACTORS, int ENV_FACTOR_MODE){
+Board::Board (Board* self, Random* random, int BOARD_SIZE, int N_ENV_FACTORS, int ENV_FACTOR_MODE){
   assert(BOARD_SIZE > 0);
   assert(N_ENV_FACTORS > 0);
   assert(self != NULL);
+  assert(random != NULL);
 
   this->BOARD_SIZE = BOARD_SIZE;
   this->N_ENV_FACTORS = N_ENV_FACTORS;
   this->ENV_FACTOR_MODE = ENV_FACTOR_MODE;
+  this->random = random;
 
   // =======================================
   // Grid Initialization
@@ -51,6 +54,16 @@ Board::Board (Board* self, int BOARD_SIZE, int N_ENV_FACTORS, int ENV_FACTOR_MOD
   // EnvFactor Allocation
   // =======================================
   this->envFactors = new EnvFactor*[this->N_ENV_FACTORS];
+  for (int i = 0; i < this->N_ENV_FACTORS; i++){
+    this->envFactors[i] = new EnvFactor(this->random, i, this->BOARD_SIZE);
+  }
+
+  /*
+  for (int i = 0; i < this->N_ENV_FACTORS; i++){
+    this->envFactors[i]->print_env_factor();
+  }
+  */
+
 }
 
 Tile* Board::get_tile(int x, int y){
@@ -61,14 +74,6 @@ Tile* Board::get_tile(int x, int y){
 
   return this->grid[i][j];
 }
-
-
-void Board::init_envFactors(){
-  for (int i = 0; i < this->N_ENV_FACTORS; i++){
-    this->envFactors[i] = new EnvFactor(i, this->BOARD_SIZE);
-  }
-}
-
 
 void Board::allocate_individuals(){
     // TODO
