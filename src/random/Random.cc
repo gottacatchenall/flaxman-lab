@@ -7,5 +7,6 @@ Random::Random(int random_seed){
 }
 
 float Random::std_normal(){
-  return this->std_normal_dist(this->generator);
+  float val =  this->std_normal_dist(this->generator);
+  return val;
 }

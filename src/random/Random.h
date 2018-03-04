@@ -7,7 +7,7 @@
 class Random{
   private:
     int random_seed;
-    std::default_random_engine generator;
+    std::mt19937 generator;
     //double std_normal_gen;
     std::normal_distribution<double> std_normal_dist;
   public:
