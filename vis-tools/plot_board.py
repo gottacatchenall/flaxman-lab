@@ -20,8 +20,10 @@ def setup(GRID_SIZE):
     return figure, ax
 
 def show(figure, ax, m, save=False, ani=False):
-    im = plt.imshow(m, interpolation='none', aspect='equal', cmap="gist_earth")
-
+    if (ani):
+        im = plt.imshow(m[0], interpolation='none', aspect='equal', cmap="gist_earth")
+    else:
+        im = plt.imshow(m, interpolation='none', aspect='equal', cmap="gist_earth")
     def update(i):
         ax.grid(color='black', linestyle='-', linewidth=.3)
         im.set_array(m[i])

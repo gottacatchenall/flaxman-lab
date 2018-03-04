@@ -45,9 +45,17 @@ void Logger::make_envFactor_directory(){
 }
 
 void Logger::make_symlinks_to_vis_tools(){
-  std::string view_env_factor_path = this->data_dir_path + "../vis-tools/view-env-factor.py";
-  std::string sym_link_path = this->run_dir_path + "view-env-factor.py";
-  symlink(view_env_factor_path.c_str(), sym_link_path.c_str());
+  std::string vis_tool_path = this->data_dir_path + "../vis-tools/";
+
+  // view-env-factor.py
+  std::string view_env_sym_link_path = this->run_dir_path + "env-factor.py";
+  std::string view_env_factor_path = vis_tool_path + "env-factor.py";
+  symlink(view_env_factor_path.c_str(), view_env_sym_link_path.c_str());
+
+  // view all
+  std::string view_all_sym_link_path = this->run_dir_path + "all-env-factors.py";
+  std::string view_all_path = vis_tool_path + "all-env-factors.py";
+  symlink(view_all_path.c_str(), view_all_sym_link_path.c_str());
 }
 
 void Logger::write_metadata(){

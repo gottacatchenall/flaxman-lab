@@ -1,7 +1,7 @@
 
 
-#define BOARD_SIZE_DEFAULT 16
-#define N_ENV_FACTORS_DEFAULT 8
+#define BOARD_SIZE_DEFAULT 64
+#define N_ENV_FACTORS_DEFAULT 32
 
 // -----------------------------------
 // Environmental Factors
