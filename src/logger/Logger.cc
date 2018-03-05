@@ -1,5 +1,6 @@
 #include "Logger.h"
 #include "EnvFactor.h"
+#include "Fragment.h"
 
 Logger::Logger(std::string dir, params_s* params){
   this->params = params;
@@ -97,5 +98,26 @@ void Logger::write_envFactor(EnvFactor* envFactor){
     }
     envFactor_file << "\n";
   }
+}
 
+void Logger::write_fragment(Fragment* fragment){
+  std::ofstream fragment_file;
+  std::string fragment_file_path = this->data_dir_path + "fragment.csv";
+
+  fragment_file.open(fragment_file_path.c_str());
+
+  int board_size = fragment->get_board_size();
+  int val;
+  std::string val_str;
+  for (int j = board_size-1; j >= 0; j--){
+    for (int i = 0; i < board_size; i++){
+      val = fragment->get_cell_value(i,j);
+      val_str = std::to_string(val);
+      fragment_file << val_str;
+      if (i < board_size- 1){
+        fragment_file << ",";
+      }
+    }
+    fragment_file << "\n";
+  }
 }

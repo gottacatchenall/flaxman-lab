@@ -1,5 +1,6 @@
 
 #include "Individual.h"
+#include "Genome.h"
 
 void Individual::get_initial_alleles(){
 }

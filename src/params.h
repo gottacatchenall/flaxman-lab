@@ -8,6 +8,6 @@
 // -----------------------------------
 
 #define ENV_FACTOR_H_VALUE .8
-#define FRACTAL_CUTOFF 0
+#define FRACTAL_CUTOFF 0.1
 
 #define RANDOM_SEED_VALUE time(NULL)

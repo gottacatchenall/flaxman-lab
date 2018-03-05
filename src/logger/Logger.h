@@ -8,10 +8,10 @@
 #include <fstream>
 
 #include "cmd_line_opts.h"
-#include "EnvFactor.h"
 #include "include.h"
 
 class EnvFactor;
+class Fragment;
 
 class Logger{
   private:
@@ -28,6 +28,7 @@ class Logger{
     void make_symlinks_to_vis_tools();
     void write_metadata();
     void write_envFactor(EnvFactor* envFactor);
+    void write_fragment(Fragment* fragment);
 };
 
 #endif

@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "Board.h"
 #include "Random.h"
+#include "Fractal.h"
 
 #include <string>
 
@@ -23,8 +24,11 @@ int main(int argc, char* argv[]){
     std::string dir_name_str(dir_name);
     Logger logger(dir_name_str, params);
 
+    // Setup Fractal Gen
+    Fractal fractal(&random, params->BOARD_SIZE);
+
     // Board initialization
-    Board board(&board, &random, &logger, params->BOARD_SIZE, params->N_ENV_FACTORS);
+    Board board(&board, &random, &fractal, &logger, params->BOARD_SIZE, params->N_ENV_FACTORS);
 
     printf("\n");
     return 0;

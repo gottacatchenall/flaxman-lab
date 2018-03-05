@@ -4,9 +4,12 @@
 
 #include "include.h"
 
+class Genome;
+
 class Individual{
     private:
-        int genome;
+        int id;
+        Genome *genome;
     public:
         Individual();
         void get_initial_alleles();

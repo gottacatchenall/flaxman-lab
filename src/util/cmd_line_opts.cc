@@ -48,7 +48,7 @@ char* get_execuable_path(char *dirNameBuffer, int bufSize){
 
   dirNameBuffer[ret] = 0;
 #endif
-
+  printf("dir name: %s\n", dirNameBuffer);
   // Cut of after last slash
   int last_slash;
   int ascii_slash = 47;
@@ -60,7 +60,7 @@ char* get_execuable_path(char *dirNameBuffer, int bufSize){
   for (int i = last_slash+1; i < bufSize; i++){
     dirNameBuffer[i] = 0;
   }
-
+  printf("dir name: %s\n", dirNameBuffer);
   return dirNameBuffer;
 }
 

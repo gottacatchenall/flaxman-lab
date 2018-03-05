@@ -1,8 +1,11 @@
 
-SRCS = 		src/tile/Tile.cc							\
-					src/board/Board.cc						\
-					src/envFactor/EnvFactor.cc		\
+SRCS = 		src/board/Board.cc						\
+					src/tile/Tile.cc							\
 					src/individual/Individual.cc	\
+					src/genome/Genome.cc					\
+					src/envFactor/EnvFactor.cc		\
+					src/fragment/Fragment.cc			\
+					src/fractal/Fractal.cc				\
 					src/logger/Logger.cc					\
 					src/random/Random.cc					\
 					src/util/cmd_line_opts.cc			\
@@ -10,9 +13,12 @@ SRCS = 		src/tile/Tile.cc							\
 
 DIRS = 		src/															\
 					src/board/												\
-					src/envFactor/										\
-					src/individual/										\
 					src/tile/													\
+					src/individual/										\
+					src/genome/												\
+					src/envFactor/										\
+					src/fragment/											\
+					src/fractal/											\
 					src/logger												\
 					src/random												\
 					src/util/

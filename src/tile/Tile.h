@@ -17,7 +17,7 @@ class Tile{
       Board *parentBoard;
 
       // HASHTABLE of individuals on the tile.
-      // KEY is the individuals id
+      // KEY is the individual's id
       std::unordered_map<int, Individual*> indivs;
     public:
       Tile(int x, int y, Board *parentBoard);

@@ -4,9 +4,10 @@
 #include "EnvFactor.h"
 #include "Random.h"
 #include "Logger.h"
-#include <random>
+#include "Fractal.h"
+#include "Fragment.h"
 
-Board::Board (Board* self, Random* random, Logger* logger, int BOARD_SIZE, int N_ENV_FACTORS){
+Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, int BOARD_SIZE, int N_ENV_FACTORS){
   assert(BOARD_SIZE > 0);
   assert(N_ENV_FACTORS > 0);
   assert(self != NULL);
@@ -15,6 +16,8 @@ Board::Board (Board* self, Random* random, Logger* logger, int BOARD_SIZE, int N
   this->BOARD_SIZE = BOARD_SIZE;
   this->N_ENV_FACTORS = N_ENV_FACTORS;
   this->random = random;
+  this->fractal = fractal;
+  this->logger = logger;
 
   // =======================================
   // Grid Initialization
@@ -51,17 +54,24 @@ Board::Board (Board* self, Random* random, Logger* logger, int BOARD_SIZE, int N
   }
 
   // =======================================
-  // EnvFactor Allocation
+  // EnvFactor Initialization
   // =======================================
   this->envFactors = new EnvFactor*[this->N_ENV_FACTORS];
   for (int i = 0; i < this->N_ENV_FACTORS; i++){
-    this->envFactors[i] = new EnvFactor(this->random, i, this->BOARD_SIZE);
+    this->envFactors[i] = new EnvFactor(this->random, this->fractal, i, this->BOARD_SIZE, 0.8, 0.1);
   }
 
   // Write EnvFactor
   for (int i = 0; i < this->N_ENV_FACTORS; i++){
     logger->write_envFactor(this->envFactors[i]);
   }
+
+
+  // =======================================
+  // Fractal Initialization
+  // =======================================
+  this->fragment = new Fragment(this->random, this->fractal, this->BOARD_SIZE);
+  logger->write_fragment(this->fragment);
 }
 
 Tile* Board::get_tile(int x, int y){

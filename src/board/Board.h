@@ -9,6 +9,8 @@ class Tile;
 class EnvFactor;
 class Random;
 class Logger;
+class Fractal;
+class Fragment;
 
 class Board{
     private:
@@ -17,15 +19,20 @@ class Board{
 
         // Random generator
         Random* random;
+        Fractal* fractal;
+        Logger* logger;
 
         // Array of environmental factors
         EnvFactor** envFactors;
+
+        // Fragment
+        Fragment *fragment;
 
         // Matrix of Tiles
         Tile ***grid;
 
     public:
-        Board(Board* self, Random* random, Logger* logger, int BOARD_SIZE, int N_ENV_FACTORS);
+        Board(Board* self, Random* random, Fractal* fractal, Logger* logger, int BOARD_SIZE, int N_ENV_FACTORS);
         Tile* get_tile(int x, int y);
         int** get_envFactor_points();
         void get_random_envFactor_points(int **points);
