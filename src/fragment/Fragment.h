@@ -15,6 +15,8 @@ class Fragment{
       Random* random;
     public:
       Fragment(Random* random, Fractal* fractal, int BOARD_SIZE);
+      int** create_fragment_map();
+      int count_zeros(int **map);
       void fragment_more();
       int get_board_size();
       void set_cell_value(int x, int y, int val);
