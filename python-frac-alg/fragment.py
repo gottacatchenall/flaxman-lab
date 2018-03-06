@@ -8,6 +8,8 @@ NUM_AXES = 4
 N_POINTS = 10
 BASE_PROB = .003
 
+N_GEN = 1000
+
 def generate_fractal(CUTOFF):
   def std_normal():
     val =  np.random.normal(0,1)
@@ -26,7 +28,7 @@ def generate_fractal(CUTOFF):
 
   maxlevel = int(np.log2(BOARD_SIZE))
 
-  H = 0
+  H = 0.1
 
   D = N
   d = N/2
@@ -90,7 +92,6 @@ def fractal():
     c = 0
     frac = 0
     lo_cutoff = 1
-    hi_cutoff = 2
     m = np.ones((BOARD_SIZE,BOARD_SIZE))
 
 
@@ -103,8 +104,8 @@ def fractal():
                 for j in range(BOARD_SIZE):
                     if (mn[i,j] == 0):
                         m[i,j] = 0
-        elif (frac > 0.6):
-            mn = generate_fractal(hi_cutoff)
+        elif (frac > 0.4):
+            mn = generate_fractal(lo_cutoff)
             for i in range(BOARD_SIZE):
                 for j in range(BOARD_SIZE):
                     if (mn[i,j] == 0):
@@ -121,16 +122,26 @@ def fractal():
         loopct += 1
         if (loopct > 10):
             break
-    return m
 
+    return m
 
 m = fractal()
 
+maps = np.ones((N_GEN, BOARD_SIZE, BOARD_SIZE))
+base_prob = 0.01
+for gen in range(1,N_GEN):
+    tmp = maps[gen-1]
 
+    for i in range(BOARD_SIZE):
+        for j in range(BOARD_SIZE):
+            if m[i,j] == 0:
+                # not yet marked
+                if tmp[i,j] == 1:
+                    if (np.random.rand() < base_prob):
+                        tmp[i,j] = 0
 
-
-
+    maps[gen] = tmp
 
 
 fig, ax = setup(BOARD_SIZE)
-show(fig, ax, m)
+show(fig, ax, maps, ani=True)
