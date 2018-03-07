@@ -17,6 +17,7 @@ Logger::Logger(std::string dir, params_s* params){
   this->make_run_directory();
   this->write_metadata();
   this->make_envFactor_directory();
+  this->make_fragment_directory();
   this->make_symlinks_to_vis_tools();
 }
 
@@ -52,6 +53,13 @@ void Logger::make_envFactor_directory(){
   this->envFactor_dir_path = envFactor_path;
   mkdir(envFactor_path.c_str(), 0700);
 }
+
+void Logger::make_fragment_directory(){
+  std::string fragment_path = this->run_dir_path + "fragment/";
+  this->fragment_dir_path = fragment_path;
+  mkdir(fragment_path.c_str(), 0700);
+}
+
 
 void Logger::make_symlinks_to_vis_tools(){
   std::string vis_tool_path = this->data_dir_path + "../vis-tools/";
@@ -115,9 +123,9 @@ void Logger::write_envFactor(EnvFactor* envFactor){
   }
 }
 
-void Logger::write_fragment(Fragment* fragment){
+void Logger::write_fragment_map(Fragment* fragment){
   std::ofstream fragment_file;
-  std::string fragment_file_path = this->run_dir_path + "fragment.csv";
+  std::string fragment_file_path = this->fragment_dir_path + "fragment_map.csv";
 
   fragment_file.open(fragment_file_path.c_str());
 
@@ -135,4 +143,12 @@ void Logger::write_fragment(Fragment* fragment){
     }
     fragment_file << "\n";
   }
+}
+
+void Logger::write_fragmentation_data(int gen, int x, int y){
+    std::ofstream fragment_file;
+    std::string fragment_file_path = this->fragment_dir_path + "fragment_data.csv";
+
+    fragment_file.open(fragment_file_path.c_str(), std::fstream::app);
+    fragment_file << gen << ", " << x << ", " << y << "\n";
 }

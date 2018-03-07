@@ -13,7 +13,7 @@ class Random{
   public:
     Random(int random_seed);
     float std_normal();
-    float uniform_float(int a, int b);
+    float uniform_float(float a, float b);
     int uniform_int(int a, int b);
 };
 

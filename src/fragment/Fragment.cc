@@ -1,16 +1,37 @@
 
 #include "Fragment.h"
 #include "Fractal.h"
+#include "Random.h"
+#include "Logger.h"
 #include "params_struct.h"
 
-Fragment::Fragment(Random* random, Fractal* fractal, params_s* params){
+Fragment::Fragment(Random* random, Fractal* fractal, Logger* logger, params_s* params){
   this->BOARD_SIZE = params->BOARD_SIZE;
   this->FRAGMENT_AMOUNT_LOW = params->FRAGMENT_AMOUNT_LOW;
   this->FRAGMENT_AMOUNT_HI = params->FRAGMENT_AMOUNT_HI;
   this->FRAGMENT_H_VALUE = params->FRAGMENT_H_VALUE;
+  this->FRAGMENT_PROBABILITY = params->FRAGMENT_PROBABILITY;
   this->random = random;
   this->fractal = fractal;
-  this->fragment_grid = this->create_fragment_map();
+  this->logger = logger;
+
+
+  this->fragment_map = this->create_fragment_map();
+
+  int** grid = new int*[this->BOARD_SIZE];
+  for (int i = 0; i < this->BOARD_SIZE; i++){
+    grid[i] = new int[this->BOARD_SIZE];
+  }
+
+  for (int i = 0; i < this->BOARD_SIZE; i++){
+    for (int j = 0; j < this->BOARD_SIZE; j++){
+        grid[i][j] = 1;
+    }
+  }
+
+  this->fragment_grid = grid;
+
+  this->setup_fragment_heap();
 }
 
 int** Fragment::create_fragment_map(){
@@ -54,28 +75,52 @@ int** Fragment::create_fragment_map(){
 }
 
 int Fragment::count_zeros(int **map){
-  int c = 0;
+    int c = 0;
 
-  for (int i = 0; i < this->BOARD_SIZE; i++){
-    for (int j = 0; j < this->BOARD_SIZE; j++){
-      if (map[i][j] == 0){
-        c++;
-      }
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            if (map[i][j] == 0){
+                c++;
+            }
+        }
     }
-  }
-  return c;
+    return c;
 }
 
-void Fragment::fragment_more(){
+void Fragment::setup_fragment_heap(){
 
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            if (this->fragment_map[i][j] == 0){
+                int key = this->random->uniform_int(0, 1000);
+                fragment_point *tmp = new fragment_point(i, j, key);
+                this->fragment_heap.push(tmp);
+            }
+        }
+    }
+}
+
+void Fragment::fragment_more(int gen){
+    double ran = this->random->uniform_float(0.0, 1.0);
+    if (ran < this->FRAGMENT_PROBABILITY){
+        if (this->fragment_heap.size() > 0){
+            fragment_point *pt = this->fragment_heap.top();
+            this->fragment_heap.pop();
+            this->set_cell_value(pt->x, pt->y, 0);
+            this->logger->write_fragmentation_data(gen, pt->x, pt->y);
+            free(pt);
+            return;
+        }
+    }
+    this->logger->write_fragmentation_data(gen, -1, -1);
 }
 
 void Fragment::set_cell_value(int x, int y, int val){
-
+    this->fragment_grid[x][y] = val;
 }
 
 int Fragment::get_cell_value(int x, int y){
-  return this->fragment_grid[x][y];
+  return this->fragment_map[x][y];
 }
 
 int Fragment::get_board_size(){

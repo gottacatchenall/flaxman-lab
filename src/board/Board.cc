@@ -31,7 +31,7 @@ Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, par
 
   this->grid = new Tile**[this->BOARD_SIZE+2];
   for (int i = 0; i < this->BOARD_SIZE+2; i++) {
-    this->grid[i] = new Tile*[BOARD_SIZE+2];
+    this->grid[i] = new Tile*[this->BOARD_SIZE+2];
   }
 
   // Initialize Edges to NULL
@@ -71,8 +71,16 @@ Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, par
   // =======================================
   // Fragment Map Initialization
   // =======================================
-  this->fragment = new Fragment(this->random, this->fractal, params);
-  logger->write_fragment(this->fragment);
+  this->fragment = new Fragment(this->random, this->fractal, this->logger, params);
+  logger->write_fragment_map(this->fragment);
+
+
+  // DEBUG
+  for (int i = 0; i < 500; i++){
+      this->fragment->fragment_more(i);
+  }
+
+  // END DEBUG
 
 }
 
