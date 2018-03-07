@@ -2,7 +2,11 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 
+size = 0
+
 def setup(GRID_SIZE):
+    global size
+    size = GRID_SIZE
     figure = plt.figure(figsize=(7,7))
     ax = plt.gca()
     ax.grid(linestyle='-', linewidth=.5)
@@ -27,11 +31,13 @@ def show(figure, ax, m, save=False, ani=False):
     def update(i):
         ax.grid(color='black', linestyle='-', linewidth=.3)
         im.set_array(m[i])
+        time_text.set_text('Generation: ' + str(i))
         return im,
     if ani:
-        ani = animation.FuncAnimation(figure, update, frames=[i for i in range(len(m))], interval=5, blit=True)
+        ani = animation.FuncAnimation(figure, update, frames=[i for i in range(len(m))], interval=200, blit=True)
         Writer = animation.writers['ffmpeg']
         writer = Writer(fps=30, metadata=dict(artist='Me'),)
         if save:
             ani.save('map.mp4', dpi=300)
+    time_text = ax.text(0, size+1, 'Generation: 0', fontsize=12)
     plt.show()

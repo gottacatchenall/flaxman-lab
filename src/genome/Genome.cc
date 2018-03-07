@@ -11,5 +11,5 @@ Genome* Genome::mate(Genome* mate_genome){
 }
 
 void Genome::crossing_over(Genome* a, Genome* b, Genome* result){
-
+    
 }

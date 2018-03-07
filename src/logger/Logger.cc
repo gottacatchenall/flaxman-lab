@@ -64,15 +64,25 @@ void Logger::make_fragment_directory(){
 void Logger::make_symlinks_to_vis_tools(){
   std::string vis_tool_path = this->data_dir_path + "../vis-tools/";
 
-  // view-env-factor.py
-  std::string view_env_sym_link_path = this->run_dir_path + "env-factor.py";
-  std::string view_env_factor_path = vis_tool_path + "env-factor.py";
-  symlink(view_env_factor_path.c_str(), view_env_sym_link_path.c_str());
+  // all-env-factors.py
+  std::string all_env_factors_symlink_path = this->run_dir_path + "all-env-factors.py";
+  std::string all_env_factors_path = vis_tool_path + "all-env-factors.py";
+  symlink(all_env_factors_path.c_str(), all_env_factors_symlink_path.c_str());
 
-  // view all
-  std::string view_all_sym_link_path = this->run_dir_path + "all-env-factors.py";
-  std::string view_all_path = vis_tool_path + "all-env-factors.py";
-  symlink(view_all_path.c_str(), view_all_sym_link_path.c_str());
+  // fragmentation-map.py
+  std::string fragmentation_map_symlink_path = this->run_dir_path + "fragmentation-map.py";
+  std::string fragmentation_map_path = vis_tool_path + "fragmentation-map.py";
+  symlink(fragmentation_map_path.c_str(), fragmentation_map_symlink_path.c_str());
+
+  // fragmentation-over-time.py
+  std::string fragmentation_over_time_symlink_path = this->run_dir_path + "fragmentation-over-time.py";
+  std::string fragmentation_over_time_path = vis_tool_path + "fragmentation-over-time.py";
+  symlink(fragmentation_over_time_path.c_str(), fragmentation_over_time_symlink_path.c_str());
+
+  // single-env-factor.py
+  std::string single_env_factor_symlink_path = this->run_dir_path + "single-env-factor.py";
+  std::string single_env_factor_path = vis_tool_path + "single-env-factor.py";
+  symlink(single_env_factor_path.c_str(), single_env_factor_symlink_path.c_str());
 }
 
 void Logger::write_metadata(){

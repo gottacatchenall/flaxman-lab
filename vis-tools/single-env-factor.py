@@ -1,12 +1,9 @@
 #! /usr/bin/env python
 
 import argparse
-import csv
 import os
-import numpy as np
 
-from plot_board import setup
-from plot_board import show
+from src import single_map
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Plot a given Env Factor on the board.')
@@ -18,22 +15,8 @@ def parse_args():
 def main():
     rel_path = parse_args()
     abs_path = os.path.abspath(rel_path)
-    print abs_path
-    with open(abs_path, 'rU') as p:
-        tmp = [list(map(int,rec)) for rec in csv.reader(p, delimiter=',')]
 
-    board_size = len(tmp)
-    m = np.zeros((board_size, board_size))
-
-    for i in range(len(tmp)):
-        for j in range(len(tmp[i])):
-            m[i,j] = tmp[i][j]
-
-    #print m
-
-    figure, ax = setup(len(m))
-    show(figure, ax, m)
-
+    single_map.plot_single_map(abs_path)
 
 
 if __name__ == '__main__':
