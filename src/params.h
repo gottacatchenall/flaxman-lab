@@ -2,12 +2,20 @@
 
 #define BOARD_SIZE_DEFAULT 64
 #define N_ENV_FACTORS_DEFAULT 32
+#define RANDOM_SEED_VALUE time(NULL)
 
 // -----------------------------------
 // Environmental Factors
 // -----------------------------------
 
-#define ENV_FACTOR_H_VALUE .8
-#define FRACTAL_CUTOFF 0.1
+#define ENV_FACTOR_H_VALUE_DEFAULT .8
+#define ENV_FACTOR_CUTOFF_DEFAULT 0.1
 
-#define RANDOM_SEED_VALUE time(NULL)
+
+// -----------------------------------
+// Fragmentation
+// -----------------------------------
+
+#define FRAGMENT_AMOUNT_LOW_DEFAULT 0.3
+#define FRAGMENT_AMOUNT_HI_DEFAULT 0.4
+#define FRAGMENT_H_VALUE_DEFAULT 0.1

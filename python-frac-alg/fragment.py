@@ -2,11 +2,12 @@
 
 from plot_board import setup, show
 import numpy as np
+import heapq
 
 BOARD_SIZE = 32
 NUM_AXES = 4
 N_POINTS = 10
-BASE_PROB = .003
+BASE_PROB = .5
 
 N_GEN = 1000
 
@@ -127,21 +128,47 @@ def fractal():
 
 m = fractal()
 
-maps = np.ones((N_GEN, BOARD_SIZE, BOARD_SIZE))
-base_prob = 0.01
-for gen in range(1,N_GEN):
-    tmp = maps[gen-1]
+
+class _Heap(object):
+   def __init__(self, initial=None, key=lambda x:x):
+       self.key = key
+       if initial:
+           self._data = [(key(item), item) for item in initial]
+           heapq.heapify(self._data)
+       else:
+           self._data = []
+
+   def push(self, item):
+       heapq.heappush(self._data, (self.key(item), item))
+
+   def pop(self):
+       return heapq.heappop(self._data)[1]
+
+
+def over_time(m):
+
+    maps = np.ones((N_GEN, BOARD_SIZE, BOARD_SIZE))
+    base_prob = 0.5
+
+    heap = _Heap()
 
     for i in range(BOARD_SIZE):
         for j in range(BOARD_SIZE):
             if m[i,j] == 0:
-                # not yet marked
-                if tmp[i,j] == 1:
-                    if (np.random.rand() < base_prob):
-                        tmp[i,j] = 0
+                key = np.random.randint(0,1000)
+                heap.push((key, (i,j)))
 
-    maps[gen] = tmp
+    for gen in range(1, N_GEN):
+        tmp = maps[gen-1]
 
+        if (np.random.uniform(0,1) < base_prob):
+            if (len(heap._data) > 0):
+                (key, (i,j)) = heap.pop()
+                tmp[i,j] = 0    
+        maps[gen] = tmp
+    return maps
+
+maps = over_time(m)
 
 fig, ax = setup(BOARD_SIZE)
 show(fig, ax, maps, ani=True)

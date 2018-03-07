@@ -2,27 +2,15 @@
 #define CMD_LINE_OPTS_H
 
 #include "include.h"
-#include <iostream>
+#include "params_struct.h"
 #include <unistd.h>
 
 #if __APPLE__
   #include <mach-o/dyld.h>
 #endif
 
-
-// Struct with all possible parameters.
-// Takes on values from params.h by default,
-// but can be overridden with cmd line options
-
-typedef struct params_s{
-    params_s(){
-        BOARD_SIZE = BOARD_SIZE_DEFAULT;
-        N_ENV_FACTORS = N_ENV_FACTORS_DEFAULT;
-    }
-    int BOARD_SIZE;
-    int N_ENV_FACTORS;
-} params_s;
-
+struct params_s;
+typedef params_s params_s;
 
 void printHello();
 void printUsage(char* name);

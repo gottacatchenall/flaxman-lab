@@ -7,6 +7,8 @@
 
 class Random;
 class Fractal;
+struct params_s;
+typedef params_s params_s;
 
 class EnvFactor{
     private:
@@ -18,7 +20,7 @@ class EnvFactor{
       Fractal* fractal;
       Random* random;
     public:
-      EnvFactor(Random* random, Fractal* fractal, int index, int BOARD_SIZE, double H_VALUE, double CUTOFF);
+      EnvFactor(Random* random, Fractal* fractal, params_s* params, int index);
       void set_cell_value(int x, int y, int val);
       int get_cell_value(int x, int y);
       int get_id();

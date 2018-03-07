@@ -6,15 +6,20 @@
 
 class Random;
 class Fractal;
+struct params_s;
+typedef params_s params_s;
 
 class Fragment{
     private:
       int BOARD_SIZE;
+      float FRAGMENT_AMOUNT_LOW;
+      float FRAGMENT_AMOUNT_HI;
+      float FRAGMENT_H_VALUE;
       int** fragment_grid;
       Fractal* fractal;
       Random* random;
     public:
-      Fragment(Random* random, Fractal* fractal, int BOARD_SIZE);
+      Fragment(Random* random, Fractal* fractal,  params_s* params);
       int** create_fragment_map();
       int count_zeros(int **map);
       void fragment_more();

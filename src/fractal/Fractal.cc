@@ -1,10 +1,11 @@
 
 #include "Fractal.h"
 #include "Random.h"
+#include "params_struct.h"
 
-Fractal::Fractal(Random* random, int BOARD_SIZE){
+Fractal::Fractal(Random* random, params_s* params){
   this->random = random;
-  this->BOARD_SIZE = BOARD_SIZE;
+  this->BOARD_SIZE = params->BOARD_SIZE;
 }
 
 int** Fractal::generate_fractal(double H_VAL, double CUTOFF){

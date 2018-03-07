@@ -6,15 +6,16 @@
 #include "Logger.h"
 #include "Fractal.h"
 #include "Fragment.h"
+#include "params_struct.h"
 
-Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, int BOARD_SIZE, int N_ENV_FACTORS){
-  assert(BOARD_SIZE > 0);
-  assert(N_ENV_FACTORS > 0);
+Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, params_s* params){
+  assert(params->BOARD_SIZE > 0);
+  assert(params->N_ENV_FACTORS > 0);
   assert(self != NULL);
   assert(random != NULL);
 
-  this->BOARD_SIZE = BOARD_SIZE;
-  this->N_ENV_FACTORS = N_ENV_FACTORS;
+  this->BOARD_SIZE = params->BOARD_SIZE;
+  this->N_ENV_FACTORS = params->N_ENV_FACTORS;
   this->random = random;
   this->fractal = fractal;
   this->logger = logger;
@@ -46,7 +47,7 @@ Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, int
   int x,y;
   for (int i = 1; i < this->BOARD_SIZE+1; i++){
     for (int j = 1; j < this->BOARD_SIZE+1; j++){
-      // adjust indecies
+      // adjust indecies to pass to tile as coordinate
       x = i - 1;
       y = j - 1;
       this->grid[i][j] = new Tile(x,y, self);
@@ -58,7 +59,7 @@ Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, int
   // =======================================
   this->envFactors = new EnvFactor*[this->N_ENV_FACTORS];
   for (int i = 0; i < this->N_ENV_FACTORS; i++){
-    this->envFactors[i] = new EnvFactor(this->random, this->fractal, i, this->BOARD_SIZE, 0.8, 0.1);
+    this->envFactors[i] = new EnvFactor(this->random, this->fractal, params, i);
   }
 
   // Write EnvFactor
@@ -68,10 +69,11 @@ Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, int
 
 
   // =======================================
-  // Fractal Initialization
+  // Fragment Map Initialization
   // =======================================
-  this->fragment = new Fragment(this->random, this->fractal, this->BOARD_SIZE);
+  this->fragment = new Fragment(this->random, this->fractal, params);
   logger->write_fragment(this->fragment);
+
 }
 
 Tile* Board::get_tile(int x, int y){

@@ -1,5 +1,6 @@
 #include "include.h"
 #include "cmd_line_opts.h"
+#include "params_struct.h"
 #include "Logger.h"
 #include "Board.h"
 #include "Random.h"
@@ -25,10 +26,10 @@ int main(int argc, char* argv[]){
     Logger logger(dir_name_str, params);
 
     // Setup Fractal Gen
-    Fractal fractal(&random, params->BOARD_SIZE);
+    Fractal fractal(&random, params);
 
     // Board initialization
-    Board board(&board, &random, &fractal, &logger, params->BOARD_SIZE, params->N_ENV_FACTORS);
+    Board board(&board, &random, &fractal, &logger, params);
 
     printf("\n");
     return 0;

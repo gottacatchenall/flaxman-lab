@@ -28,11 +28,19 @@ void Logger::make_data_directory(){
 }
 
 void Logger::make_run_directory(){
+
+  std::string dirname;
   time_t rawtime;
   time (&rawtime);
   this->timeinfo = localtime (&rawtime);
 
-  std::string dirname = std::to_string(rawtime);
+  if (this->params->RUN_DATA_DIR != ""){
+    dirname = this->params->RUN_DATA_DIR;
+  }
+  else{
+    dirname = std::to_string(rawtime);
+  }
+
   std::string path = this->data_dir_path + dirname + "/";
 
   this->run_dir_path = path;
@@ -75,6 +83,13 @@ void Logger::write_metadata(){
   metadata_file << "BOARD_SIZE: " << this->params->BOARD_SIZE << "\n";
   metadata_file << "N_ENV_FACTORS: " << this->params->N_ENV_FACTORS << "\n";
 
+  metadata_file << "FRAGMENT_AMOUNT_LOW: " << this->params->FRAGMENT_AMOUNT_LOW << "\n";
+  metadata_file << "FRAGMENT_AMOUNT_HI: " << this->params->FRAGMENT_AMOUNT_HI << "\n";
+  metadata_file << "FRAGMENT_H_VALUE: " << this->params->FRAGMENT_H_VALUE << "\n";
+
+  metadata_file << "ENV_FACTOR_CUTOFF: " << this->params->ENV_FACTOR_CUTOFF << "\n";
+  metadata_file << "ENV_FACTOR_H_VALUE: " << this->params->ENV_FACTOR_H_VALUE << "\n";
+
   metadata_file.close();
 }
 
@@ -102,7 +117,7 @@ void Logger::write_envFactor(EnvFactor* envFactor){
 
 void Logger::write_fragment(Fragment* fragment){
   std::ofstream fragment_file;
-  std::string fragment_file_path = this->data_dir_path + "fragment.csv";
+  std::string fragment_file_path = this->run_dir_path + "fragment.csv";
 
   fragment_file.open(fragment_file_path.c_str());
 

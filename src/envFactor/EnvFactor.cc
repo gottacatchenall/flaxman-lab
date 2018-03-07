@@ -2,16 +2,17 @@
 #include "EnvFactor.h"
 #include "Random.h"
 #include "Fractal.h"
+#include "params_struct.h"
 
-EnvFactor::EnvFactor(Random* random, Fractal* fractal, int index, int BOARD_SIZE, double H_VALUE, double CUTOFF){
+EnvFactor::EnvFactor(Random* random, Fractal* fractal, params_s* params, int index){
   assert(random != NULL);
 
   this->id = index;
-  this->BOARD_SIZE = BOARD_SIZE;
   this->random = random;
   this->fractal = fractal;
-  this->H_VALUE = H_VALUE;
-  this->CUTOFF = CUTOFF;
+  this->BOARD_SIZE = params->BOARD_SIZE;
+  this->H_VALUE = params->ENV_FACTOR_H_VALUE;
+  this->CUTOFF = params->ENV_FACTOR_CUTOFF;
 
   // Generate the Theta Map
   this->envFactor_grid = this->fractal->generate_fractal(this->H_VALUE, this->CUTOFF);
