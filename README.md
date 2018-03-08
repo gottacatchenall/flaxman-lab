@@ -7,6 +7,8 @@ Clean directory with `make clean`.
 Run mpfm with `make run` or `./mpfm`
 Use `mpfm -h` for usage. 	
 
+Data will be created in `$(MPFM_DIRECTORY)/data`. By default, each run is stored in a directory named for the epoch time at the run's start (this can be overridden with the `-p` flag). Various visualization tools can be invoked from this run directory using the symlinks to visualization scripts.
+
 ----
 
 ### Directory Structure
@@ -17,9 +19,12 @@ Use `mpfm -h` for usage.
 	|--mpfm
 	     |--src/
 		|--board/
-		|--tile/
+		|--patch/
 		|--individual/
 		|--envFactor/
+		|--fractal/
+		|--fragment
+		|--genome/
 		|--logger/
 		|--random/
 		|--util/
@@ -29,7 +34,7 @@ Use `mpfm -h` for usage.
 
 ##### Core Classes
 `board` contains the source and header files for the `Board` class.
-`tile` contains the source and header files for the `Tile` class.
+`patch` contains the source and header files for the `Patch` class.
 `individual` contains the source and header files for the `Individual` class.
 `envFactor` contains the source and header files for the `envFactor` class.
 
@@ -47,6 +52,8 @@ Use `mpfm -h` for usage.
 
 `vis-tools` contains Python scripts used for visualizing data from `mpfm`'s source.
 
+These should rarely be run from the `vis-tools` directory because symlinks to these scripts are created in each run directory.
+
 -----
 ### `data`
 
@@ -55,5 +62,6 @@ Data contains directories from each run. Each run has its own directory within `
 Each run data contains the following:
 `metadata.txt`: Includes `RANDOM_SEED` value, parameter values, and time of run.
 `EnvFactors/` : contains `.csv`s of the Environmental factor maps.
+`Fragment/` : contains`fragment_map.csv`, which shows all the patches that will be marked fragmented, and `fragment_data.csv` contains fragmentation data.
 
 -----
