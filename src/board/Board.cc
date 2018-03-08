@@ -74,14 +74,6 @@ Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, par
     this->fragment = new Fragment(this->random, this->fractal, this->logger, params);
     logger->write_fragment_map(this->fragment);
 
-
-    // DEBUG
-    for (int i = 0; i < 1500; i++){
-        this->fragment->fragment_more(i);
-    }
-
-    // END DEBUG
-
 }
 
 Patch* Board::get_patch(int x, int y){
@@ -101,6 +93,6 @@ void Board::migrate(){
     // TODO
 }
 
-void Board::next_gen(){
-    // TODO
+void Board::next_gen(int gen){
+    this->fragment->fragment_more(gen);
 }

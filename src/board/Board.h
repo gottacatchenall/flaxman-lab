@@ -37,7 +37,7 @@ class Board{
         int** get_envFactor_points();
         void allocate_individuals();
         void migrate();
-        void next_gen();
+        void next_gen(int gen);
 
 };
 

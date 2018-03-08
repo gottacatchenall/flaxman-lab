@@ -30,6 +30,14 @@ int main(int argc, char* argv[]){
 
     // Board initialization
     Board board(&board, &random, &fractal, &logger, params);
+    board.allocate_individuals();
+
+    int i;
+    int n_gen = params->N_GENERATIONS;
+    for (i = 0; i < n_gen; i++){
+        board.migrate();
+        board.next_gen(i);
+    }
 
     printf("\n");
     return 0;
