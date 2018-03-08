@@ -1,6 +1,6 @@
 
 SRCS = 				src/board/Board.cc				\
-					src/tile/Tile.cc				\
+					src/patch/Patch.cc				\
 					src/individual/Individual.cc	\
 					src/genome/Genome.cc			\
 					src/envFactor/EnvFactor.cc		\
@@ -13,7 +13,7 @@ SRCS = 				src/board/Board.cc				\
 
 DIRS = 				src/							\
 					src/board/						\
-					src/tile/						\
+					src/patch/						\
 					src/individual/					\
 					src/genome/						\
 					src/envFactor/					\

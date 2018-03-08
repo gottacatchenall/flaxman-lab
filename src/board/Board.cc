@@ -1,6 +1,6 @@
 
 #include "Board.h"
-#include "Tile.h"
+#include "Patch.h"
 #include "EnvFactor.h"
 #include "Random.h"
 #include "Logger.h"
@@ -27,11 +27,11 @@ Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, par
     // Initiallize Grid 2D-Array
 
     // Size is BOARD_SIZE+2 so entire thing is surrounded by NULLs to avoid
-    // issues with indexing surrounding Tiles at edges or corner.
+    // issues with indexing surrounding patches at edges or corner.
 
-    this->grid = new Tile**[this->BOARD_SIZE+2];
+    this->grid = new Patch**[this->BOARD_SIZE+2];
     for (int i = 0; i < this->BOARD_SIZE+2; i++) {
-        this->grid[i] = new Tile*[this->BOARD_SIZE+2];
+        this->grid[i] = new Patch*[this->BOARD_SIZE+2];
     }
 
     // Initialize Edges to NULL
@@ -43,14 +43,14 @@ Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, par
         this->grid[max_index][i] = NULL;
     }
 
-    // Initiallize Tiles
+    // Initiallize Patch
     int x,y;
     for (int i = 1; i < this->BOARD_SIZE+1; i++){
         for (int j = 1; j < this->BOARD_SIZE+1; j++){
-            // adjust indecies to pass to tile as coordinate
+            // adjust indecies to pass to patch as coordinate
             x = i - 1;
             y = j - 1;
-            this->grid[i][j] = new Tile(x,y, self);
+            this->grid[i][j] = new Patch(x,y, self);
         }
     }
 
@@ -84,7 +84,7 @@ Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, par
 
 }
 
-Tile* Board::get_tile(int x, int y){
+Patch* Board::get_patch(int x, int y){
     // Remember, this->grid is padded by NULLs on all sides,
     // so, index must be adjusted so (x,y) actually maps to (x,y)
     int i = x + 1;

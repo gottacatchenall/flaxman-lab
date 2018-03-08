@@ -1,6 +1,6 @@
 
-#ifndef TILE_H
-#define TILE_H
+#ifndef PATCH_H
+#define PATCH_H
 
 #include <unordered_map>
 #include "include.h"
@@ -8,7 +8,7 @@
 class Individual;
 class Board;
 
-class Tile{
+class Patch{
     private:
         int x;
         int y;
@@ -20,7 +20,7 @@ class Tile{
         // KEY is the individual's id
         std::unordered_map<int, Individual*> indivs;
     public:
-        Tile(int x, int y, Board *parentBoard);
+        Patch(int x, int y, Board *parentBoard);
         void callparentfunc();
 };
 

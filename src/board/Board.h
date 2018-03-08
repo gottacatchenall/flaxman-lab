@@ -6,7 +6,7 @@
 #include "include.h"
 
 // Forward Declarations
-class Tile;
+class Patch;
 class EnvFactor;
 class Random;
 class Logger;
@@ -28,12 +28,12 @@ class Board{
         EnvFactor** envFactors;
         Fragment *fragment;
 
-        // Matrix of Tiles
-        Tile ***grid;
+        // Matrix of Patches
+        Patch ***grid;
 
     public:
         Board(Board* self, Random* random, Fractal* fractal, Logger* logger, params_s* params);
-        Tile* get_tile(int x, int y);
+        Patch* get_patch(int x, int y);
         int** get_envFactor_points();
         void allocate_individuals();
         void migrate();
