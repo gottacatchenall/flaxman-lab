@@ -1,26 +1,26 @@
 
-SRCS = 		src/board/Board.cc						\
-					src/tile/Tile.cc							\
+SRCS = 				src/board/Board.cc				\
+					src/tile/Tile.cc				\
 					src/individual/Individual.cc	\
-					src/genome/Genome.cc					\
+					src/genome/Genome.cc			\
 					src/envFactor/EnvFactor.cc		\
-					src/fragment/Fragment.cc			\
-					src/fractal/Fractal.cc				\
-					src/logger/Logger.cc					\
-					src/random/Random.cc					\
-					src/util/cmd_line_opts.cc			\
+					src/fragment/Fragment.cc		\
+					src/fractal/Fractal.cc			\
+					src/logger/Logger.cc			\
+					src/random/Random.cc			\
+					src/util/cmd_line_opts.cc		\
 					src/main.cc
 
-DIRS = 		src/															\
-					src/board/												\
-					src/tile/													\
-					src/individual/										\
-					src/genome/												\
-					src/envFactor/										\
-					src/fragment/											\
-					src/fractal/											\
-					src/logger												\
-					src/random												\
+DIRS = 				src/							\
+					src/board/						\
+					src/tile/						\
+					src/individual/					\
+					src/genome/						\
+					src/envFactor/					\
+					src/fragment/					\
+					src/fractal/					\
+					src/logger						\
+					src/random						\
 					src/util/
 
 INC_PARAMS=$(foreach d, $(DIRS), -I$d)

@@ -34,7 +34,7 @@ def show(figure, ax, m, save=False, ani=False):
         time_text.set_text('Generation: ' + str(i))
         return im,
     if ani:
-        ani = animation.FuncAnimation(figure, update, frames=[i for i in range(len(m))], interval=200, blit=True)
+        ani = animation.FuncAnimation(figure, update, frames=[i for i in range(len(m))], interval=1, blit=False)
         Writer = animation.writers['ffmpeg']
         writer = Writer(fps=30, metadata=dict(artist='Me'),)
         if save:

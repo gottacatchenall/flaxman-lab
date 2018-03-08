@@ -1,7 +1,7 @@
 
 
-#define BOARD_SIZE_DEFAULT 64
-#define N_ENV_FACTORS_DEFAULT 32
+#define BOARD_SIZE_DEFAULT 32
+#define N_ENV_FACTORS_DEFAULT 16
 #define RANDOM_SEED_VALUE time(NULL)
 
 // -----------------------------------

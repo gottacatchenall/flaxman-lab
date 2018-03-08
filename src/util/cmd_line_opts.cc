@@ -4,14 +4,14 @@
 #include <getopt.h>
 
 void printHello(){
-  printf("\n");
-  printf("========================================================\n");
-  printf("=                                                      =\n");
-  printf("=       Metapopulation Fragmentation Model (mpfm)      =\n");
-  printf("=                                            v0.1      =\n");
-  printf("=                                                      =\n");
-  printf("========================================================\n");
-  printf("\n\n");
+    printf("\n");
+    printf("========================================================\n");
+    printf("=                                                      =\n");
+    printf("=       Metapopulation Fragmentation Model (mpfm)      =\n");
+    printf("=                                            v0.1      =\n");
+    printf("=                                                      =\n");
+    printf("========================================================\n");
+    printf("\n\n");
 }
 
 void printUsage(char *name){
@@ -40,37 +40,37 @@ void printUsage(char *name){
 char* get_execuable_path(char *dirNameBuffer, int bufSize){
 
 #ifdef __APPLE__ // MAC
-  uint32_t size = bufSize;
+    uint32_t size = bufSize;
 
-  if (_NSGetExecutablePath(dirNameBuffer, &size) != 0) {
-    // Buffer size is too small.
-    printf("Length of path to executable was too long.\n");
-    printf("Adjust buffer size in main.cc\n");
-    exit(-1);
-  }
-#else // LINUX
-  const char *linkName = "/proc/self/exe";
-  const int ret = int(readlink(linkName, dirNameBuffer, bufSize - 1));
-
-  if (ret == -1) {
-    printf("Permission to read executable path was denied.\n");
-    exit(-1);
-  }
-
-  dirNameBuffer[ret] = 0;
-#endif
-  // Cut of after last slash
-  int last_slash;
-  int ascii_slash = 47;
-  for (int i = 0; i < bufSize; i++){
-    if (dirNameBuffer[i] == ascii_slash){
-      last_slash = i;
+    if (_NSGetExecutablePath(dirNameBuffer, &size) != 0) {
+        // Buffer size is too small.
+        printf("Length of path to executable was too long.\n");
+        printf("Adjust buffer size in main.cc\n");
+        exit(-1);
     }
-  }
-  for (int i = last_slash+1; i < bufSize; i++){
-    dirNameBuffer[i] = 0;
-  }
-  return dirNameBuffer;
+#else // LINUX
+    const char *linkName = "/proc/self/exe";
+    const int ret = int(readlink(linkName, dirNameBuffer, bufSize - 1));
+
+    if (ret == -1) {
+        printf("Permission to read executable path was denied.\n");
+        exit(-1);
+    }
+
+    dirNameBuffer[ret] = 0;
+#endif
+    // Cut of after last slash
+    int last_slash;
+    int ascii_slash = 47;
+    for (int i = 0; i < bufSize; i++){
+        if (dirNameBuffer[i] == ascii_slash){
+            last_slash = i;
+        }
+    }
+    for (int i = last_slash+1; i < bufSize; i++){
+        dirNameBuffer[i] = 0;
+    }
+    return dirNameBuffer;
 }
 
 
@@ -78,11 +78,11 @@ params_s* get_options(int argc, char *argv[], params_s* opts){
     int opt;
 
     static struct option long_options[] =
-      {
+    {
         {"frag-lo", required_argument, 0, 0},
         {"frag-hi", required_argument, 0, 0},
         {0, 0, 0, 0}
-      };
+    };
 
     int option_index = 0;
 

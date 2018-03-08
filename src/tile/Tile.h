@@ -10,18 +10,18 @@ class Board;
 
 class Tile{
     private:
-      int x;
-      int y;
-      int n_indiv;
+        int x;
+        int y;
+        int n_indiv;
 
-      Board *parentBoard;
+        Board *parentBoard;
 
-      // HASHTABLE of individuals on the tile.
-      // KEY is the individual's id
-      std::unordered_map<int, Individual*> indivs;
+        // HASHTABLE of individuals on the tile.
+        // KEY is the individual's id
+        std::unordered_map<int, Individual*> indivs;
     public:
-      Tile(int x, int y, Board *parentBoard);
-      void callparentfunc();
+        Tile(int x, int y, Board *parentBoard);
+        void callparentfunc();
 };
 
 #endif

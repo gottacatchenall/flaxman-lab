@@ -35,26 +35,26 @@ class Compare{
 
 class Fragment{
     private:
-      int BOARD_SIZE;
-      float FRAGMENT_AMOUNT_LOW;
-      float FRAGMENT_AMOUNT_HI;
-      float FRAGMENT_H_VALUE;
-      float FRAGMENT_PROBABILITY;
-      int** fragment_grid;
-      int** fragment_map;
-      std::priority_queue<fragment_point*, std::vector<fragment_point*>, Compare> fragment_heap;
-      Fractal* fractal;
-      Random* random;
-      Logger* logger;
+        int BOARD_SIZE;
+        float FRAGMENT_AMOUNT_LOW;
+        float FRAGMENT_AMOUNT_HI;
+        float FRAGMENT_H_VALUE;
+        float FRAGMENT_PROBABILITY;
+        int** fragment_grid;
+        int** fragment_map;
+        std::priority_queue<fragment_point*, std::vector<fragment_point*>, Compare> fragment_heap;
+        Fractal* fractal;
+        Random* random;
+        Logger* logger;
     public:
-      Fragment(Random* random, Fractal* fractal, Logger* logger, params_s* params);
-      int** create_fragment_map();
-      int count_zeros(int **map);
-      void fragment_more(int gen);
-      void setup_fragment_heap();
-      int get_board_size();
-      void set_cell_value(int x, int y, int val);
-      int get_cell_value(int x, int y);
+        Fragment(Random* random, Fractal* fractal, Logger* logger, params_s* params);
+        int** create_fragment_map();
+        int count_zeros(int **map);
+        void fragment_more(int gen);
+        void setup_fragment_heap();
+        int get_board_size();
+        void set_cell_value(int x, int y, int val);
+        int get_cell_value(int x, int y);
 };
 
 #endif

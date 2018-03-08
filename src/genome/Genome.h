@@ -6,19 +6,23 @@
 
 class Random;
 class Individual;
+struct params_s;
+typedef params_s params_s;
 
 class Genome{
     private:
-      Individual *individual;
-      Random* random;
-      int* preferences;
-      int* fitness;
-      int* male_chromosome;
-      int* female_chromosome;
+        Individual *individual;
+        Random* random;
+        params_s *params;
+        int K_VALUE;
+        int* preferences;
+        int* fitness;
+        int* male_chromosome;
+        int* female_chromosome;
     public:
-      Genome(Individual* individual, Random* random);
-      Genome* mate(Genome* mate_genome);
-      void crossing_over(Genome* a, Genome* b, Genome* result);
+        Genome(Individual* individual, Random* random, params_s* params);
+        Genome* mate(Genome* mate_genome);
+        void crossing_over(Genome* a, Genome* b, Genome* result);
 };
 
 #endif
