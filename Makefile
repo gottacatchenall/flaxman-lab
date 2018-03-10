@@ -1,37 +1,15 @@
+include include.mk
 
-SRCS = 				src/board/Board.cc				\
-					src/patch/Patch.cc				\
-					src/individual/Individual.cc	\
-					src/genome/Genome.cc			\
-					src/envFactor/EnvFactor.cc		\
-					src/fragment/Fragment.cc		\
-					src/fractal/Fractal.cc			\
-					src/logger/Logger.cc			\
-					src/random/Random.cc			\
-					src/util/cmd_line_opts.cc		\
-					src/main.cc
+INC_PARAMS=$(foreach d, $(INCLUDE_DIRS), -I$d)
 
-DIRS = 				src/							\
-					src/board/						\
-					src/patch/						\
-					src/individual/					\
-					src/genome/						\
-					src/envFactor/					\
-					src/fragment/					\
-					src/fractal/					\
-					src/logger						\
-					src/random						\
-					src/util/
-
-INC_PARAMS=$(foreach d, $(DIRS), -I$d)
+EXE = mpfm
+TEST_EXE = test/run_tests
 
 CC = g++
 CFLAGS = -std=c++11 -Wall -g -march=native $(INC_PARAMS)
 
-OBJS = $(SRCS:.c=.o)
-EXE = mpfm
-
-.PHONY: clean run
+OBJS = $(SRCS:.c=.o) $(MAIN:.c=.o)
+.PHONY: clean run test
 
 all:  $(EXE)
 	@echo  Compiled successfully to $(EXE)
@@ -41,6 +19,9 @@ $(EXE): $(OBJS)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<  -o $@
+
+test:
+	$(CC) $(CFLAGS) -I$(MOCK_CLASS_DIR) $(TEST_SRCS) $(GMOCK_LIB) $(GTEST_LIB) $(SRCS) -o $(TEST_EXE)
 
 clean:
 	$(RM) *.o *~ $(EXE)

@@ -10,8 +10,11 @@ Genome::Genome(Individual* individual, Random* random, params_s* params){
 
     this->K_VALUE = params->N_ENV_FACTORS;
 
-    this->preferences = new int[K_VALUE];
-    this->fitness = new int[K_VALUE];
+    this->N_BEANBAG_CHROMO = params->N_BEANBAG_CHROMOSOMES;
+    this->N_BEANBAG_LOCI_PER_CHROMO = params->N_BEANBAG_LOCI_PER_CHROMO;
+
+    this->preferences = new int[this->K_VALUE];
+    this->fitness = new int[this->K_VALUE];
     this->male_chromosome = new int[2];
     this->female_chromosome = new int[1];
 }

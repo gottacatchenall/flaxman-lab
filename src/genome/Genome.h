@@ -14,7 +14,12 @@ class Genome{
         Individual *individual;
         Random* random;
         params_s *params;
+
         int K_VALUE;
+        int N_BEANBAG_CHROMO;
+        int N_BEANBAG_LOCI_PER_CHROMO;
+
+        int*** beanbag_loci;
         int* preferences;
         int* fitness;
         int* male_chromosome;
