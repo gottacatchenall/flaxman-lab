@@ -35,7 +35,9 @@ $(EXE): $(OBJS)
 	$(CC) $(CFLAGS) -c $<  -o $@
 
 test:
-	$(CC) $(CFLAGS) -I$(MOCK_CLASS_DIR) $(TEST_SRCS) $(GMOCK_LIB) $(GTEST_LIB) $(SRCS) -o $(TEST_EXE)
+	@echo Building tests from \$(MPFM_DIR)/test/tests.cc...
+	@echo
+	@$(CC) $(CFLAGS) $(TEST_SRCS) $(TEST_MAIN) $(GMOCK_LIB) $(GTEST_LIB) $(SRCS) -o $(TEST_EXE)
 
 clean:
 	$(RM) *.o *~ $(EXE)

@@ -32,19 +32,8 @@ INCLUDE_DIRS = 		$(ROOT_DIR)/src/							\
 # ========================================
 # Tests
 # ========================================
-TEST_MAIN =         $(ROOT_DIR)/test/main_test.cc
-MOCK_CLASS_DIR = 	$(ROOT_DIR)/test/mock_classes
-TEST_SRCS = 		$(ROOT_DIR)/test/main_test.cc								\
-					$(ROOT_DIR)/src/board/test/board_test.cc 					\
-					$(ROOT_DIR)/src/patch/test/test.cc							\
-					$(ROOT_DIR)/src/individual/test/test.cc						\
-					$(ROOT_DIR)/src/genome/test/test.cc							\
-					$(ROOT_DIR)/src/envFactor/test/test.cc						\
-					$(ROOT_DIR)/src/fragment/test/test.cc						\
-					$(ROOT_DIR)/src/fractal/test/test.cc						\
-					$(ROOT_DIR)/src/logger/test/test.cc							\
-					$(ROOT_DIR)/src/random/test/test.cc							\
-					$(ROOT_DIR)/src/util/test/test.cc
+TEST_MAIN =         $(ROOT_DIR)/test/main.cc
+TEST_SRCS = 		$(ROOT_DIR)/test/tests.cc
 
 GTEST_LIB = /usr/local/lib/libgtest.a
 GMOCK_LIB = /usr/local/lib/libgmock.a
