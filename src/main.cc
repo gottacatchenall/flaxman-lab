@@ -1,5 +1,6 @@
 #include "include.h"
 #include "cmd_line_opts.h"
+#include "genetic_map.h"
 #include "params_struct.h"
 #include "Logger.h"
 #include "Board.h"
@@ -21,27 +22,30 @@ int main(int argc, char* argv[]){
 
     // Setup Random Generator...
     int random_seed = RANDOM_SEED_VALUE;
-    Random random(random_seed);
+    Random* random = new Random(random_seed);
+
+    // Setup Genetic Map...
+    genetic_map_s* genetic_map = generate_genetic_map(random, params);
 
     // Setup Data Logger...
     int path_buffer_size = 200;
     char dir_name[path_buffer_size];
     get_execuable_path(dir_name, path_buffer_size);
     std::string dir_name_str(dir_name);
-    Logger logger(dir_name_str, params);
+    Logger* logger = new Logger(dir_name_str, params);
 
     // Setup Fractal Gen
-    Fractal fractal(&random, params);
+    Fractal* fractal = new Fractal(random, params);
 
     // Board initialization
-    Board board(&board, &random, &fractal, &logger, params);
-    board.allocate_individuals();
+    Board* board = new Board(random, fractal, logger, params);
+    board->allocate_individuals();
 
     int i;
     int n_gen = params->N_GENERATIONS;
     for (i = 0; i < n_gen; i++){
-        board.migrate();
-        board.next_gen(i);
+        board->migrate();
+        board->next_gen(i);
     }
 
     return 0;

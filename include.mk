@@ -15,6 +15,7 @@ SRCS = 				$(ROOT_DIR)/src/board/Board.cc				\
 					$(ROOT_DIR)/src/fractal/Fractal.cc			\
 					$(ROOT_DIR)/src/logger/Logger.cc			\
 					$(ROOT_DIR)/src/random/Random.cc			\
+					$(ROOT_DIR)/src/util/genetic_map.cc			\
 					$(ROOT_DIR)/src/util/cmd_line_opts.cc
 
 INCLUDE_DIRS = 		$(ROOT_DIR)/src/							\

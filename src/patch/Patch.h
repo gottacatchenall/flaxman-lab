@@ -21,7 +21,8 @@ class Patch{
         std::unordered_map<int, Individual*> indivs;
     public:
         Patch(int x, int y, Board *parentBoard);
-        void callparentfunc();
+        void increment_num_indiv();
+        void decrement_num_indiv();
 };
 
 #endif

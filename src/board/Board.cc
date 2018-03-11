@@ -8,11 +8,14 @@
 #include "Fragment.h"
 #include "params_struct.h"
 
-Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, params_s* params){
+Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params){
+    assert(random != NULL);
+    assert(fractal != NULL);
+    assert(logger != NULL);
+    assert(params != NULL);
     assert(params->BOARD_SIZE > 0);
     assert(params->N_ENV_FACTORS > 0);
-    assert(self != NULL);
-    assert(random != NULL);
+
 
     this->BOARD_SIZE = params->BOARD_SIZE;
     this->N_ENV_FACTORS = params->N_ENV_FACTORS;
@@ -50,7 +53,7 @@ Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, par
             // adjust indecies to pass to patch as coordinate
             x = i - 1;
             y = j - 1;
-            this->grid[i][j] = new Patch(x,y, self);
+            this->grid[i][j] = new Patch(x, y, this);
         }
     }
 
@@ -73,6 +76,14 @@ Board::Board (Board* self, Random* random, Fractal* fractal, Logger* logger, par
     // =======================================
     this->fragment = new Fragment(this->random, this->fractal, this->logger, params);
     logger->write_fragment_map(this->fragment);
+
+#if __DEBUG__
+    // Check that Fragment map cover amount is between the supplied parameters
+#endif
+
+    // =======================================
+    // Genome Map Initialization
+    // =======================================
 
 }
 

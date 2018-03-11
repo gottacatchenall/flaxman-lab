@@ -26,5 +26,5 @@
 // Genome
 // -----------------------------------
 
-#define N_BEANBAG_CHROMOSOMES_DEFAULT 10
-#define N_BEANBAG_LOCI_PER_CHROMO_DEFAULT 50
+#define N_CHROMOSOMES_DEFAULT 10
+#define N_LOCI_DEFAULT 1000

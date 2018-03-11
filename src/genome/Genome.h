@@ -16,14 +16,15 @@ class Genome{
         params_s *params;
 
         int K_VALUE;
-        int N_BEANBAG_CHROMO;
-        int N_BEANBAG_LOCI_PER_CHROMO;
+        int N_CHROMOSOMES;
+        int N_LOCI;
 
-        int*** beanbag_loci;
-        int* preferences;
-        int* fitness;
-        int* male_chromosome;
-        int* female_chromosome;
+        int* genome;
+        int* genetic_map;
+        int* pref_loci;
+        int* fitness_loci;
+        int* male_loci;
+        int* female_loci;
     public:
         Genome(Individual* individual, Random* random, params_s* params);
         Genome* mate(Genome* mate_genome);

@@ -10,13 +10,18 @@ Genome::Genome(Individual* individual, Random* random, params_s* params){
 
     this->K_VALUE = params->N_ENV_FACTORS;
 
-    this->N_BEANBAG_CHROMO = params->N_BEANBAG_CHROMOSOMES;
-    this->N_BEANBAG_LOCI_PER_CHROMO = params->N_BEANBAG_LOCI_PER_CHROMO;
+    this->N_CHROMOSOMES = params->N_CHROMOSOMES;
+    this->N_LOCI = params->N_LOCI;
 
-    this->preferences = new int[this->K_VALUE];
-    this->fitness = new int[this->K_VALUE];
-    this->male_chromosome = new int[2];
-    this->female_chromosome = new int[1];
+
+    this->genome = new int[this->N_LOCI];
+    this->genetic_map = new int[this->N_CHROMOSOMES];
+
+    this->pref_loci = new int[this->K_VALUE];
+    this->fitness_loci = new int[this->K_VALUE];
+    this->male_loci = new int[2];
+    this->female_loci = new int[1];
+
 }
 
 Genome* Genome::mate(Genome* mate_genome){

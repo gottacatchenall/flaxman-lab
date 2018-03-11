@@ -32,7 +32,7 @@ class Board{
         Patch ***grid;
 
     public:
-        Board(Board* self, Random* random, Fractal* fractal, Logger* logger, params_s* params);
+        Board(Random* random, Fractal* fractal, Logger* logger, params_s* params);
         Patch* get_patch(int x, int y);
         int** get_envFactor_points();
         void allocate_individuals();
