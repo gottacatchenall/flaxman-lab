@@ -3,7 +3,7 @@
 
 class MockLogger : public Logger {
     public:
-        MockLogger(std::string str, params_s* params) : Logger(str, params) {}
+        //MockLogger(params_s* params) : Logger("", params) {}
         MOCK_METHOD0(make_data_directory, void());
         MOCK_METHOD0(make_run_directory, void());
         MOCK_METHOD0(make_envFactor_directory, void());

@@ -25,4 +25,4 @@ $(EXE): $(OBJS)
 	$(CC) $(CFLAGS) -c $<  -o $@
 
 clean:
-	$(RM) *.o *~ $(EXE)
+	$(RM) *.o *~ $(TEST_EXE)

@@ -10,9 +10,14 @@
 
 int main(int argc, char* argv[]){
 
+
     // Setup custom parameters
     params_s* params = new params_s;
     get_options(argc, argv, params);
+
+#if __DEBUG__
+    printf("Running in __DEBUG__ mode! This enables inline unit testing/validation, but will significantly slow performance.\n\n");
+#endif
 
     // Setup Random Generator...
     int random_seed = RANDOM_SEED_VALUE;
@@ -39,6 +44,5 @@ int main(int argc, char* argv[]){
         board.next_gen(i);
     }
 
-    printf("\n");
     return 0;
 }
