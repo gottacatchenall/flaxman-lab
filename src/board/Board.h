@@ -20,6 +20,8 @@ class Board{
         int BOARD_SIZE;
         int N_ENV_FACTORS;
 
+        params_s* params;
+
         Random* random;
         Fractal* fractal;
         Logger* logger;

@@ -1,4 +1,7 @@
 
+// -----------------------------------
+// Board
+// -----------------------------------
 
 #define BOARD_SIZE_DEFAULT 32
 #define N_ENV_FACTORS_DEFAULT 16
@@ -21,6 +24,15 @@
 #define FRAGMENT_AMOUNT_HI_DEFAULT 0.3
 #define FRAGMENT_H_VALUE_DEFAULT 0.1
 #define FRAGMENT_PROBABILITY_DEFAULT 0.5
+
+// -----------------------------------
+// Individuals
+// -----------------------------------
+
+#define N_INDIVIDUALS_DEFAULT 1000
+#define INDIVIDUALS_INITIAL_GENOME_DEFAULT INDIVIDUALS_ANCESTRAL_GENOTYPE
+#define N_MAX_INIT_OCCUPIED_PATCHES_DEFAULT (BOARD_SIZE_DEFAULT*BOARD_SIZE_DEFAULT) / 4
+
 
 // -----------------------------------
 // Genome

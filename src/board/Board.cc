@@ -5,6 +5,7 @@
 #include "Random.h"
 #include "Logger.h"
 #include "Fractal.h"
+#include "Individual.h"
 #include "Fragment.h"
 #include "params_struct.h"
 
@@ -13,10 +14,11 @@ Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params
     assert(fractal != NULL);
     assert(logger != NULL);
     assert(params != NULL);
-    assert(params->BOARD_SIZE > 0);
-    assert(params->N_ENV_FACTORS > 0);
+    assert(params->BOARD_SIZE > 0 && "board size must be greater than 0!");
+    assert(params->N_ENV_FACTORS > 0 && "the number of environmental factors must be greater than 0!");
 
 
+    this->params = params;
     this->BOARD_SIZE = params->BOARD_SIZE;
     this->N_ENV_FACTORS = params->N_ENV_FACTORS;
     this->random = random;
@@ -97,7 +99,30 @@ Patch* Board::get_patch(int x, int y){
 }
 
 void Board::allocate_individuals(){
-    // TODO
+
+    // Pick locations of patches that will be initially occupied
+    int n_patches = this->params->N_MAX_INIT_OCCUPIED_PATCHES;
+    int x[n_patches];
+    int y[n_patches];
+
+    for (int i = 0; i < n_patches; i++){
+        x[i] = this->random->uniform_int(0, this->BOARD_SIZE-1);
+        y[i] = this->random->uniform_int(0, this->BOARD_SIZE-1);
+    }
+
+
+    // Put individuals in these patches
+    int n_indiv = this->params->N_INDIVIDUALS;
+    int random_index;
+    for (int i = 0; i < n_indiv; i++){
+        random_index = this->random->uniform_int(0, n_patches-1);
+        Patch* patch = this->get_patch(x[random_index], y[random_index]);
+
+        Individual* indiv = new Individual(patch, this->random, this->params);
+        indiv->get_initial_alleles();
+
+        patch->add_individual(indiv);
+    }
 }
 
 void Board::migrate(){

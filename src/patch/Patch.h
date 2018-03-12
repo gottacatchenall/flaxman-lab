@@ -19,10 +19,12 @@ class Patch{
         // HASHTABLE of individuals on the tile.
         // KEY is the individual's id
         std::unordered_map<int, Individual*> indivs;
-    public:
-        Patch(int x, int y, Board *parentBoard);
         void increment_num_indiv();
         void decrement_num_indiv();
+    public:
+        Patch(int x, int y, Board *parentBoard);
+        void add_individual(Individual* indiv);
+        void remove_individual(Individual* indiv);
 };
 
 #endif
