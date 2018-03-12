@@ -14,7 +14,7 @@ class Patch{
         int y;
         int n_indiv;
 
-        Board *parentBoard;
+        Board *board;
 
         // HASHTABLE of individuals on the tile.
         // KEY is the individual's id
@@ -22,7 +22,10 @@ class Patch{
         void increment_num_indiv();
         void decrement_num_indiv();
     public:
-        Patch(int x, int y, Board *parentBoard);
+        Patch(int x, int y, Board *board);
+        int get_x();
+        int get_y();
+        int get_envFactor_value(int x, int y, int envFactor);
         void add_individual(Individual* indiv);
         void remove_individual(Individual* indiv);
 };

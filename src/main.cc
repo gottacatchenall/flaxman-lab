@@ -38,7 +38,7 @@ int main(int argc, char* argv[]){
     Fractal* fractal = new Fractal(random, params);
 
     // Board initialization
-    Board* board = new Board(random, fractal, logger, params);
+    Board* board = new Board(random, fractal, logger, params, genetic_map);
     board->allocate_individuals();
 
     int i;

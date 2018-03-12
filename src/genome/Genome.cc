@@ -14,15 +14,22 @@ Genome::Genome(Individual* individual, Random* random, params_s* params){
     this->N_LOCI = params->N_LOCI;
 
 
-    this->genome = new int[this->N_LOCI];
-    this->genetic_map = new int[this->N_CHROMOSOMES];
+    this->genome = new double[this->N_LOCI];
 
-    this->pref_loci = new int[this->K_VALUE];
-    this->fitness_loci = new int[this->K_VALUE];
-    this->male_loci = new int[2];
-    this->female_loci = new int[1];
-
+    for (int i = 0; i < this->N_LOCI; i++){
+        this->genome[i] = 0.0;
+    }
 }
+
+double Genome::get_allele(int locus){
+    return this->genome[locus];
+}
+
+void Genome::set_allele(int locus, double value){
+    this->genome[locus] = value;
+}
+
+
 
 Genome* Genome::mate(Genome* mate_genome){
     return mate_genome;

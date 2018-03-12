@@ -14,6 +14,8 @@ class Fractal;
 class Fragment;
 struct params_s;
 typedef params_s params_s;
+struct genetic_map_s;
+typedef genetic_map_s genetic_map_s;
 
 class Board{
     private:
@@ -21,7 +23,8 @@ class Board{
         int N_ENV_FACTORS;
 
         params_s* params;
-
+        genetic_map_s* genetic_map;
+        
         Random* random;
         Fractal* fractal;
         Logger* logger;
@@ -34,9 +37,9 @@ class Board{
         Patch ***grid;
 
     public:
-        Board(Random* random, Fractal* fractal, Logger* logger, params_s* params);
+        Board(Random* random, Fractal* fractal, Logger* logger, params_s* params, genetic_map_s* genetic_map);
         Patch* get_patch(int x, int y);
-        int** get_envFactor_points();
+        int get_envFactor_value(int x, int y, int envFactor);
         void allocate_individuals();
         void migrate();
         void next_gen(int gen);

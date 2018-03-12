@@ -9,11 +9,12 @@
 #include "Fragment.h"
 #include "params_struct.h"
 
-Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params){
+Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params,genetic_map_s* genetic_map){
     assert(random != NULL);
     assert(fractal != NULL);
     assert(logger != NULL);
     assert(params != NULL);
+    assert(genetic_map != NULL);
     assert(params->BOARD_SIZE > 0 && "board size must be greater than 0!");
     assert(params->N_ENV_FACTORS > 0 && "the number of environmental factors must be greater than 0!");
 
@@ -24,7 +25,7 @@ Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params
     this->random = random;
     this->fractal = fractal;
     this->logger = logger;
-
+    this->genetic_map = genetic_map;
     // =======================================
     // Grid Initialization
     // =======================================
@@ -98,6 +99,10 @@ Patch* Board::get_patch(int x, int y){
     return this->grid[i][j];
 }
 
+int Board::get_envFactor_value(int x, int y, int envFactor){
+    return this->envFactors[envFactor]->get_cell_value(x,y);
+}
+
 void Board::allocate_individuals(){
 
     // Pick locations of patches that will be initially occupied
@@ -118,7 +123,7 @@ void Board::allocate_individuals(){
         random_index = this->random->uniform_int(0, n_patches-1);
         Patch* patch = this->get_patch(x[random_index], y[random_index]);
 
-        Individual* indiv = new Individual(patch, this->random, this->params);
+        Individual* indiv = new Individual(patch, this->random, this->params, this->genetic_map);
         indiv->get_initial_alleles();
 
         patch->add_individual(indiv);

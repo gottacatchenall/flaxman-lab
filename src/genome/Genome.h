@@ -19,15 +19,12 @@ class Genome{
         int N_CHROMOSOMES;
         int N_LOCI;
 
-        int* genome;
-        int* genetic_map;
-        int* pref_loci;
-        int* fitness_loci;
-        int* male_loci;
-        int* female_loci;
+        double* genome;
     public:
         Genome(Individual* individual, Random* random, params_s* params);
         Genome* mate(Genome* mate_genome);
+        double get_allele(int locus);
+        void set_allele(int locus, double val);
         void crossing_over(Genome* a, Genome* b, Genome* result);
 };
 

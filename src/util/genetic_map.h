@@ -13,7 +13,7 @@ typedef struct genetic_map_s{
     int* pref_loci;
     int* fitness_loci;
     int* male_loci;
-    int* female_loci;
+    int* female_loci;    
 } genetic_map_s;
 
 genetic_map_s* generate_genetic_map(Random* random, params_s* params);
