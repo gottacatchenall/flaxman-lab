@@ -31,6 +31,24 @@ void Patch::remove_individual(Individual* indiv){
     this->indivs.erase(indiv->get_id());
 }
 
+std::vector<Individual*> Patch::get_all_individuals(){
+    int ct = this->indivs.size();
+
+    std::vector<Individual*> individuals;
+
+    if (ct < 1){
+        return individuals;
+    }
+
+    Individual* tmp_indiv;
+    for (auto ind: this->indivs){
+        tmp_indiv = ind.second;
+        individuals.push_back(tmp_indiv);
+    }
+
+    return individuals;
+}
+
 void Patch::increment_num_indiv(){
     this->n_indiv++;
 }

@@ -71,6 +71,9 @@ int** Fragment::create_fragment_map(){
             }
         }
 
+        for (int i = 0; i < this->BOARD_SIZE; i++){
+            free(adj_map[i]);
+        }
         c = this->count_zeros(map);
         frac = float(c) / float(total);
         free(adj_map);

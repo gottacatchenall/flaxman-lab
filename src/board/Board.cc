@@ -83,11 +83,6 @@ Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params
 #if __DEBUG__
     // Check that Fragment map cover amount is between the supplied parameters
 #endif
-
-    // =======================================
-    // Genome Map Initialization
-    // =======================================
-
 }
 
 Patch* Board::get_patch(int x, int y){
@@ -129,6 +124,23 @@ void Board::allocate_individuals(){
         patch->add_individual(indiv);
     }
 }
+
+void Board::log_gen(int gen){
+    // get all indivs and log
+
+    bool write_data = !(gen % 100);
+    std::vector<Individual*> indivs;
+
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            indivs = this->get_patch(i,j)->get_all_individuals();
+            if (indivs.size() > 0 && write_data){
+                this->logger->write_generation_data(gen, i, j, indivs);
+            }
+        }
+    }
+}
+
 
 void Board::migrate(){
     // TODO

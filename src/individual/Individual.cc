@@ -8,7 +8,7 @@
 
 int Individual::id_counter = 0;
 
-Individual::Individual(Patch* patch, Random *random, params_s* params, genetic_map_s* genetic_map){
+Individual::Individual(Patch* patch, Random* random, params_s* params, genetic_map_s* genetic_map){
     this->id = this->id_counter++;
     this->params = params;
     this->random = random;
@@ -22,12 +22,13 @@ int Individual::get_id(){
 }
 
 void Individual::get_initial_alleles(){
+
+    // Ancestral Genotype
     if (this->params->INDIVIDUALS_INITIAL_GENOME == INDIVIDUALS_ANCESTRAL_GENOTYPE){
         int K_VALUE = this->params->N_ENV_FACTORS;
-
-
-
     }
+
+    // Perfectly Adapted Genome
     else if (this->params->INDIVIDUALS_INITIAL_GENOME == INDIVIDUALS_PERFECTLY_ADAPTED_GENOTYPE){
         int K_VALUE = this->params->N_ENV_FACTORS;
         int allele, fit_locus;
@@ -36,10 +37,28 @@ void Individual::get_initial_alleles(){
             fit_locus = this->genetic_map->fitness_loci[i];
             this->genome->set_allele(fit_locus, allele);
         }
+
+        #if __DEBUG__
+            int env_val;
+            for (int i = 0; i < K_VALUE; i++){
+                fit_locus = this->genetic_map->fitness_loci[i];
+                env_val = this->patch->get_envFactor_value(this->patch->get_x(), this->patch->get_y(), i);
+                if (this->genome->get_allele(fit_locus) != env_val){
+                    assert(0 && "genome init failed");
+                }
+            }
+        #endif
+
     }
+
+    // Entirely Random Genotype
     else if (this->params->INDIVIDUALS_INITIAL_GENOME == INDIVIDUALS_RANDOM_GENOTYPE){
         assert(0 && "not implemented yet");
     }
+}
+
+int Individual::get_allele(int locus){
+    return this->genome->get_allele(locus);
 }
 
 void Individual::migrate(){

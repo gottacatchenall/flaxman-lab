@@ -3,10 +3,11 @@
 #define PATCH_H
 
 #include <unordered_map>
+#include <vector>
 #include "include.h"
 
-class Individual;
 class Board;
+class Individual;
 
 class Patch{
     private:
@@ -28,6 +29,7 @@ class Patch{
         int get_envFactor_value(int x, int y, int envFactor);
         void add_individual(Individual* indiv);
         void remove_individual(Individual* indiv);
+        std::vector<Individual*> get_all_individuals();
 };
 
 #endif

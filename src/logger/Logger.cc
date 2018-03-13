@@ -1,6 +1,7 @@
 #include "Logger.h"
 #include "EnvFactor.h"
 #include "Fragment.h"
+#include "Individual.h"
 
 Logger::Logger(std::string dir, params_s* params){
     this->params = params;
@@ -19,6 +20,7 @@ Logger::Logger(std::string dir, params_s* params){
     this->write_metadata();
     this->make_envFactor_directory();
     this->make_fragment_directory();
+    this->make_generations_directory();
     this->make_symlinks_to_vis_tools();
 }
 
@@ -58,6 +60,24 @@ void Logger::make_fragment_directory(){
     std::string fragment_path = this->run_dir_path + "fragment/";
     this->fragment_dir_path = fragment_path;
     mkdir(fragment_path.c_str(), 0700);
+}
+
+void Logger::make_generations_directory(){
+    std::string gens_path = this->run_dir_path + "generations/";
+    this->generations_dir_path = gens_path;
+    mkdir(gens_path.c_str(), 0700);
+}
+
+std::string Logger::make_gen_directory(int gen){
+    std::string gen_dir_path = this->generations_dir_path + "gen" + std::to_string(gen) + "/";
+    mkdir(gen_dir_path.c_str(), 0700);
+    return gen_dir_path;
+}
+
+std::string Logger::make_patch_directory(std::string gen_dir, int x, int y){
+    std::string patch_dir_path = gen_dir + "patch" + std::to_string(x) + "_" + std::to_string(y) + "/";
+    mkdir(patch_dir_path.c_str(), 0700);
+    return patch_dir_path;
 }
 
 
@@ -161,4 +181,22 @@ void Logger::write_fragmentation_data(int gen, int x, int y){
 
     fragment_file.open(fragment_file_path.c_str(), std::fstream::app);
     fragment_file << gen << ", " << x << ", " << y << "\n";
+}
+
+
+void Logger::write_generation_data(int gen, int patch_x, int patch_y, std::vector<Individual*> indivs){
+    std::string gen_dir_path = this->make_gen_directory(gen);
+    std::string patch_dir_path = this->make_patch_directory(gen_dir_path, patch_x, patch_y);
+
+    std::ofstream indivs_file;
+    std::string file_path = patch_dir_path + "indivs.csv";
+
+    indivs_file.open(file_path.c_str(), std::fstream::app);
+
+    for (Individual* indiv : indivs){
+        for (int i = 0; i < this->params->N_LOCI; i++){
+            indivs_file <<  std::to_string(indiv->get_allele(i)) + ",";
+        }
+        indivs_file << "\n";
+    }
 }

@@ -24,7 +24,7 @@ class Board{
 
         params_s* params;
         genetic_map_s* genetic_map;
-        
+
         Random* random;
         Fractal* fractal;
         Logger* logger;
@@ -41,6 +41,7 @@ class Board{
         Patch* get_patch(int x, int y);
         int get_envFactor_value(int x, int y, int envFactor);
         void allocate_individuals();
+        void log_gen(int gen);
         void migrate();
         void next_gen(int gen);
 

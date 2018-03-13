@@ -44,6 +44,7 @@ int main(int argc, char* argv[]){
     int i;
     int n_gen = params->N_GENERATIONS;
     for (i = 0; i < n_gen; i++){
+        board->log_gen(i);
         board->migrate();
         board->next_gen(i);
     }

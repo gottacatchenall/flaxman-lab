@@ -3,7 +3,6 @@
 #define GENOME_H
 
 #include "include.h"
-
 class Random;
 class Individual;
 struct params_s;
