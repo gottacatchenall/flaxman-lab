@@ -1,13 +1,22 @@
 #include "Patch.h"
 #include "Board.h"
 #include "Individual.h"
+#include "bio_functions.h"
+#include "params_struct.h"
 
-Patch::Patch(int x, int y, Board* board){
+Patch::Patch(Board *board, params_s* params, int x, int y){
     this->n_indiv = 0;
     this->x = x;
     this->y = y;
     this->board = board;
+    this->params = params;
 }
+
+void Patch::setup_initial_alleles(){
+    int num_alleles = expected_num_neutral_alleles(this->n_indiv, params->MUTATION_RATE);
+    printf("num alleles: %d\n", num_alleles);
+}
+
 
 int Patch::get_x(){
     return this->x;

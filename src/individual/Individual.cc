@@ -25,7 +25,7 @@ void Individual::get_initial_alleles(){
 
     // Ancestral Genotype
     if (this->params->INDIVIDUALS_INITIAL_GENOME == INDIVIDUALS_ANCESTRAL_GENOTYPE){
-        int K_VALUE = this->params->N_ENV_FACTORS;
+        //int K_VALUE = this->params->N_ENV_FACTORS;
     }
 
     // Perfectly Adapted Genome
@@ -48,16 +48,20 @@ void Individual::get_initial_alleles(){
                 }
             }
         #endif
-
     }
 
     // Entirely Random Genotype
     else if (this->params->INDIVIDUALS_INITIAL_GENOME == INDIVIDUALS_RANDOM_GENOTYPE){
-        assert(0 && "not implemented yet");
+        int i;
+        double allele;
+        for (i = 0; i < this->params->N_LOCI; i++){
+            allele = this->random->uniform_float(0.0, 1.0);
+            this->genome->set_allele(i, allele);
+        }
     }
 }
 
-int Individual::get_allele(int locus){
+double Individual::get_allele(int locus){
     return this->genome->get_allele(locus);
 }
 

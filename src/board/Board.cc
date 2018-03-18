@@ -9,7 +9,7 @@
 #include "Fragment.h"
 #include "params_struct.h"
 
-Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params,genetic_map_s* genetic_map){
+Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params, genetic_map_s* genetic_map){
     assert(random != NULL);
     assert(fractal != NULL);
     assert(logger != NULL);
@@ -26,6 +26,7 @@ Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params
     this->fractal = fractal;
     this->logger = logger;
     this->genetic_map = genetic_map;
+
     // =======================================
     // Grid Initialization
     // =======================================
@@ -56,7 +57,7 @@ Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params
             // adjust indecies to pass to patch as coordinate
             x = i - 1;
             y = j - 1;
-            this->grid[i][j] = new Patch(x, y, this);
+            this->grid[i][j] = new Patch(this, this->params, x, y);
         }
     }
 
@@ -73,16 +74,15 @@ Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params
         logger->write_envFactor(this->envFactors[i]);
     }
 
-
     // =======================================
     // Fragment Map Initialization
     // =======================================
     this->fragment = new Fragment(this->random, this->fractal, this->logger, params);
     logger->write_fragment_map(this->fragment);
 
-#if __DEBUG__
-    // Check that Fragment map cover amount is between the supplied parameters
-#endif
+    #if __DEBUG__
+        // Check that Fragment map cover amount is between the supplied parameters
+    #endif
 }
 
 Patch* Board::get_patch(int x, int y){
@@ -110,33 +110,43 @@ void Board::allocate_individuals(){
         y[i] = this->random->uniform_int(0, this->BOARD_SIZE-1);
     }
 
-
     // Put individuals in these patches
     int n_indiv = this->params->N_INDIVIDUALS;
-    int random_index;
+    int random_index, hash_key;
     for (int i = 0; i < n_indiv; i++){
         random_index = this->random->uniform_int(0, n_patches-1);
         Patch* patch = this->get_patch(x[random_index], y[random_index]);
 
         Individual* indiv = new Individual(patch, this->random, this->params, this->genetic_map);
-        indiv->get_initial_alleles();
 
         patch->add_individual(indiv);
+        hash_key = std::stoi(std::to_string(patch->get_x()) + ',' + std::to_string(patch->get_y()));
+        if (this->occupied_patches.find(hash_key) == this->occupied_patches.end()){
+            // Not yet in occupied patches hashtable
+            this->occupied_patches.insert(std::pair<int, Patch*>(hash_key, patch));
+        }
     }
+}
+
+void Board::setup_initial_alleles(){
+    Patch* patch;
+    for (auto pair: this->occupied_patches){
+        patch = pair.second;
+        patch->setup_initial_alleles();
+    }
+
 }
 
 void Board::log_gen(int gen){
     // get all indivs and log
-
-    bool write_data = !(gen % 100);
+    bool write_data = !(gen % 300);
     std::vector<Individual*> indivs;
-
-    for (int i = 0; i < this->BOARD_SIZE; i++){
-        for (int j = 0; j < this->BOARD_SIZE; j++){
-            indivs = this->get_patch(i,j)->get_all_individuals();
-            if (indivs.size() > 0 && write_data){
-                this->logger->write_generation_data(gen, i, j, indivs);
-            }
+    Patch* patch;
+    for (auto obj: this->occupied_patches){
+        patch = obj.second;
+        indivs = patch->get_all_individuals();
+        if (indivs.size() > 0 && write_data){
+            this->logger->write_generation_data(gen, patch->get_x(), patch->get_y(), indivs);
         }
     }
 }

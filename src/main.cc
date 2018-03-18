@@ -10,8 +10,6 @@
 #include <string>
 
 int main(int argc, char* argv[]){
-
-
     // Setup custom parameters
     params_s* params = new params_s;
     get_options(argc, argv, params);
@@ -40,6 +38,9 @@ int main(int argc, char* argv[]){
     // Board initialization
     Board* board = new Board(random, fractal, logger, params, genetic_map);
     board->allocate_individuals();
+    board->setup_initial_alleles();
+    
+    printf("\n");
 
     int i;
     int n_gen = params->N_GENERATIONS;
@@ -47,6 +48,12 @@ int main(int argc, char* argv[]){
         board->log_gen(i);
         board->migrate();
         board->next_gen(i);
+
+        // Print gen to console
+        if (i % 100 == 0){
+            printf("\t=== Generation: [%d / %d] === \r", i, n_gen);
+            std::cout.flush();
+        }
     }
 
     return 0;

@@ -28,7 +28,7 @@ class Individual{
         void migrate();
         void get_fitness();
         void choose_mate();
-        int get_allele(int locus);
+        double get_allele(int locus);
         void reproduce(Individual* mate);
 };
 

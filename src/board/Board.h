@@ -4,6 +4,7 @@
 
 #include <assert.h>
 #include "include.h"
+#include <unordered_map>
 
 // Forward Declarations
 class Patch;
@@ -36,11 +37,16 @@ class Board{
         // Matrix of Patches
         Patch ***grid;
 
+        // Vector of occupied patches
+        std::unordered_map<int, Patch*> occupied_patches;
+
+
     public:
         Board(Random* random, Fractal* fractal, Logger* logger, params_s* params, genetic_map_s* genetic_map);
         Patch* get_patch(int x, int y);
         int get_envFactor_value(int x, int y, int envFactor);
         void allocate_individuals();
+        void setup_initial_alleles();
         void log_gen(int gen);
         void migrate();
         void next_gen(int gen);

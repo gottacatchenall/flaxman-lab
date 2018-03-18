@@ -15,6 +15,8 @@ typedef struct params_s{
         N_ENV_FACTORS = N_ENV_FACTORS_DEFAULT;
         N_GENERATIONS = N_GENERATIONS_DEFAULT;
 
+        MUTATION_RATE = MUTATION_RATE_DEFAULT;
+
         N_CHROMOSOMES = N_CHROMOSOMES_DEFAULT;
         N_LOCI = N_LOCI_DEFAULT;
 
@@ -34,6 +36,8 @@ typedef struct params_s{
     int BOARD_SIZE;
     int N_ENV_FACTORS;
     int N_GENERATIONS;
+
+    float MUTATION_RATE;
 
     int N_CHROMOSOMES;
     int N_LOCI;

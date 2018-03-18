@@ -21,7 +21,6 @@ Fragment::Fragment(Random* random, Fractal* fractal, Logger* logger, params_s* p
     this->fractal = fractal;
     this->logger = logger;
 
-
     this->fragment_map = this->create_fragment_map();
 
     int** grid = new int*[this->BOARD_SIZE];
@@ -97,7 +96,6 @@ int Fragment::count_zeros(int **map){
 }
 
 void Fragment::setup_fragment_heap(){
-
     for (int i = 0; i < this->BOARD_SIZE; i++){
         for (int j = 0; j < this->BOARD_SIZE; j++){
             if (this->fragment_map[i][j] == 0){

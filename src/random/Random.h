@@ -12,9 +12,10 @@ class Random{
         std::normal_distribution<double> std_normal_dist;
     public:
         Random(int random_seed);
-        virtual float std_normal();
-        virtual float uniform_float(float a, float b);
-        virtual int uniform_int(int a, int b);
+        double std_normal();
+        double uniform_float(double a, double b);
+        int uniform_int(int a, int b);
+        double beta(double alpha, double beta);
 };
 
 #endif

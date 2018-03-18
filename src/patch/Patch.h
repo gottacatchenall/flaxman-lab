@@ -8,6 +8,8 @@
 
 class Board;
 class Individual;
+struct params_s;
+typedef params_s params_s;
 
 class Patch{
     private:
@@ -16,14 +18,15 @@ class Patch{
         int n_indiv;
 
         Board *board;
-
+        params_s* params;
         // HASHTABLE of individuals on the tile.
         // KEY is the individual's id
         std::unordered_map<int, Individual*> indivs;
         void increment_num_indiv();
         void decrement_num_indiv();
     public:
-        Patch(int x, int y, Board *board);
+        Patch(Board *board, params_s* params, int x, int y);
+        void setup_initial_alleles();
         int get_x();
         int get_y();
         int get_envFactor_value(int x, int y, int envFactor);

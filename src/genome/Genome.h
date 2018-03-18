@@ -14,17 +14,17 @@ class Genome{
         Random* random;
         params_s *params;
 
-        int K_VALUE;
         int N_CHROMOSOMES;
         int N_LOCI;
 
-        double* genome;
+        double* haplotype1;
+        double* haplotype2;
     public:
         Genome(Individual* individual, Random* random, params_s* params);
         Genome* mate(Genome* mate_genome);
         double get_allele(int locus);
         void set_allele(int locus, double val);
-        void crossing_over(Genome* a, Genome* b, Genome* result);
+        void crossing_over(Genome* a, Genome* result);
 };
 
 #endif

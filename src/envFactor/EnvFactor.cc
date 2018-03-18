@@ -21,10 +21,9 @@ EnvFactor::EnvFactor(Random* random, Fractal* fractal, params_s* params, int ind
     // Generate the Theta Map
     this->envFactor_grid = this->fractal->generate_fractal(this->H_VALUE, this->CUTOFF);
 
-#if __DEBUG__
-    // Check that EnvFactor cover amount is between the supplied parameters
-#endif
-
+    #if __DEBUG__
+        // Check that EnvFactor cover amount is between the supplied parameters
+    #endif
 }
 
 int EnvFactor::get_cell_value(int x, int y){
