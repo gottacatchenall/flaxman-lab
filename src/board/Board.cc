@@ -161,8 +161,7 @@ void Board::setup_initial_alleles(){
 
 void Board::log_gen(int gen){
     // get all indivs and log
-    //bool write_data = !(gen % 300);
-    bool write_data = true;
+    bool write_data = !(gen % 100);
     Patch* patch;
     if (write_data){
         std::vector<std::vector<int>> map(this->BOARD_SIZE,std::vector<int>(this->BOARD_SIZE));

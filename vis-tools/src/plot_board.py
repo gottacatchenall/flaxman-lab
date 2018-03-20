@@ -82,7 +82,6 @@ def show_w_indivs(figure, ax, m, pop_map, save=False, ani=False):
                 n_indiv = pop[i][j]
                 if (n_indiv > 0):
                     rad = float(n_indiv)/float(50) * .45
-                    print rad
                     if rad < 0.15:
                         rad = 0.15
                     c = Circle((i,j), radius=rad, edgecolor='purple', facecolor='purple', alpha=0.5)
@@ -96,7 +95,6 @@ def show_w_indivs(figure, ax, m, pop_map, save=False, ani=False):
                 n_indiv = pop[i][j]
                 if (n_indiv > 0):
                     rad = float(n_indiv)/float(50) * .45
-                    print rad
                     if rad < 0.15:
                         rad = 0.15
                     c = Circle((i,j), radius=rad, edgecolor='purple', facecolor='purple', alpha=0.5)
