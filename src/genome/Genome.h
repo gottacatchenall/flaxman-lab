@@ -22,8 +22,8 @@ class Genome{
     public:
         Genome(Individual* individual, Random* random, params_s* params);
         Genome* mate(Genome* mate_genome);
-        double get_allele(int locus);
-        void set_allele(int locus, double val);
+        double get_allele(int locus, int haplo);
+        void set_allele(int locus, double val, int haplo);
         void crossing_over(Genome* a, Genome* result);
 };
 

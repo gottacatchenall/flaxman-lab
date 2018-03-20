@@ -37,7 +37,7 @@ class Logger{
         void write_envFactor(EnvFactor* envFactor);
         void write_fragment_map(Fragment* fragment);
         void write_fragmentation_data(int gen, int x, int y);
-        void write_generation_data(int gen, int patch_x, int patch_y, std::vector<Individual*> indivs);
+        void write_generation_data(int gen, std::vector<std::vector<int>> map);
 };
 
 #endif

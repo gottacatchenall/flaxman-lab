@@ -28,6 +28,19 @@ Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params
     this->genetic_map = genetic_map;
 
     // =======================================
+    // EnvFactor Initialization
+    // =======================================
+    this->envFactors = new EnvFactor*[this->N_ENV_FACTORS];
+    for (int i = 0; i < this->N_ENV_FACTORS; i++){
+        this->envFactors[i] = new EnvFactor(this->random, this->fractal, params, i);
+    }
+
+    // Write EnvFactor
+    for (int i = 0; i < this->N_ENV_FACTORS; i++){
+        logger->write_envFactor(this->envFactors[i]);
+    }
+
+    // =======================================
     // Grid Initialization
     // =======================================
 
@@ -57,21 +70,8 @@ Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params
             // adjust indecies to pass to patch as coordinate
             x = i - 1;
             y = j - 1;
-            this->grid[i][j] = new Patch(this, this->params, x, y);
+            this->grid[i][j] = new Patch(this, this->params, this->random, x, y);
         }
-    }
-
-    // =======================================
-    // EnvFactor Initialization
-    // =======================================
-    this->envFactors = new EnvFactor*[this->N_ENV_FACTORS];
-    for (int i = 0; i < this->N_ENV_FACTORS; i++){
-        this->envFactors[i] = new EnvFactor(this->random, this->fractal, params, i);
-    }
-
-    // Write EnvFactor
-    for (int i = 0; i < this->N_ENV_FACTORS; i++){
-        logger->write_envFactor(this->envFactors[i]);
     }
 
     // =======================================
@@ -92,6 +92,29 @@ Patch* Board::get_patch(int x, int y){
     int j = y + 1;
 
     return this->grid[i][j];
+}
+
+bool Board::on_board(int x, int y){
+    if (x < 0 || x >= this->BOARD_SIZE || y < 0 || y >= this->BOARD_SIZE){
+        return false;
+    }
+    return true;
+}
+
+
+std::vector<Patch*> Board::get_surrounding_patches(int x, int y){
+    int migration_dist = this->params->MIGRATION_DISTANCE;
+    std::vector<Patch*> surrounding_patches;
+
+    for (int i = -1*migration_dist; i <= migration_dist; i++){
+        for (int j = -1*migration_dist; j <= migration_dist; j++){
+            if (this->on_board(x+i, y+j)){
+                surrounding_patches.push_back(this->get_patch(x+i, y+j));
+            }
+        }
+    }
+
+    return surrounding_patches;
 }
 
 int Board::get_envFactor_value(int x, int y, int envFactor){
@@ -134,26 +157,53 @@ void Board::setup_initial_alleles(){
         patch = pair.second;
         patch->setup_initial_alleles();
     }
-
 }
 
 void Board::log_gen(int gen){
     // get all indivs and log
-    bool write_data = !(gen % 300);
-    std::vector<Individual*> indivs;
+    //bool write_data = !(gen % 300);
+    bool write_data = true;
     Patch* patch;
-    for (auto obj: this->occupied_patches){
-        patch = obj.second;
-        indivs = patch->get_all_individuals();
-        if (indivs.size() > 0 && write_data){
-            this->logger->write_generation_data(gen, patch->get_x(), patch->get_y(), indivs);
+    if (write_data){
+        std::vector<std::vector<int>> map(this->BOARD_SIZE,std::vector<int>(this->BOARD_SIZE));
+        for (int i = 0; i < this->BOARD_SIZE; i++){
+            for (int j = 0; j < this->BOARD_SIZE; j++){
+                patch = this->get_patch(i,j);
+                map[i][j] = patch->get_n_indiv();
+            }
         }
+
+        this->logger->write_generation_data(gen, map);
+
     }
 }
 
 
 void Board::migrate(){
-    // TODO
+    Patch* patch;
+    for (auto obj: this->occupied_patches){
+        patch = obj.second;
+        patch->migrate();
+    }
+
+    occupied_patches.clear();
+
+    int hash_key;
+
+    // TODO this could be better
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            patch = this->get_patch(i,j);
+            if (patch->get_n_indiv() > 0){
+                hash_key = std::stoi(std::to_string(patch->get_x()) + ',' + std::to_string(patch->get_y()));
+                if (this->occupied_patches.find(hash_key) == this->occupied_patches.end()){
+                    // Not yet in occupied patches hashtable
+                    this->occupied_patches.insert(std::pair<int, Patch*>(hash_key, patch));
+                }
+            }
+        }
+    }
+
 }
 
 void Board::next_gen(int gen){

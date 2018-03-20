@@ -69,7 +69,7 @@ void Logger::make_generations_directory(){
 }
 
 std::string Logger::make_gen_directory(int gen){
-    std::string gen_dir_path = this->generations_dir_path + "gen" + std::to_string(gen) + "/";
+    std::string gen_dir_path = this->generations_dir_path + std::to_string(gen) + "/";
     mkdir(gen_dir_path.c_str(), 0700);
     return gen_dir_path;
 }
@@ -103,6 +103,11 @@ void Logger::make_symlinks_to_vis_tools(){
     std::string single_env_factor_symlink_path = this->run_dir_path + "single-env-factor.py";
     std::string single_env_factor_path = vis_tool_path + "single-env-factor.py";
     symlink(single_env_factor_path.c_str(), single_env_factor_symlink_path.c_str());
+
+    // population.py
+    std::string population_symlink_path = this->run_dir_path + "populations.py";
+    std::string population_path = vis_tool_path + "populations.py";
+    symlink(population_path.c_str(), population_symlink_path.c_str());
 }
 
 void Logger::write_metadata(){
@@ -184,18 +189,26 @@ void Logger::write_fragmentation_data(int gen, int x, int y){
 }
 
 
-void Logger::write_generation_data(int gen, int patch_x, int patch_y, std::vector<Individual*> indivs){
+void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map){
     std::string gen_dir_path = this->make_gen_directory(gen);
-    std::string patch_dir_path = this->make_patch_directory(gen_dir_path, patch_x, patch_y);
+    //std::string patch_dir_path = this->make_patch_directory(gen_dir_path, patch_x, patch_y);
 
     std::ofstream indivs_file;
-    std::string file_path = patch_dir_path + "indivs.csv";
+    std::string file_path = gen_dir_path + std::to_string(gen) + ".csv";
 
     indivs_file.open(file_path.c_str(), std::fstream::app);
 
-    for (Individual* indiv : indivs){
-        for (int i = 0; i < this->params->N_LOCI; i++){
-            indivs_file <<  std::to_string(indiv->get_allele(i)) + ",";
+    int board_size = this->params->BOARD_SIZE;
+    int val;
+    std::string val_str;
+
+    for (int j = board_size-1; j >= 0; j--){
+        for (int i = 0; i < board_size; i++){
+            val = map[i][j];
+            indivs_file << std::to_string(val);
+            if (i < board_size- 1){
+                indivs_file << ",";
+            }
         }
         indivs_file << "\n";
     }

@@ -24,11 +24,12 @@ class Individual{
     public:
         Individual(Patch* patch, Random *random, params_s* params, genetic_map_s* genetic_map);
         int get_id();
-        void get_initial_alleles();
-        void migrate();
+        void migrate(std::vector<Patch*> surrounding_patches);
+        double calc_pref(Patch* patch);
         void get_fitness();
         void choose_mate();
-        double get_allele(int locus);
+        void set_allele(int locus, double value, int haplo);
+        double get_allele(int locus, int haplo);
         void reproduce(Individual* mate);
 };
 

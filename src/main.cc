@@ -39,7 +39,7 @@ int main(int argc, char* argv[]){
     Board* board = new Board(random, fractal, logger, params, genetic_map);
     board->allocate_individuals();
     board->setup_initial_alleles();
-    
+
     printf("\n");
 
     int i;

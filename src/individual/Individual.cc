@@ -21,51 +21,51 @@ int Individual::get_id(){
     return this->id;
 }
 
-void Individual::get_initial_alleles(){
-
-    // Ancestral Genotype
-    if (this->params->INDIVIDUALS_INITIAL_GENOME == INDIVIDUALS_ANCESTRAL_GENOTYPE){
-        //int K_VALUE = this->params->N_ENV_FACTORS;
-    }
-
-    // Perfectly Adapted Genome
-    else if (this->params->INDIVIDUALS_INITIAL_GENOME == INDIVIDUALS_PERFECTLY_ADAPTED_GENOTYPE){
-        int K_VALUE = this->params->N_ENV_FACTORS;
-        int allele, fit_locus;
-        for (int i = 0; i < K_VALUE; i++){
-            allele = this->patch->get_envFactor_value(this->patch->get_x(), this->patch->get_y(), i);
-            fit_locus = this->genetic_map->fitness_loci[i];
-            this->genome->set_allele(fit_locus, allele);
-        }
-
-        #if __DEBUG__
-            int env_val;
-            for (int i = 0; i < K_VALUE; i++){
-                fit_locus = this->genetic_map->fitness_loci[i];
-                env_val = this->patch->get_envFactor_value(this->patch->get_x(), this->patch->get_y(), i);
-                if (this->genome->get_allele(fit_locus) != env_val){
-                    assert(0 && "genome init failed");
-                }
-            }
-        #endif
-    }
-
-    // Entirely Random Genotype
-    else if (this->params->INDIVIDUALS_INITIAL_GENOME == INDIVIDUALS_RANDOM_GENOTYPE){
-        int i;
-        double allele;
-        for (i = 0; i < this->params->N_LOCI; i++){
-            allele = this->random->uniform_float(0.0, 1.0);
-            this->genome->set_allele(i, allele);
-        }
-    }
+void Individual::set_allele(int locus, double value, int haplo){
+    this->genome->set_allele(locus, value, haplo);
 }
 
-double Individual::get_allele(int locus){
-    return this->genome->get_allele(locus);
+double Individual::get_allele(int locus, int haplo){
+    return this->genome->get_allele(locus, haplo);
 }
 
-void Individual::migrate(){
+double Individual::calc_pref(Patch* patch){
+    double allele_val, env_factor_val;
+    int locus;
+    double pref = 1.0;
+    int n_pref_alleles = this->params->N_ENV_FACTORS;
+    for (int i = 0; i < n_pref_alleles; i++){
+        locus = this->genetic_map->pref_loci[i];
+        env_factor_val = patch->get_envFactor_value(i);
+
+        allele_val = this->get_allele(locus, 1);
+        pref = pref * abs(allele_val - env_factor_val);
+
+        allele_val = this->get_allele(locus, 2);
+        pref = pref * abs(allele_val - env_factor_val);
+    }
+    return pref;
+}
+
+void Individual::migrate(std::vector<Patch*> surrounding_patches){
+    double pref;
+
+    double min_pref = this->calc_pref(this->patch);
+    Patch* best_patch = this->patch;
+
+    for (Patch* patch : surrounding_patches){
+        pref = this->calc_pref(patch);
+        if (pref < min_pref){
+            min_pref = pref;
+            best_patch = patch;
+        }
+    }
+
+    if (this->patch != best_patch){
+        this->patch->remove_individual(this);
+        best_patch->add_individual(this);
+        this->patch = best_patch;
+    }
 
 }
 

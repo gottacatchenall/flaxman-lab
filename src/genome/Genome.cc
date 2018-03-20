@@ -20,12 +20,20 @@ Genome::Genome(Individual* individual, Random* random, params_s* params){
     }
 }
 
-double Genome::get_allele(int locus){
-    return this->haplotype1[locus];
+double Genome::get_allele(int locus, int haplo){
+    if (haplo == 1){
+        return this->haplotype1[locus];
+    }
+    return this->haplotype2[locus];
 }
 
-void Genome::set_allele(int locus, double value){
-    this->haplotype1[locus] = value;
+void Genome::set_allele(int locus, double value, int haplo){
+    if (haplo == 1){
+        this->haplotype1[locus] = value;
+    }
+    else{
+        this->haplotype2[locus] = value;
+    }
 }
 
 Genome* Genome::mate(Genome* mate_genome){

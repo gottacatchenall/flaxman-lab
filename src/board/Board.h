@@ -39,11 +39,11 @@ class Board{
 
         // Vector of occupied patches
         std::unordered_map<int, Patch*> occupied_patches;
-
-
     public:
         Board(Random* random, Fractal* fractal, Logger* logger, params_s* params, genetic_map_s* genetic_map);
         Patch* get_patch(int x, int y);
+        std::vector<Patch*> get_surrounding_patches(int x, int y);
+        bool on_board(int x, int y);
         int get_envFactor_value(int x, int y, int envFactor);
         void allocate_individuals();
         void setup_initial_alleles();
