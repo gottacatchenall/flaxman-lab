@@ -8,13 +8,10 @@
 
 int Individual::id_counter = 0;
 
-Individual::Individual(Patch* patch, Random* random, params_s* params, genetic_map_s* genetic_map){
+Individual::Individual(Patch* patch){
     this->id = this->id_counter++;
-    this->params = params;
-    this->random = random;
     this->patch = patch;
-    this->genetic_map = genetic_map;
-    this->genome = new Genome(this, this->random, this->params);
+    this->genome = new Genome(this);
 }
 
 int Individual::get_id(){
@@ -33,9 +30,9 @@ double Individual::calc_pref(Patch* patch){
     double allele_val, env_factor_val;
     int locus;
     double pref = 1.0;
-    int n_pref_alleles = this->params->N_ENV_FACTORS;
+    int n_pref_alleles = params->N_ENV_FACTORS;
     for (int i = 0; i < n_pref_alleles; i++){
-        locus = this->genetic_map->pref_loci[i];
+        locus = genetic_map->pref_loci[i];
         env_factor_val = patch->get_envFactor_value(i);
 
         allele_val = this->get_allele(locus, 1);

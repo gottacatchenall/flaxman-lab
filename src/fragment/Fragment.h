@@ -5,13 +5,6 @@
 #include "include.h"
 #include <queue>
 
-class Random;
-class Fractal;
-class Logger;
-
-struct params_s;
-typedef params_s params_s;
-
 typedef struct fragment_point{
     fragment_point(int x0, int y0, int key0){
         x = x0;
@@ -43,11 +36,8 @@ class Fragment{
         int** fragment_grid;
         int** fragment_map;
         std::priority_queue<fragment_point*, std::vector<fragment_point*>, Compare> fragment_heap;
-        Fractal* fractal;
-        Random* random;
-        Logger* logger;
     public:
-        Fragment(Random* random, Fractal* fractal, Logger* logger, params_s* params);
+        Fragment();
         int** create_fragment_map();
         int count_zeros(int **map);
         void fragment_more(int gen);

@@ -10,6 +10,7 @@
 
 typedef struct params_s{
     params_s(){
+        RANDOM_SEED_VALUE = RANDOM_SEED_VALUE_DEFAULT;
         RUN_DATA_DIR = "";
         BOARD_SIZE = BOARD_SIZE_DEFAULT;
         N_ENV_FACTORS = N_ENV_FACTORS_DEFAULT;
@@ -37,6 +38,8 @@ typedef struct params_s{
     int BOARD_SIZE;
     int N_ENV_FACTORS;
     int N_GENERATIONS;
+
+    long int RANDOM_SEED_VALUE;
 
     float MUTATION_RATE;
 

@@ -17,6 +17,7 @@ SRCS = 				$(ROOT_DIR)/src/board/Board.cc					\
 					$(ROOT_DIR)/src/random/Random.cc				\
 					$(ROOT_DIR)/src/bio_functions/bio_functions.cc	\
 					$(ROOT_DIR)/src/util/genetic_map.cc				\
+					$(ROOT_DIR)/src/time_tracker/TimeTracker.cc		\
 					$(ROOT_DIR)/src/util/cmd_line_opts.cc
 
 INCLUDE_DIRS = 		$(ROOT_DIR)/src/							\
@@ -29,7 +30,8 @@ INCLUDE_DIRS = 		$(ROOT_DIR)/src/							\
 					$(ROOT_DIR)/src/fractal/					\
 					$(ROOT_DIR)/src/logger/						\
 					$(ROOT_DIR)/src/random/						\
-					$(ROOT_DIR)/src/bio_functions/					\
+					$(ROOT_DIR)/src/bio_functions/				\
+					$(ROOT_DIR)/src/time_tracker/				\
 					$(ROOT_DIR)/src/util/
 
 # ========================================

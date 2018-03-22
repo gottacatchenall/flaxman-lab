@@ -6,37 +6,48 @@
 #include "Board.h"
 #include "Random.h"
 #include "Fractal.h"
+#include "TimeTracker.h"
 
 #include <string>
 
+// Globals
+TimeTracker* time_tracker;
+genetic_map_s* genetic_map;
+Random* random_gen;
+params_s* params;
+Logger* logger;
+Fractal* fractal;
+
+
 int main(int argc, char* argv[]){
+
+    time_tracker = new TimeTracker();
+
     // Setup custom parameters
-    params_s* params = new params_s;
+    params = new params_s;
     get_options(argc, argv, params);
 
-#if __DEBUG__
-    printf("Running in __DEBUG__ mode! This enables inline unit testing/validation, but will significantly slow performance.\n\n");
-#endif
+    #if __DEBUG__
+        printf("Running in __DEBUG__ mode! This enables inline unit testing/validation, but will significantly slow performance.\n\n");
+    #endif
 
     // Setup Random Generator...
-    int random_seed = RANDOM_SEED_VALUE;
-    Random* random = new Random(random_seed);
+    random_gen = new Random(params->RANDOM_SEED_VALUE);
 
     // Setup Genetic Map...
-    genetic_map_s* genetic_map = generate_genetic_map(random, params);
+    genetic_map = generate_genetic_map();
 
     // Setup Data Logger...
     int path_buffer_size = 200;
     char dir_name[path_buffer_size];
     get_execuable_path(dir_name, path_buffer_size);
-    std::string dir_name_str(dir_name);
-    Logger* logger = new Logger(dir_name_str, params);
+    logger = new Logger(std::string(dir_name));
 
     // Setup Fractal Gen
-    Fractal* fractal = new Fractal(random, params);
+    fractal = new Fractal();
 
     // Board initialization
-    Board* board = new Board(random, fractal, logger, params, genetic_map);
+    Board* board = new Board();
     board->allocate_individuals();
     board->setup_initial_alleles();
 
@@ -56,5 +67,6 @@ int main(int argc, char* argv[]){
         }
     }
 
+    time_tracker->print_times();
     return 0;
 }

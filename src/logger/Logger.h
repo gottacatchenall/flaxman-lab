@@ -10,10 +10,6 @@
 #include "cmd_line_opts.h"
 #include "include.h"
 
-class EnvFactor;
-class Fragment;
-class Individual;
-
 class Logger{
     private:
         std::string data_dir_path;
@@ -21,10 +17,9 @@ class Logger{
         std::string envFactor_dir_path;
         std::string fragment_dir_path;
         std::string generations_dir_path;
-        params_s* params;
         struct tm *timeinfo;
     public:
-        Logger(std::string dir, params_s *params);
+        Logger(std::string dir);
         void make_data_directory();
         void make_run_directory();
         void make_envFactor_directory();

@@ -6,12 +6,6 @@
 #include <vector>
 #include "include.h"
 
-class Board;
-class Individual;
-class Random;
-struct params_s;
-typedef params_s params_s;
-
 class Patch{
     private:
         int x;
@@ -19,8 +13,6 @@ class Patch{
         int n_indiv;
 
         Board* board;
-        Random* random;
-        params_s* params;
 
         std::vector<int> envFactor_values;
         // HASHTABLE of individuals on the tile.
@@ -29,7 +21,7 @@ class Patch{
         void increment_num_indiv();
         void decrement_num_indiv();
     public:
-        Patch(Board *board, params_s* params, Random* random, int x, int y);
+        Patch(Board *board, int x, int y);
         void migrate();
         std::vector<Patch*> get_surrounding_patches();
 

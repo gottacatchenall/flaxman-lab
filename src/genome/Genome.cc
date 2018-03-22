@@ -2,10 +2,8 @@
 #include "Genome.h"
 #include "params_struct.h"
 
-Genome::Genome(Individual* individual, Random* random, params_s* params){
+Genome::Genome(Individual* individual){
     this->individual = individual;
-    this->random = random;
-    this->params = params;
 
     this->N_CHROMOSOMES = params->N_CHROMOSOMES;
     this->N_LOCI = params->N_LOCI;

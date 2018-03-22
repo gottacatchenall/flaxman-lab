@@ -6,15 +6,13 @@
 #include "params_struct.h"
 #include <algorithm>
 
-Patch::Patch(Board *board, params_s* params, Random* random, int x, int y){
+Patch::Patch(Board *board, int x, int y){
     this->n_indiv = 0;
     this->x = x;
     this->y = y;
     this->board = board;
-    this->params = params;
-    this->random = random;
 
-    for (int i = 0; i < this->params->N_ENV_FACTORS; i++){
+    for (int i = 0; i < params->N_ENV_FACTORS; i++){
         this->envFactor_values.push_back(this->board->get_envFactor_value(this->x, this->y, i));
     }
 }
@@ -24,6 +22,10 @@ Patch::Patch(Board *board, params_s* params, Random* random, int x, int y){
 // ==========================================
 
 void Patch::migrate(){
+    if (this->n_indiv == 0){
+        return;
+    }
+
     std::vector<Patch*> surrounding_patches = this->get_surrounding_patches();
     std::vector<Individual*> indivs = this->get_all_individuals();
 
@@ -44,7 +46,7 @@ std::vector<double> Patch::generate_allele_freq_from_beta(int n_alleles){
     double p, prop;
     std::vector<double> props;
     for (int i = 0; i < n_alleles - 1; i++){
-        p = this->random->beta(0.6, 1.7);
+        p = random_gen->beta(0.6, 1.7);
         prop = rem * p;
         rem -= prop;
         props.push_back(prop);
@@ -66,7 +68,7 @@ std::vector<int> Patch::get_num_with_each_allele(std::vector<double> props, int 
     int index;
     int resid = n_this_locus - sum;
     for (int i = 0; i < resid; i++){
-        index = this->random->uniform_int(0, n_alleles-1);
+        index = random_gen->uniform_int(0, n_alleles-1);
         num_per_allele[i]++;
     }
     return num_per_allele;
@@ -75,13 +77,13 @@ std::vector<int> Patch::get_num_with_each_allele(std::vector<double> props, int 
 std::vector<double> Patch::gen_alleles(int n_alleles){
     std::vector<double> alleles;
     for (int i = 0; i < n_alleles; i++){
-        alleles.push_back(this->random->uniform_float(0.0, 1.0));
+        alleles.push_back(random_gen->uniform_float(0.0, 1.0));
     }
     return alleles;
 }
 
 void Patch::setup_initial_alleles(){
-    int N_LOCI = this->params->N_LOCI;
+    int N_LOCI = params->N_LOCI;
     std::vector<Individual*> indiv = this->get_all_individuals();
 
     for (int locus = 0; locus < N_LOCI; locus++){
@@ -109,7 +111,6 @@ void Patch::setup_initial_alleles(){
             allele_ct++;
         }
     }
-
 }
 
 // ==========================================
@@ -136,6 +137,7 @@ void Patch::add_individual(Individual* indiv){
 
 void Patch::remove_individual(Individual* indiv){
     this->indivs.erase(indiv->get_id());
+    this->decrement_num_indiv();
 }
 
 int Patch::get_n_indiv(){

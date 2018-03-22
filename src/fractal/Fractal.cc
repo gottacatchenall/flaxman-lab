@@ -3,8 +3,7 @@
 #include "Random.h"
 #include "params_struct.h"
 
-Fractal::Fractal(Random* random, params_s* params){
-    this->random = random;
+Fractal::Fractal(){
     this->BOARD_SIZE = params->BOARD_SIZE;
 }
 
@@ -28,10 +27,10 @@ int** Fractal::generate_fractal(double H_VAL, double CUTOFF){
     }
 
     // Init corner values
-    X[0][0] = delta*this->random->std_normal();
-    X[0][N] = delta*this->random->std_normal();
-    X[N][0] = delta*this->random->std_normal();
-    X[N][N] = delta*this->random->std_normal();
+    X[0][0] = delta*random_gen->std_normal();
+    X[0][N] = delta*random_gen->std_normal();
+    X[N][0] = delta*random_gen->std_normal();
+    X[N][N] = delta*random_gen->std_normal();
 
     for (int stage = 0; stage < maxlevel; stage++){
         delta = delta * double(pow(double(0.5), double(0.5*H)));
@@ -94,13 +93,13 @@ int** Fractal::generate_fractal(double H_VAL, double CUTOFF){
 double Fractal::f4(double delta, double a, double b, double c, double d){
     double sum = a+b+c+d;
     double avg = sum/4.0;
-    double val =  avg + double(delta) * double(this->random->std_normal());
+    double val =  avg + double(delta) * double(random_gen->std_normal());
     return val;
 }
 
 double Fractal::f3(double delta, double a, double b, double c){
     double sum = a+b+c;
     double avg = sum/3.0;
-    double val =  avg + double(delta) * double(this->random->std_normal());
+    double val =  avg + double(delta) * double(random_gen->std_normal());
     return val;
 }

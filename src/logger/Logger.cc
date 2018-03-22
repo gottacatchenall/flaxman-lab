@@ -2,9 +2,10 @@
 #include "EnvFactor.h"
 #include "Fragment.h"
 #include "Individual.h"
+#include "TimeTracker.h"
 
-Logger::Logger(std::string dir, params_s* params){
-    this->params = params;
+Logger::Logger(std::string dir){
+    double start_time = time_tracker->get_start_time();
     this->data_dir_path = (dir += "data/");
 
     DIR* data = opendir(this->data_dir_path.c_str());
@@ -22,6 +23,8 @@ Logger::Logger(std::string dir, params_s* params){
     this->make_fragment_directory();
     this->make_generations_directory();
     this->make_symlinks_to_vis_tools();
+
+    time_tracker->add_time_in_logger(start_time);
 }
 
 void Logger::make_data_directory(){
@@ -37,8 +40,8 @@ void Logger::make_run_directory(){
     time (&rawtime);
     this->timeinfo = localtime (&rawtime);
 
-    if (this->params->RUN_DATA_DIR != ""){
-        dirname = this->params->RUN_DATA_DIR;
+    if (params->RUN_DATA_DIR != ""){
+        dirname = params->RUN_DATA_DIR;
     }
     else{
         dirname = std::to_string(rawtime);
@@ -117,26 +120,27 @@ void Logger::write_metadata(){
 
     metadata_file.open(metadata_file_path.c_str());
     metadata_file << "RUNTIME: " << asctime(this->timeinfo);
-    metadata_file << "RANDOM_SEED_VALUE: " << RANDOM_SEED_VALUE << "\n\n";
+    metadata_file << "RANDOM_SEED_VALUE: " << params->RANDOM_SEED_VALUE << "\n\n";
 
     metadata_file << "======================================\n";
     metadata_file << "PARAMETER VALUES\n";
     metadata_file << "======================================\n\n";
 
-    metadata_file << "BOARD_SIZE: " << this->params->BOARD_SIZE << "\n";
-    metadata_file << "N_ENV_FACTORS: " << this->params->N_ENV_FACTORS << "\n";
+    metadata_file << "BOARD_SIZE: " << params->BOARD_SIZE << "\n";
+    metadata_file << "N_ENV_FACTORS: " << params->N_ENV_FACTORS << "\n";
 
-    metadata_file << "FRAGMENT_AMOUNT_LOW: " << this->params->FRAGMENT_AMOUNT_LOW << "\n";
-    metadata_file << "FRAGMENT_AMOUNT_HI: " << this->params->FRAGMENT_AMOUNT_HI << "\n";
-    metadata_file << "FRAGMENT_H_VALUE: " << this->params->FRAGMENT_H_VALUE << "\n";
+    metadata_file << "FRAGMENT_AMOUNT_LOW: " << params->FRAGMENT_AMOUNT_LOW << "\n";
+    metadata_file << "FRAGMENT_AMOUNT_HI: " << params->FRAGMENT_AMOUNT_HI << "\n";
+    metadata_file << "FRAGMENT_H_VALUE: " << params->FRAGMENT_H_VALUE << "\n";
 
-    metadata_file << "ENV_FACTOR_CUTOFF: " << this->params->ENV_FACTOR_CUTOFF << "\n";
-    metadata_file << "ENV_FACTOR_H_VALUE: " << this->params->ENV_FACTOR_H_VALUE << "\n";
+    metadata_file << "ENV_FACTOR_CUTOFF: " << params->ENV_FACTOR_CUTOFF << "\n";
+    metadata_file << "ENV_FACTOR_H_VALUE: " << params->ENV_FACTOR_H_VALUE << "\n";
 
     metadata_file.close();
 }
 
 void Logger::write_envFactor(EnvFactor* envFactor){
+    double start_time = time_tracker->get_start_time();
     std::ofstream envFactor_file;
     std::string envFactor_file_path = this->envFactor_dir_path + "envFactor" + std::to_string(envFactor->get_id()) + ".csv";
 
@@ -156,9 +160,12 @@ void Logger::write_envFactor(EnvFactor* envFactor){
         }
         envFactor_file << "\n";
     }
+
+    time_tracker->add_time_in_logger(start_time);
 }
 
 void Logger::write_fragment_map(Fragment* fragment){
+    double start_time = time_tracker->get_start_time();
     std::ofstream fragment_file;
     std::string fragment_file_path = this->fragment_dir_path + "fragment_map.csv";
 
@@ -178,18 +185,24 @@ void Logger::write_fragment_map(Fragment* fragment){
         }
         fragment_file << "\n";
     }
+
+    time_tracker->add_time_in_logger(start_time);
 }
 
 void Logger::write_fragmentation_data(int gen, int x, int y){
+    double start_time = time_tracker->get_start_time();
     std::ofstream fragment_file;
     std::string fragment_file_path = this->fragment_dir_path + "fragment_data.csv";
 
     fragment_file.open(fragment_file_path.c_str(), std::fstream::app);
     fragment_file << gen << ", " << x << ", " << y << "\n";
+
+    time_tracker->add_time_in_logger(start_time);
 }
 
 
 void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map){
+    double start_time = time_tracker->get_start_time();
     std::string gen_dir_path = this->make_gen_directory(gen);
     //std::string patch_dir_path = this->make_patch_directory(gen_dir_path, patch_x, patch_y);
 
@@ -198,7 +211,7 @@ void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map){
 
     indivs_file.open(file_path.c_str(), std::fstream::app);
 
-    int board_size = this->params->BOARD_SIZE;
+    int board_size = params->BOARD_SIZE;
     int val;
     std::string val_str;
 
@@ -212,4 +225,6 @@ void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map){
         }
         indivs_file << "\n";
     }
+
+    time_tracker->add_time_in_logger(start_time);
 }

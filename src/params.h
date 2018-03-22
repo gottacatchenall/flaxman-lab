@@ -3,10 +3,10 @@
 // Board
 // -----------------------------------
 
-#define BOARD_SIZE_DEFAULT 32
-#define N_ENV_FACTORS_DEFAULT 16
+#define BOARD_SIZE_DEFAULT 8
+#define N_ENV_FACTORS_DEFAULT 8
 #define N_GENERATIONS_DEFAULT 1000
-#define RANDOM_SEED_VALUE time(NULL)
+#define RANDOM_SEED_VALUE_DEFAULT time(NULL)
 
 // -----------------------------------
 // Environmental Factors
@@ -31,13 +31,13 @@
 
 #define N_INDIVIDUALS_DEFAULT 1000
 #define INDIVIDUALS_INITIAL_GENOME_DEFAULT INDIVIDUALS_RANDOM_GENOTYPE
-#define N_MAX_INIT_OCCUPIED_PATCHES_DEFAULT (BOARD_SIZE_DEFAULT*BOARD_SIZE_DEFAULT) / 4
+#define N_MAX_INIT_OCCUPIED_PATCHES_DEFAULT 1
 #define MIGRATION_DISTANCE_DEFAULT 4
 
 // -----------------------------------
 // Genome
 // -----------------------------------
 
-#define N_CHROMOSOMES_DEFAULT 10
-#define N_LOCI_DEFAULT 1000
-#define MUTATION_RATE_DEFAULT 0.01
+#define N_CHROMOSOMES_DEFAULT 5
+#define N_LOCI_DEFAULT 120
+#define MUTATION_RATE_DEFAULT 0.001

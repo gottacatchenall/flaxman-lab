@@ -4,25 +4,14 @@
 
 #include "include.h"
 
-class Genome;
-class Random;
-class Patch;
-struct params_s;
-typedef params_s params_s;
-struct genetic_map_s;
-typedef genetic_map_s genetic_map_s;
-
 class Individual{
     private:
         static int id_counter;
         int id;
         Patch* patch;
-        Random *random;
         Genome *genome;
-        params_s *params;
-        genetic_map_s* genetic_map;
     public:
-        Individual(Patch* patch, Random *random, params_s* params, genetic_map_s* genetic_map);
+        Individual(Patch* patch);
         int get_id();
         void migrate(std::vector<Patch*> surrounding_patches);
         double calc_pref(Patch* patch);

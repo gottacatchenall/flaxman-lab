@@ -7,32 +7,24 @@
 #include "Fractal.h"
 #include "Individual.h"
 #include "Fragment.h"
+#include "TimeTracker.h"
 #include "params_struct.h"
 
-Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params, genetic_map_s* genetic_map){
-    assert(random != NULL);
-    assert(fractal != NULL);
-    assert(logger != NULL);
-    assert(params != NULL);
-    assert(genetic_map != NULL);
+Board::Board (){
     assert(params->BOARD_SIZE > 0 && "board size must be greater than 0!");
     assert(params->N_ENV_FACTORS > 0 && "the number of environmental factors must be greater than 0!");
 
+    double start_time = time_tracker->get_start_time();
 
-    this->params = params;
     this->BOARD_SIZE = params->BOARD_SIZE;
     this->N_ENV_FACTORS = params->N_ENV_FACTORS;
-    this->random = random;
-    this->fractal = fractal;
-    this->logger = logger;
-    this->genetic_map = genetic_map;
 
     // =======================================
     // EnvFactor Initialization
     // =======================================
     this->envFactors = new EnvFactor*[this->N_ENV_FACTORS];
     for (int i = 0; i < this->N_ENV_FACTORS; i++){
-        this->envFactors[i] = new EnvFactor(this->random, this->fractal, params, i);
+        this->envFactors[i] = new EnvFactor(i);
     }
 
     // Write EnvFactor
@@ -70,19 +62,21 @@ Board::Board (Random* random, Fractal* fractal, Logger* logger, params_s* params
             // adjust indecies to pass to patch as coordinate
             x = i - 1;
             y = j - 1;
-            this->grid[i][j] = new Patch(this, this->params, this->random, x, y);
+            this->grid[i][j] = new Patch(this, x, y);
         }
     }
 
     // =======================================
     // Fragment Map Initialization
     // =======================================
-    this->fragment = new Fragment(this->random, this->fractal, this->logger, params);
+    this->fragment = new Fragment();
     logger->write_fragment_map(this->fragment);
 
     #if __DEBUG__
         // Check that Fragment map cover amount is between the supplied parameters
     #endif
+
+    time_tracker->add_time_in_setup(start_time);
 }
 
 Patch* Board::get_patch(int x, int y){
@@ -103,12 +97,12 @@ bool Board::on_board(int x, int y){
 
 
 std::vector<Patch*> Board::get_surrounding_patches(int x, int y){
-    int migration_dist = this->params->MIGRATION_DISTANCE;
+    int migration_dist = params->MIGRATION_DISTANCE;
     std::vector<Patch*> surrounding_patches;
 
     for (int i = -1*migration_dist; i <= migration_dist; i++){
         for (int j = -1*migration_dist; j <= migration_dist; j++){
-            if (this->on_board(x+i, y+j)){
+            if (!(i == 0 && j == 0) && this->on_board(x+i, y+j)){
                 surrounding_patches.push_back(this->get_patch(x+i, y+j));
             }
         }
@@ -124,23 +118,23 @@ int Board::get_envFactor_value(int x, int y, int envFactor){
 void Board::allocate_individuals(){
 
     // Pick locations of patches that will be initially occupied
-    int n_patches = this->params->N_MAX_INIT_OCCUPIED_PATCHES;
+    int n_patches = params->N_MAX_INIT_OCCUPIED_PATCHES;
     int x[n_patches];
     int y[n_patches];
 
     for (int i = 0; i < n_patches; i++){
-        x[i] = this->random->uniform_int(0, this->BOARD_SIZE-1);
-        y[i] = this->random->uniform_int(0, this->BOARD_SIZE-1);
+        x[i] = random_gen->uniform_int(0, this->BOARD_SIZE-1);
+        y[i] = random_gen->uniform_int(0, this->BOARD_SIZE-1);
     }
 
     // Put individuals in these patches
-    int n_indiv = this->params->N_INDIVIDUALS;
+    int n_indiv = params->N_INDIVIDUALS;
     int random_index, hash_key;
     for (int i = 0; i < n_indiv; i++){
-        random_index = this->random->uniform_int(0, n_patches-1);
+        random_index = random_gen->uniform_int(0, n_patches-1);
         Patch* patch = this->get_patch(x[random_index], y[random_index]);
 
-        Individual* indiv = new Individual(patch, this->random, this->params, this->genetic_map);
+        Individual* indiv = new Individual(patch);
 
         patch->add_individual(indiv);
         hash_key = std::stoi(std::to_string(patch->get_x()) + ',' + std::to_string(patch->get_y()));
@@ -172,22 +166,45 @@ void Board::log_gen(int gen){
             }
         }
 
-        this->logger->write_generation_data(gen, map);
-
+        logger->write_generation_data(gen, map);
     }
 }
 
 
 void Board::migrate(){
     Patch* patch;
+    double start_time = time_tracker->get_start_time();
+
+    #if __DEBUG__
+        // conservation of mass sanity check
+        int total_pop_before = 0;
+        for (int i = 0; i < this->BOARD_SIZE; i++){
+            for (int j = 0; j < this->BOARD_SIZE; j++){
+                total_pop_before += this->get_patch(i,j)->get_n_indiv();
+            }
+        }
+    #endif
+
     for (auto obj: this->occupied_patches){
         patch = obj.second;
         patch->migrate();
     }
 
-    occupied_patches.clear();
+    #if __DEBUG__
+        // conservation of mass sanity check
+        int total_pop_after = 0;
+        for (int i = 0; i < this->BOARD_SIZE; i++){
+            for (int j = 0; j < this->BOARD_SIZE; j++){
+                total_pop_after += this->get_patch(i,j)->get_n_indiv();
+            }
+        }
 
+        assert(total_pop_after == total_pop_before && "num of indiv before and after migration is different!");
+    #endif
+
+    occupied_patches.clear();
     int hash_key;
+
 
     // TODO this could be better
     for (int i = 0; i < this->BOARD_SIZE; i++){
@@ -203,6 +220,7 @@ void Board::migrate(){
         }
     }
 
+    time_tracker->add_time_in_migration(start_time);
 }
 
 void Board::next_gen(int gen){

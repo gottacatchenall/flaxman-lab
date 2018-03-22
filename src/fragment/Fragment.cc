@@ -5,7 +5,7 @@
 #include "Logger.h"
 #include "params_struct.h"
 
-Fragment::Fragment(Random* random, Fractal* fractal, Logger* logger, params_s* params){
+Fragment::Fragment(){
 
     assert(params->FRAGMENT_AMOUNT_LOW < 1 && params->FRAGMENT_AMOUNT_LOW > 0);
     assert(params->FRAGMENT_AMOUNT_HI < 1 && params->FRAGMENT_AMOUNT_HI > 0);
@@ -17,9 +17,6 @@ Fragment::Fragment(Random* random, Fractal* fractal, Logger* logger, params_s* p
     this->FRAGMENT_AMOUNT_HI = params->FRAGMENT_AMOUNT_HI;
     this->FRAGMENT_H_VALUE = params->FRAGMENT_H_VALUE;
     this->FRAGMENT_PROBABILITY = params->FRAGMENT_PROBABILITY;
-    this->random = random;
-    this->fractal = fractal;
-    this->logger = logger;
 
     this->fragment_map = this->create_fragment_map();
 
@@ -40,7 +37,7 @@ Fragment::Fragment(Random* random, Fractal* fractal, Logger* logger, params_s* p
 }
 
 int** Fragment::create_fragment_map(){
-    int** map = this->fractal->generate_fractal(0.1, .2);
+    int** map = fractal->generate_fractal(0.1, .2);
 
     int total = (this->BOARD_SIZE) * (this->BOARD_SIZE);
     int c = this->count_zeros(map);
@@ -55,7 +52,7 @@ int** Fragment::create_fragment_map(){
     // The max iteration value of 10 is reached only rarely, ~2.3% of the time.
 
     while((frac < this->FRAGMENT_AMOUNT_LOW|| frac > this->FRAGMENT_AMOUNT_HI) && it_count < total_its){
-        adj_map = this->fractal->generate_fractal(this->FRAGMENT_H_VALUE, 1);
+        adj_map = fractal->generate_fractal(this->FRAGMENT_H_VALUE, 1);
 
         for (int i = 0; i < this->BOARD_SIZE; i++){
             for (int j = 0; j < this->BOARD_SIZE; j++){
@@ -99,7 +96,7 @@ void Fragment::setup_fragment_heap(){
     for (int i = 0; i < this->BOARD_SIZE; i++){
         for (int j = 0; j < this->BOARD_SIZE; j++){
             if (this->fragment_map[i][j] == 0){
-                int key = this->random->uniform_int(0, 1000);
+                int key = random_gen->uniform_int(0, 1000);
                 fragment_point *tmp = new fragment_point(i, j, key);
                 this->fragment_heap.push(tmp);
             }
@@ -108,18 +105,18 @@ void Fragment::setup_fragment_heap(){
 }
 
 void Fragment::fragment_more(int gen){
-    double ran = this->random->uniform_float(0.0, 1.0);
+    double ran = random_gen->uniform_float(0.0, 1.0);
     if (ran < this->FRAGMENT_PROBABILITY){
         if (this->fragment_heap.size() > 0){
             fragment_point *pt = this->fragment_heap.top();
             this->fragment_heap.pop();
             this->set_cell_value(pt->x, pt->y, 0);
-            this->logger->write_fragmentation_data(gen, pt->x, pt->y);
+            logger->write_fragmentation_data(gen, pt->x, pt->y);
             free(pt);
             return;
         }
     }
-    this->logger->write_fragmentation_data(gen, -1, -1);
+    logger->write_fragmentation_data(gen, -1, -1);
 }
 
 void Fragment::set_cell_value(int x, int y, int val){
