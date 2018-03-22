@@ -129,7 +129,7 @@ void Board::allocate_individuals(){
 
     // Put individuals in these patches
     int n_indiv = params->N_INDIVIDUALS;
-    int random_index, hash_key;
+    int random_index;
     for (int i = 0; i < n_indiv; i++){
         random_index = random_gen->uniform_int(0, n_patches-1);
         Patch* patch = this->get_patch(x[random_index], y[random_index]);
@@ -137,11 +137,7 @@ void Board::allocate_individuals(){
         Individual* indiv = new Individual(patch);
 
         patch->add_individual(indiv);
-        hash_key = std::stoi(std::to_string(patch->get_x()) + ',' + std::to_string(patch->get_y()));
-        if (this->occupied_patches.find(hash_key) == this->occupied_patches.end()){
-            // Not yet in occupied patches hashtable
-            this->occupied_patches.insert(std::pair<int, Patch*>(hash_key, patch));
-        }
+        this->mark_patch_occupied(patch);
     }
 }
 
@@ -149,6 +145,7 @@ void Board::setup_initial_alleles(){
     Patch* patch;
     for (auto pair: this->occupied_patches){
         patch = pair.second;
+        assert(patch != NULL);
         patch->setup_initial_alleles();
     }
 }
@@ -170,6 +167,19 @@ void Board::log_gen(int gen){
     }
 }
 
+void Board::mark_patch_occupied(Patch* patch){
+    int hash_key = (long int) patch;
+    if (this->occupied_patches.find(hash_key) == this->occupied_patches.end()){
+        this->occupied_patches.insert(std::pair<int, Patch*>(hash_key, patch));
+    }
+}
+
+void Board::mark_patch_unoccupied(Patch* patch){
+    int hash_key = (long int) patch;
+    if (this->occupied_patches.find(hash_key) != this->occupied_patches.end()){
+        this->occupied_patches.erase(hash_key);
+    }
+}
 
 void Board::migrate(){
     Patch* patch;
@@ -185,10 +195,30 @@ void Board::migrate(){
         }
     #endif
 
+
     for (auto obj: this->occupied_patches){
         patch = obj.second;
         patch->migrate();
     }
+
+    this->occupied_patches.clear();
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            if(this->get_patch(i,j)->get_n_indiv() > 0){
+                this->mark_patch_occupied(this->get_patch(i,j));
+            }
+        }
+    }
+
+
+    /*
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            if(this->get_patch(i,j)->get_n_indiv() > 0){
+                this->get_patch(i,j)->migrate();
+            }
+        }
+    }*/
 
     #if __DEBUG__
         // conservation of mass sanity check
@@ -200,26 +230,28 @@ void Board::migrate(){
         }
 
         assert(total_pop_after == total_pop_before && "num of indiv before and after migration is different!");
-    #endif
 
-    occupied_patches.clear();
-    int hash_key;
+        Patch* debug_patch;
 
-
-    // TODO this could be better
-    for (int i = 0; i < this->BOARD_SIZE; i++){
-        for (int j = 0; j < this->BOARD_SIZE; j++){
-            patch = this->get_patch(i,j);
-            if (patch->get_n_indiv() > 0){
-                hash_key = std::stoi(std::to_string(patch->get_x()) + ',' + std::to_string(patch->get_y()));
-                if (this->occupied_patches.find(hash_key) == this->occupied_patches.end()){
-                    // Not yet in occupied patches hashtable
-                    this->occupied_patches.insert(std::pair<int, Patch*>(hash_key, patch));
+        // make sure all occupied patches are in occupied_patches and all unoccupied aren't
+        for (int i = 0; i < this->BOARD_SIZE; i++){
+            for (int j = 0; j < this->BOARD_SIZE; j++){
+                debug_patch = this->get_patch(i,j);
+                int hash_key = (long int) debug_patch;
+                int n = debug_patch->get_n_indiv();
+                if (n > 0){
+                    assert(this->occupied_patches.find(hash_key) != this->occupied_patches.end() && "occupied patch not in vector of occupied patches!");
+                }
+                else{
+                    if (this->occupied_patches.find(hash_key) != this->occupied_patches.end()){
+                        printf("debug patch n: %d\n", debug_patch->get_n_indiv());
+                    }
+                    assert(this->occupied_patches.find(hash_key) == this->occupied_patches.end() && "unoccupied patch in vector of occupied patches!");
                 }
             }
         }
-    }
 
+    #endif
     time_tracker->add_time_in_migration(start_time);
 }
 

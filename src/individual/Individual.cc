@@ -30,21 +30,37 @@ double Individual::calc_pref(Patch* patch){
     double allele_val, env_factor_val;
     int locus;
     double pref = 1.0;
+    double diff;
     int n_pref_alleles = params->N_ENV_FACTORS;
     for (int i = 0; i < n_pref_alleles; i++){
         locus = genetic_map->pref_loci[i];
         env_factor_val = patch->get_envFactor_value(i);
 
         allele_val = this->get_allele(locus, 1);
-        pref = pref * abs(allele_val - env_factor_val);
+
+        diff = abs(allele_val - env_factor_val);
+        pref = pref * diff;
 
         allele_val = this->get_allele(locus, 2);
-        pref = pref * abs(allele_val - env_factor_val);
+        diff = abs(allele_val - env_factor_val);
+        pref = pref * diff;
     }
+    
     return pref;
 }
 
 void Individual::migrate(std::vector<Patch*> surrounding_patches){
+
+    // Probability that an individual will migrate.
+        // This can be done before finding out if there is a patch the individual
+        // wants to migrate to because there will still be a MIGRATION_TENDENCY
+        // proportion of indivs who could migrate but don't. Done to speed up runtime a bit.
+
+    if (random_gen->uniform_float(0.0, 1.0) < params->MIGRATION_TENDENCY){
+        return;
+    }
+
+
     double pref;
 
     double min_pref = this->calc_pref(this->patch);
@@ -63,7 +79,6 @@ void Individual::migrate(std::vector<Patch*> surrounding_patches){
         best_patch->add_individual(this);
         this->patch = best_patch;
     }
-
 }
 
 void Individual::get_fitness(){

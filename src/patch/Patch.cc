@@ -22,10 +22,6 @@ Patch::Patch(Board *board, int x, int y){
 // ==========================================
 
 void Patch::migrate(){
-    if (this->n_indiv == 0){
-        return;
-    }
-
     std::vector<Patch*> surrounding_patches = this->get_surrounding_patches();
     std::vector<Individual*> indivs = this->get_all_individuals();
 
@@ -168,5 +164,4 @@ void Patch::increment_num_indiv(){
 
 void Patch::decrement_num_indiv(){
     this->n_indiv--;
-    assert(n_indiv >= 0);
 }
