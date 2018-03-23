@@ -17,6 +17,19 @@ Patch::Patch(Board *board, int x, int y){
     }
 }
 
+
+void Patch::selection(){
+    std::vector<Individual*> indivs = this->get_all_individuals();
+    bool surv;
+    for (Individual* indiv : indivs){
+        surv = indiv->selection();
+        if (!surv){
+            this->remove_individual(indiv);
+            delete indiv;
+        }
+    }
+}
+
 // ==========================================
 // Migration
 // ==========================================

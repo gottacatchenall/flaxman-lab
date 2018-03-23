@@ -11,6 +11,11 @@ double Random::std_normal(){
     return val;
 }
 
+double Random::normal(double mu, double sigma){
+    std::normal_distribution<double> dis(mu, sigma);
+    return dis(this->generator);
+}
+
 int Random::uniform_int(int a, int b){
     std::uniform_int_distribution<int> dis(a,b);
     return dis(this->generator);

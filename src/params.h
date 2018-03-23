@@ -8,6 +8,8 @@
 #define N_GENERATIONS_DEFAULT 1000
 #define RANDOM_SEED_VALUE_DEFAULT time(NULL)
 
+#define CARRYING_CAPACITY_DEFAULT 1000
+
 // -----------------------------------
 // Environmental Factors
 // -----------------------------------
@@ -35,6 +37,8 @@
 #define MIGRATION_DISTANCE_DEFAULT 4
 #define MIGRATION_TENDENCY_DEFAULT 0.5
 
+#define SELECTION_STRENGTH_DEFAULT 0.5
+#define AVG_NUM_OFFSPRING_PER_FEMALE_DEFAULT 5
 
 // -----------------------------------
 // Genome

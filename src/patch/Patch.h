@@ -23,6 +23,7 @@ class Patch{
     public:
         Patch(Board *board, int x, int y);
         void migrate();
+        void selection();
         std::vector<Patch*> get_surrounding_patches();
 
         void setup_initial_alleles();

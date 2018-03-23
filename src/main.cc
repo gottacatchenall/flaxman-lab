@@ -58,6 +58,7 @@ int main(int argc, char* argv[]){
     for (i = 0; i < n_gen; i++){
         board->log_gen(i);
         board->migrate();
+        board->selection();
         board->next_gen(i);
 
         // Print gen to console

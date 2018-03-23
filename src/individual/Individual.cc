@@ -26,13 +26,70 @@ double Individual::get_allele(int locus, int haplo){
     return this->genome->get_allele(locus, haplo);
 }
 
+// ==========================================
+// Selection
+// ==========================================
+double Individual::fitness_gaussian(double diff){
+    double sigma = params->SELECTION_STRENGTH;
+    return exp(-1*(diff*diff)/(2*sigma*sigma));
+}
+
+double Individual::calc_fitness(){
+    int n_fitness_loci = params->N_ENV_FACTORS;
+    double max_fitness = n_fitness_loci*2;
+    int locus;
+    double env_factor_val, allele_val, diff;
+
+    double fitness = 0.0;
+
+    for (int i = 0; i < n_fitness_loci; i++){
+        locus = genetic_map->fitness_loci[i];
+        env_factor_val = this->patch->get_envFactor_value(i);
+
+        allele_val = this->get_allele(locus, 1);
+        diff = env_factor_val - allele_val;
+        fitness += this->fitness_gaussian(diff);
+
+        allele_val = this->get_allele(locus, 2);
+        diff = env_factor_val - allele_val;
+        fitness += this->fitness_gaussian(diff);
+    }
+
+    double norm_fitness = fitness/max_fitness;
+    return norm_fitness;
+}
+
+double Individual::beverton_holt_prob(double k_prime){
+    int n = this->patch->get_n_indiv();
+    int b = params->AVG_NUM_OFFSPRING_PER_FEMALE;
+
+    double prop_full = double(n)/double(k_prime);
+    double prob = double(1.0) / double(1 + (double(b)/double(2) - 1)*(prop_full));
+    return prob;
+}
+
+bool Individual::selection(){
+    double fitness = this->calc_fitness();
+    double k_prime = double(params->CARRYING_CAPACITY * fitness);
+    double prob = this->beverton_holt_prob(k_prime);
+
+    if (random_gen->uniform_float(0,1) < prob){
+            return true;
+    }
+    return false;
+}
+
+// ==========================================
+// Migration
+// ==========================================
+
 double Individual::calc_pref(Patch* patch){
     double allele_val, env_factor_val;
     int locus;
     double pref = 1.0;
     double diff;
-    int n_pref_alleles = params->N_ENV_FACTORS;
-    for (int i = 0; i < n_pref_alleles; i++){
+    int n_pref_loci= params->N_ENV_FACTORS;
+    for (int i = 0; i < n_pref_loci; i++){
         locus = genetic_map->pref_loci[i];
         env_factor_val = patch->get_envFactor_value(i);
 
@@ -45,7 +102,7 @@ double Individual::calc_pref(Patch* patch){
         diff = abs(allele_val - env_factor_val);
         pref = pref * diff;
     }
-    
+
     return pref;
 }
 
@@ -79,10 +136,6 @@ void Individual::migrate(std::vector<Patch*> surrounding_patches){
         best_patch->add_individual(this);
         this->patch = best_patch;
     }
-}
-
-void Individual::get_fitness(){
-
 }
 
 void Individual::choose_mate(){

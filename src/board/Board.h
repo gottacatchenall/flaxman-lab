@@ -31,7 +31,10 @@ class Board{
         void log_gen(int gen);
         void mark_patch_occupied(Patch* patch);
         void mark_patch_unoccupied(Patch* patch);
+
+
         void migrate();
+        void selection();
         void next_gen(int gen);
 
 };

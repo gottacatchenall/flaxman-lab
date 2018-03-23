@@ -152,7 +152,8 @@ void Board::setup_initial_alleles(){
 
 void Board::log_gen(int gen){
     // get all indivs and log
-    bool write_data = !(gen % 100);
+    //bool write_data = !(gen % 100);
+    bool write_data = 1;
     Patch* patch;
     if (write_data){
         std::vector<std::vector<int>> map(this->BOARD_SIZE,std::vector<int>(this->BOARD_SIZE));
@@ -200,6 +201,7 @@ void Board::migrate(){
         patch = obj.second;
         patch->migrate();
     }
+
 
     this->occupied_patches.clear();
     for (int i = 0; i < this->BOARD_SIZE; i++){
@@ -255,6 +257,25 @@ void Board::migrate(){
     time_tracker->add_time_in_migration(start_time);
 }
 
+void Board::selection(){
+    double start_time = time_tracker->get_start_time();
+
+    Patch* patch;
+    for (auto obj: this->occupied_patches){
+        patch = obj.second;
+        patch->selection();
+    }
+
+    time_tracker->add_time_in_selection(start_time);
+}
+
 void Board::next_gen(int gen){
+    int c = 0;
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            c += this->get_patch(i,j)->get_n_indiv();
+        }
+    }
+
     this->fragment->fragment_more(gen);
 }

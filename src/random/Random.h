@@ -13,6 +13,7 @@ class Random{
     public:
         Random(int random_seed);
         double std_normal();
+        double normal(double mu, double sigma);
         double uniform_float(double a, double b);
         int uniform_int(int a, int b);
         double beta(double alpha, double beta);
