@@ -35,6 +35,7 @@ class Board{
 
         void migrate();
         void selection();
+        void mating();
         void next_gen(int gen);
 
 };

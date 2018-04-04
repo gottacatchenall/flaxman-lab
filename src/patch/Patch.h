@@ -17,12 +17,19 @@ class Patch{
         std::vector<int> envFactor_values;
         // HASHTABLE of individuals on the tile.
         // KEY is the individual's id
-        std::unordered_map<int, Individual*> indivs;
+        std::unordered_map<int, Individual*>* indivs;
+
+        std::unordered_map<int, Individual*>* next_gen;
         void increment_num_indiv();
         void decrement_num_indiv();
     public:
         Patch(Board *board, int x, int y);
+
+        void replace_old_gen();
+        void mating();
+
         void migrate();
+
         void selection();
         std::vector<Patch*> get_surrounding_patches();
 
@@ -34,8 +41,14 @@ class Patch{
         int get_x();
         int get_y();
         int get_envFactor_value(int envFactor);
+
+
+        void add_offspring(Individual* offspring);
+        void empty_patch();
+
         void add_individual(Individual* indiv);
         void remove_individual(Individual* indiv);
+
         std::vector<Individual*> get_all_individuals();
         int get_n_indiv();
 };

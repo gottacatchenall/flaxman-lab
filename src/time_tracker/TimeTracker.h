@@ -10,12 +10,16 @@ class TimeTracker{
         double time_in_migration;
         double time_in_selection;
         double time_in_setup;
+        double time_in_random_gen;
+        double time_in_mating;
     public:
         TimeTracker();
         double get_start_time();
         void add_time_in_logger(double start);
         void add_time_in_migration(double start);
         void add_time_in_selection(double start);
+        void add_time_in_mating(double start);
+        void add_time_in_random(double start);
         void add_time_in_setup(double start);
         void print_times();
 };

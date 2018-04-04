@@ -4,6 +4,7 @@
 #include "Random.h"
 #include "bio_functions.h"
 #include "params_struct.h"
+#include "genetic_map.h"
 #include <algorithm>
 
 Patch::Patch(Board *board, int x, int y){
@@ -12,11 +13,82 @@ Patch::Patch(Board *board, int x, int y){
     this->y = y;
     this->board = board;
 
+    this->indivs = new std::unordered_map<int, Individual*>;
+    this->next_gen = new std::unordered_map<int, Individual*>;
     for (int i = 0; i < params->N_ENV_FACTORS; i++){
         this->envFactor_values.push_back(this->board->get_envFactor_value(this->x, this->y, i));
     }
 }
 
+// ==========================================
+// Mating
+// ==========================================
+
+void Patch::replace_old_gen(){
+    this->empty_patch();
+    delete this->indivs;
+    this->indivs = this->next_gen;
+
+    this->next_gen = new std::unordered_map<int, Individual*>;
+}
+
+void Patch::mating(){
+
+    std::vector<Individual*> indivs = this->get_all_individuals();
+
+    std::vector<Individual*> males;
+    std::vector<Individual*> females;
+
+    for (Individual* indiv : indivs){
+        if (indiv->get_sex() == MALE){
+            males.push_back(indiv);
+        }
+        else if (indiv->get_sex() == FEMALE){
+            females.push_back(indiv);
+        }
+    }
+
+    if (males.size() == 0 || females.size() == 0){
+        return;
+    }
+
+    int rand_index, n_offspring, sex;
+    Individual *male, *offspring;
+    double *haplo1, *haplo2;
+
+    for (Individual* female: females){
+        rand_index = random_gen->uniform_int(0, males.size()-1);
+        male = males[rand_index];
+
+        n_offspring = random_gen->n_offspring();
+
+        for (int i = 0; i < n_offspring; i++){
+            haplo1 = female->make_gamete();
+            haplo2 = male->make_gamete();
+
+            for (int i = 0; i < params->N_LOCI; i++){
+                //printf("val: %f\n", haplo1[i]);
+            }
+
+            if (random_gen->uniform_int(0,1) == 0){
+                sex = MALE;
+            }
+            else{
+                sex = FEMALE;
+            }
+            offspring = new Individual(this, sex);
+            offspring->set_haplotype(1, haplo1);
+            offspring->set_haplotype(2, haplo2);
+            this->add_offspring(offspring);
+        }
+    }
+
+    this->replace_old_gen();
+}
+
+// ==========================================
+// Selection
+// ==========================================
 
 void Patch::selection(){
     std::vector<Individual*> indivs = this->get_all_individuals();
@@ -50,6 +122,7 @@ std::vector<Patch*> Patch::get_surrounding_patches(){
 // ==========================================
 // Setup initial population
 // ==========================================
+
 std::vector<double> Patch::generate_allele_freq_from_beta(int n_alleles){
     double rem = 1.0;
     double p, prop;
@@ -138,23 +211,39 @@ int Patch::get_envFactor_value(int envFactor){
     return this->envFactor_values[envFactor];
 }
 
+void Patch::empty_patch(){
+    std::vector<Individual*> old_gen = this->get_all_individuals();
+
+    for (Individual* indiv: old_gen){
+        this->remove_individual(indiv);
+        delete indiv;
+    }
+
+}
+
+
+void Patch::add_offspring(Individual* offspring){
+    std::pair<int, Individual*> value(offspring->get_id(), offspring);
+    this->next_gen->insert(value);
+}
+
 void Patch::add_individual(Individual* indiv){
     std::pair<int, Individual*> value(indiv->get_id(), indiv);
-    this->indivs.insert(value);
-    this->increment_num_indiv();
+    this->indivs->insert(value);
+    this->n_indiv++;
 }
 
 void Patch::remove_individual(Individual* indiv){
-    this->indivs.erase(indiv->get_id());
-    this->decrement_num_indiv();
+    this->indivs->erase(indiv->get_id());
+    this->n_indiv--;
 }
 
 int Patch::get_n_indiv(){
-    return this->n_indiv;
+    return this->indivs->size();
 }
 
 std::vector<Individual*> Patch::get_all_individuals(){
-    int ct = this->indivs.size();
+    int ct = this->indivs->size();
 
     std::vector<Individual*> individuals;
 
@@ -163,18 +252,10 @@ std::vector<Individual*> Patch::get_all_individuals(){
     }
 
     Individual* tmp_indiv;
-    for (auto ind: this->indivs){
+    for (auto ind: *this->indivs){
         tmp_indiv = ind.second;
         individuals.push_back(tmp_indiv);
     }
 
     return individuals;
-}
-
-void Patch::increment_num_indiv(){
-    this->n_indiv++;
-}
-
-void Patch::decrement_num_indiv(){
-    this->n_indiv--;
 }

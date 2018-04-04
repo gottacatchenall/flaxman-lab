@@ -10,8 +10,6 @@ genetic_map_s* generate_genetic_map(){
     map->chromo_map = generate_perm_with_uniq_ints(params->N_CHROMOSOMES, params->N_LOCI);
     map->pref_loci = new int[params->N_ENV_FACTORS];
     map->fitness_loci = new int[params->N_ENV_FACTORS];
-    map->male_loci = new int[2];
-    map->female_loci = new int[1];
 
     int n_unique_indecies = params->N_ENV_FACTORS + params->N_ENV_FACTORS + 2 + 1;
     int* uniq_perm = generate_perm_with_uniq_ints(n_unique_indecies, params->N_LOCI);
@@ -19,7 +17,7 @@ genetic_map_s* generate_genetic_map(){
     int pref_offset = 0;
     int fitness_offset = params->N_ENV_FACTORS;
     int male_offset = 2*params->N_ENV_FACTORS;
-    int female_offset = 2*params->N_ENV_FACTORS + 2;
+    int female_offset = 2*params->N_ENV_FACTORS + 1;
 
     for (int i = 0; i < n_unique_indecies; i++){
         if (i < fitness_offset){
@@ -29,10 +27,12 @@ genetic_map_s* generate_genetic_map(){
             map->fitness_loci[i-fitness_offset] = uniq_perm[i];
         }
         else if (i >= male_offset && i < female_offset){
-            map->male_loci[i-male_offset] = uniq_perm[i];
+            map->m_locus = uniq_perm[i];
         }
-        else{
-            map->female_loci[i-female_offset] = uniq_perm[i];
+        else if (i < n_unique_indecies - 1){
+            map->f_locus = uniq_perm[i];
+            map->c_locus = uniq_perm[i+1];
+            break;
         }
     }
 

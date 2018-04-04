@@ -8,14 +8,27 @@
 
 int Individual::id_counter = 0;
 
-Individual::Individual(Patch* patch){
+Individual::Individual(Patch* patch, int sex){
     this->id = this->id_counter++;
+    this->sex = sex;
     this->patch = patch;
     this->genome = new Genome(this);
 }
 
+Individual::~Individual(){
+    delete(this->genome);
+}
+
+void Individual::set_haplotype(int haplo_num, double* haplotype){
+    this->genome->set_haplotype(haplo_num, haplotype);
+}
+
 int Individual::get_id(){
     return this->id;
+}
+
+int Individual::get_sex(){
+    return this->sex;
 }
 
 void Individual::set_allele(int locus, double value, int haplo){
@@ -94,7 +107,6 @@ double Individual::calc_pref(Patch* patch){
         env_factor_val = patch->get_envFactor_value(i);
 
         allele_val = this->get_allele(locus, 1);
-
         diff = abs(allele_val - env_factor_val);
         pref = pref * diff;
 
@@ -117,7 +129,6 @@ void Individual::migrate(std::vector<Patch*> surrounding_patches){
         return;
     }
 
-
     double pref;
 
     double min_pref = this->calc_pref(this->patch);
@@ -138,10 +149,6 @@ void Individual::migrate(std::vector<Patch*> surrounding_patches){
     }
 }
 
-void Individual::choose_mate(){
-
-}
-
-void Individual::reproduce(Individual* mate){
-
+double* Individual::make_gamete(){
+    return this->genome->make_gamete();
 }

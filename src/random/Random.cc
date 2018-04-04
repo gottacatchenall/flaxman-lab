@@ -1,9 +1,12 @@
 #include "Random.h"
+#include "TimeTracker.h"
+#include "params_struct.h"
 
 Random::Random(int random_seed){
     this->random_seed = random_seed;
     this->generator.seed(this->random_seed);
     this->std_normal_dist = std::normal_distribution<double>(0,1);
+    this->n_offspring_dist = std::poisson_distribution<int>(params->AVG_NUM_OFFSPRING_PER_FEMALE);
 }
 
 double Random::std_normal(){
@@ -24,6 +27,13 @@ int Random::uniform_int(int a, int b){
 double Random::uniform_float(double a, double b){
     std::uniform_real_distribution<double> dis(a, b);
     return dis(this->generator);
+}
+
+int Random::n_offspring(){
+    double start_time = time_tracker->get_start_time();
+    int val = this->n_offspring_dist(this->generator);
+    time_tracker->add_time_in_random(start_time);
+    return val;
 }
 
 double Random::beta(double alpha, double beta){

@@ -3,12 +3,12 @@
 // Board
 // -----------------------------------
 
-#define BOARD_SIZE_DEFAULT 8
-#define N_ENV_FACTORS_DEFAULT 8
+#define BOARD_SIZE_DEFAULT 16
+#define N_ENV_FACTORS_DEFAULT 16
 #define N_GENERATIONS_DEFAULT 1000
 #define RANDOM_SEED_VALUE_DEFAULT time(NULL)
 
-#define CARRYING_CAPACITY_DEFAULT 1000
+#define CARRYING_CAPACITY_DEFAULT 300
 
 // -----------------------------------
 // Environmental Factors
@@ -16,7 +16,6 @@
 
 #define ENV_FACTOR_H_VALUE_DEFAULT .8
 #define ENV_FACTOR_CUTOFF_DEFAULT 0.1
-
 
 // -----------------------------------
 // Fragmentation
@@ -31,7 +30,7 @@
 // Individuals
 // -----------------------------------
 
-#define N_INDIVIDUALS_DEFAULT 1000
+#define N_INDIVIDUALS_DEFAULT 50
 #define INDIVIDUALS_INITIAL_GENOME_DEFAULT INDIVIDUALS_RANDOM_GENOTYPE
 #define N_MAX_INIT_OCCUPIED_PATCHES_DEFAULT 1
 #define MIGRATION_DISTANCE_DEFAULT 4
@@ -43,6 +42,8 @@
 // -----------------------------------
 // Genome
 // -----------------------------------
+
+#define LINKAGE_MODE_DEFAULT ALL_LOCI_INDEPENDENT
 
 #define N_CHROMOSOMES_DEFAULT 5
 #define N_LOCI_DEFAULT 120

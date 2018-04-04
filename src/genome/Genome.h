@@ -15,10 +15,14 @@ class Genome{
         double* haplotype2;
     public:
         Genome(Individual* individual);
+        ~Genome();
         Genome* mate(Genome* mate_genome);
         double get_allele(int locus, int haplo);
         void set_allele(int locus, double val, int haplo);
-        void crossing_over(Genome* a, Genome* result);
+
+        void set_haplotype(int haplo_num, double* haplotype);
+        double* make_gamete();
+        void crossing_over();
 };
 
 #endif

@@ -6,6 +6,12 @@
 #include <iostream>
 #include <assert.h>
 
+struct params_s;
+typedef params_s params_s;
+struct genetic_map_s;
+typedef genetic_map_s genetic_map_s;
+
+
 // Forward Declars
 class Board;
 class EnvFactor;
@@ -18,11 +24,6 @@ class Logger;
 class Fractal;
 class Random;
 class TimeTracker;
-
-struct params_s;
-typedef params_s params_s;
-struct genetic_map_s;
-typedef genetic_map_s genetic_map_s;
 
 // Externs
 extern Random* random_gen;

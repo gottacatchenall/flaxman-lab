@@ -59,6 +59,7 @@ int main(int argc, char* argv[]){
         board->log_gen(i);
         board->migrate();
         board->selection();
+        board->mating();
         board->next_gen(i);
 
         // Print gen to console

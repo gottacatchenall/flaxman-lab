@@ -10,6 +10,7 @@ class Random{
         std::mt19937 generator;
         //double std_normal_gen;
         std::normal_distribution<double> std_normal_dist;
+        std::poisson_distribution<int> n_offspring_dist;
     public:
         Random(int random_seed);
         double std_normal();
@@ -17,6 +18,7 @@ class Random{
         double uniform_float(double a, double b);
         int uniform_int(int a, int b);
         double beta(double alpha, double beta);
+        int n_offspring();
 };
 
 #endif

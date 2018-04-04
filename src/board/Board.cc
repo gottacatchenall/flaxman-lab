@@ -129,13 +129,19 @@ void Board::allocate_individuals(){
 
     // Put individuals in these patches
     int n_indiv = params->N_INDIVIDUALS;
-    int random_index;
+    int random_index, sex;
+    Individual* indiv;
+
     for (int i = 0; i < n_indiv; i++){
         random_index = random_gen->uniform_int(0, n_patches-1);
         Patch* patch = this->get_patch(x[random_index], y[random_index]);
-
-        Individual* indiv = new Individual(patch);
-
+        if (i < int(n_indiv/2)){
+            sex = FEMALE;
+        }
+        else{
+            sex = MALE;
+        }
+        indiv = new Individual(patch, sex);
         patch->add_individual(indiv);
         this->mark_patch_occupied(patch);
     }
@@ -212,16 +218,6 @@ void Board::migrate(){
         }
     }
 
-
-    /*
-    for (int i = 0; i < this->BOARD_SIZE; i++){
-        for (int j = 0; j < this->BOARD_SIZE; j++){
-            if(this->get_patch(i,j)->get_n_indiv() > 0){
-                this->get_patch(i,j)->migrate();
-            }
-        }
-    }*/
-
     #if __DEBUG__
         // conservation of mass sanity check
         int total_pop_after = 0;
@@ -267,6 +263,18 @@ void Board::selection(){
     }
 
     time_tracker->add_time_in_selection(start_time);
+}
+
+void Board::mating(){
+    double start_time = time_tracker->get_start_time();
+
+    Patch* patch;
+    for (auto obj: this->occupied_patches){
+        patch = obj.second;
+        patch->mating();
+    }
+
+    time_tracker->add_time_in_mating(start_time);
 }
 
 void Board::next_gen(int gen){
