@@ -10,10 +10,11 @@ class Individual{
         int id;
         int sex;
         Patch* patch;
-        Genome *genome;
+
+        double* haplotype1;
+        double* haplotype2;
     public:
         Individual(Patch* patch, int sex);
-        ~Individual();
         int get_id();
         int get_sex();
         void migrate(std::vector<Patch*> surrounding_patches);

@@ -9,7 +9,6 @@ MAIN =              src/main.cc
 SRCS = 				$(ROOT_DIR)/src/board/Board.cc					\
 					$(ROOT_DIR)/src/patch/Patch.cc					\
 					$(ROOT_DIR)/src/individual/Individual.cc		\
-					$(ROOT_DIR)/src/genome/Genome.cc				\
 					$(ROOT_DIR)/src/envFactor/EnvFactor.cc			\
 					$(ROOT_DIR)/src/fragment/Fragment.cc			\
 					$(ROOT_DIR)/src/fractal/Fractal.cc				\
@@ -24,7 +23,6 @@ INCLUDE_DIRS = 		$(ROOT_DIR)/src/							\
 					$(ROOT_DIR)/src/board/						\
 					$(ROOT_DIR)/src/patch/						\
 					$(ROOT_DIR)/src/individual/					\
-					$(ROOT_DIR)/src/genome/						\
 					$(ROOT_DIR)/src/envFactor/					\
 					$(ROOT_DIR)/src/fragment/					\
 					$(ROOT_DIR)/src/fractal/					\

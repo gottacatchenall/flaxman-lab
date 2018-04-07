@@ -1,6 +1,5 @@
 
 #include "Individual.h"
-#include "Genome.h"
 #include "Random.h"
 #include "Patch.h"
 #include "params_struct.h"
@@ -12,15 +11,25 @@ Individual::Individual(Patch* patch, int sex){
     this->id = this->id_counter++;
     this->sex = sex;
     this->patch = patch;
-    this->genome = new Genome(this);
-}
 
-Individual::~Individual(){
-    delete(this->genome);
+    int n_loci = params->N_LOCI;
+    this->haplotype1 = new double[n_loci];
+    this->haplotype2 = new double[n_loci];
 }
 
 void Individual::set_haplotype(int haplo_num, double* haplotype){
-    this->genome->set_haplotype(haplo_num, haplotype);
+    if (haplo_num == 1){
+        free(this->haplotype1);
+        this->haplotype1 = haplotype;
+        return;
+    }
+    else if (haplo_num == 2){
+        free(this->haplotype2);
+        this->haplotype2 = haplotype;
+        return;
+    }
+
+    assert(0 && "set_haplotype called with invalid haplo_num");
 }
 
 int Individual::get_id(){
@@ -32,11 +41,19 @@ int Individual::get_sex(){
 }
 
 void Individual::set_allele(int locus, double value, int haplo){
-    this->genome->set_allele(locus, value, haplo);
+    if (haplo == 1){
+        this->haplotype1[locus] = value;
+    }
+    else{
+        this->haplotype2[locus] = value;
+    }
 }
 
 double Individual::get_allele(int locus, int haplo){
-    return this->genome->get_allele(locus, haplo);
+    if (haplo == 1){
+        return this->haplotype1[locus];
+    }
+    return this->haplotype2[locus];
 }
 
 // ==========================================
@@ -150,5 +167,20 @@ void Individual::migrate(std::vector<Patch*> surrounding_patches){
 }
 
 double* Individual::make_gamete(){
-    return this->genome->make_gamete();
+    double* gamete = new double[params->N_LOCI];
+
+    if (params->LINKAGE_MODE == ALL_LOCI_INDEPENDENT){
+        int n_loci = params->N_LOCI;
+        int haplo;
+        for (int i = 0; i < n_loci; i++){
+            haplo = random_gen->uniform_int(0,1);
+            gamete[i] = this->get_allele(i, haplo);
+        }
+        return gamete;
+    }
+    else if (params->LINKAGE_MODE == NORMAL_LINKAGE){
+        return gamete;
+    }
+
+    assert(0 && "neither linkage mode was chosen");
 }

@@ -18,7 +18,6 @@ class EnvFactor;
 class Fragment;
 class Patch;
 class Individual;
-class Genome;
 
 class Logger;
 class Fractal;
