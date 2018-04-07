@@ -31,6 +31,8 @@ void printUsage(char *name){
     printf("\t[-g <double>]\n");
     printf("\t\t The number of generations.\n");
 
+    printf("\t[-m <double>]\n");
+    printf("\t\t The migratation tendency. Must be a real number between 0 and 1.\n");
 
     printf("\t[-s <integer>]\n");
     printf("\t\t The size of the lattice. Integer is the length of one side.\n");
@@ -90,7 +92,7 @@ params_s* get_options(int argc, char *argv[], params_s* opts){
 
     int option_index = 0;
 
-    while ((opt = getopt_long(argc, argv, "e:g:s:p:h:?", long_options, &option_index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "e:g:s:p:h:m:?", long_options, &option_index)) != -1) {
         switch (opt) {
             // frag-lo
             case 0:
@@ -100,11 +102,15 @@ params_s* get_options(int argc, char *argv[], params_s* opts){
             case 1:
                 opts->FRAGMENT_AMOUNT_HI = atof(optarg);
                 break;
+
             case 'e':
                 opts->N_ENV_FACTORS = atoi(optarg);
                 break;
             case 'g':
                 opts->N_GENERATIONS = atoi(optarg);
+                break;
+            case 'm':
+                opts->MIGRATION_TENDENCY = atof(optarg);
                 break;
             case 's':
                 opts->BOARD_SIZE = atoi(optarg);
