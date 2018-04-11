@@ -10,6 +10,10 @@
 #include "TimeTracker.h"
 #include "params_struct.h"
 
+// ===============================================
+// Board Constructor
+// ===============================================
+
 Board::Board (){
     assert(params->BOARD_SIZE > 0 && "board size must be greater than 0!");
     assert(params->N_ENV_FACTORS > 0 && "the number of environmental factors must be greater than 0!");
@@ -37,32 +41,15 @@ Board::Board (){
     // =======================================
 
     // Initiallize Grid 2D-Array
-
-    // Size is BOARD_SIZE+2 so entire thing is surrounded by NULLs to avoid
-    // issues with indexing surrounding patches at edges or corner.
-
-    this->grid = new Patch**[this->BOARD_SIZE+2];
-    for (int i = 0; i < this->BOARD_SIZE+2; i++) {
-        this->grid[i] = new Patch*[this->BOARD_SIZE+2];
+    this->grid = new Patch**[this->BOARD_SIZE];
+    for (int i = 0; i < this->BOARD_SIZE; i++) {
+        this->grid[i] = new Patch*[this->BOARD_SIZE];
     }
 
-    // Initialize Edges to NULL
-    int max_index = this->BOARD_SIZE+1;
-    for (int i = 0; i < this->BOARD_SIZE+2; i++){
-        this->grid[i][0] = NULL;
-        this->grid[i][max_index] = NULL;
-        this->grid[0][i] = NULL;
-        this->grid[max_index][i] = NULL;
-    }
-
-    // Initiallize Patch
-    int x,y;
-    for (int i = 1; i < this->BOARD_SIZE+1; i++){
-        for (int j = 1; j < this->BOARD_SIZE+1; j++){
-            // adjust indecies to pass to patch as coordinate
-            x = i - 1;
-            y = j - 1;
-            this->grid[i][j] = new Patch(this, x, y);
+    // Initiallize Patches
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            this->grid[i][j] = new Patch(this, i, j);
         }
     }
 
@@ -79,22 +66,13 @@ Board::Board (){
     time_tracker->add_time_in_setup(start_time);
 }
 
+// ===============================================
+// Getters and Setters
+// ===============================================
+
 Patch* Board::get_patch(int x, int y){
-    // Remember, this->grid is padded by NULLs on all sides,
-    // so, index must be adjusted so (x,y) actually maps to (x,y)
-    int i = x + 1;
-    int j = y + 1;
-
-    return this->grid[i][j];
+    return this->grid[x][y];
 }
-
-bool Board::on_board(int x, int y){
-    if (x < 0 || x >= this->BOARD_SIZE || y < 0 || y >= this->BOARD_SIZE){
-        return false;
-    }
-    return true;
-}
-
 
 std::vector<Patch*> Board::get_surrounding_patches(int x, int y){
     int migration_dist = params->MIGRATION_DISTANCE;
@@ -113,6 +91,28 @@ std::vector<Patch*> Board::get_surrounding_patches(int x, int y){
 
 int Board::get_envFactor_value(int x, int y, int envFactor){
     return this->envFactors[envFactor]->get_cell_value(x,y);
+}
+
+
+bool Board::on_board(int x, int y){
+    if (x < 0 || x >= this->BOARD_SIZE || y < 0 || y >= this->BOARD_SIZE){
+        return false;
+    }
+    return true;
+}
+
+void Board::mark_patch_occupied(Patch* patch){
+    int hash_key = (long int) patch;
+    if (this->occupied_patches.find(hash_key) == this->occupied_patches.end()){
+        this->occupied_patches.insert(std::pair<int, Patch*>(hash_key, patch));
+    }
+}
+
+void Board::mark_patch_unoccupied(Patch* patch){
+    int hash_key = (long int) patch;
+    if (this->occupied_patches.find(hash_key) != this->occupied_patches.end()){
+        this->occupied_patches.erase(hash_key);
+    }
 }
 
 void Board::allocate_individuals(){
@@ -171,20 +171,6 @@ void Board::log_gen(int gen){
         }
 
         logger->write_generation_data(gen, map);
-    }
-}
-
-void Board::mark_patch_occupied(Patch* patch){
-    int hash_key = (long int) patch;
-    if (this->occupied_patches.find(hash_key) == this->occupied_patches.end()){
-        this->occupied_patches.insert(std::pair<int, Patch*>(hash_key, patch));
-    }
-}
-
-void Board::mark_patch_unoccupied(Patch* patch){
-    int hash_key = (long int) patch;
-    if (this->occupied_patches.find(hash_key) != this->occupied_patches.end()){
-        this->occupied_patches.erase(hash_key);
     }
 }
 
@@ -278,12 +264,5 @@ void Board::mating(){
 }
 
 void Board::next_gen(int gen){
-    int c = 0;
-    for (int i = 0; i < this->BOARD_SIZE; i++){
-        for (int j = 0; j < this->BOARD_SIZE; j++){
-            c += this->get_patch(i,j)->get_n_indiv();
-        }
-    }
-
     this->fragment->fragment_more(gen);
 }

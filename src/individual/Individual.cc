@@ -70,6 +70,9 @@ double Individual::calc_fitness(){
     int locus;
     double env_factor_val, allele_val, diff;
 
+
+    /* Additive fitness */
+
     double fitness = 0.0;
 
     for (int i = 0; i < n_fitness_loci; i++){
@@ -167,9 +170,8 @@ void Individual::migrate(std::vector<Patch*> surrounding_patches){
 }
 
 double* Individual::make_gamete(){
-    double* gamete = new double[params->N_LOCI];
-
     if (params->LINKAGE_MODE == ALL_LOCI_INDEPENDENT){
+        double* gamete = new double[params->N_LOCI];
         int n_loci = params->N_LOCI;
         int haplo;
         for (int i = 0; i < n_loci; i++){
@@ -178,9 +180,51 @@ double* Individual::make_gamete(){
         }
         return gamete;
     }
+
     else if (params->LINKAGE_MODE == NORMAL_LINKAGE){
-        return gamete;
+        return this->crossing_over();
     }
 
     assert(0 && "neither linkage mode was chosen");
+}
+
+double* Individual::crossing_over(){
+    double* gamete = new double[params->N_LOCI];
+
+    int n_loci = params->N_LOCI;
+    int n_crossover_events = random_gen->n_crossover_events();
+
+    std::vector<int> crossing_over_points;
+
+    int r;
+    bool exists;
+    for(int i = 0; i < n_crossover_events; i++){
+        do{
+            r = random_gen->uniform_int(0,n_loci-1);
+            exists = (std::find(crossing_over_points.begin(), crossing_over_points.end(), r) != crossing_over_points.end());
+        } while(exists);
+        crossing_over_points.push_back(r);
+    }
+
+    std::sort(crossing_over_points.begin(), crossing_over_points.end());
+
+    int curr_crossover = 0;
+    int curr_chromo = 0;
+    int current_haplo = random_gen->uniform_int(0,1);
+
+    for (int i = 0; i < n_loci; i++){
+        if (i == genetic_map->chromo_map[curr_chromo]){
+            curr_chromo++;
+            current_haplo = random_gen->uniform_int(0,1);
+        }
+        if (n_crossover_events > 0){
+            if (i == crossing_over_points[curr_crossover]){
+                curr_crossover++;
+                current_haplo = !(current_haplo);
+            }
+        }
+        gamete[i] = this->get_allele(i, current_haplo);
+    }
+
+    return gamete;
 }

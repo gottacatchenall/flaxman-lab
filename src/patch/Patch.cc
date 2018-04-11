@@ -66,16 +66,14 @@ void Patch::mating(){
             haplo1 = female->make_gamete();
             haplo2 = male->make_gamete();
 
-            for (int i = 0; i < params->N_LOCI; i++){
-                //printf("val: %f\n", haplo1[i]);
-            }
-
+            // coin flip to determine sex 
             if (random_gen->uniform_int(0,1) == 0){
                 sex = MALE;
             }
             else{
                 sex = FEMALE;
             }
+
             offspring = new Individual(this, sex);
             offspring->set_haplotype(1, haplo1);
             offspring->set_haplotype(2, haplo2);

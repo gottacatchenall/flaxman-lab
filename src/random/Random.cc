@@ -7,6 +7,7 @@ Random::Random(int random_seed){
     this->generator.seed(this->random_seed);
     this->std_normal_dist = std::normal_distribution<double>(0,1);
     this->n_offspring_dist = std::poisson_distribution<int>(params->AVG_NUM_OFFSPRING_PER_FEMALE);
+    this->n_crossover_events_dist = std::poisson_distribution<int>(params->GENOME_LENGTH_IN_CENTIMORGANS);
 }
 
 double Random::std_normal(){
@@ -32,6 +33,13 @@ double Random::uniform_float(double a, double b){
 int Random::n_offspring(){
     double start_time = time_tracker->get_start_time();
     int val = this->n_offspring_dist(this->generator);
+    time_tracker->add_time_in_random(start_time);
+    return val;
+}
+
+int Random::n_crossover_events(){
+    double start_time = time_tracker->get_start_time();
+    int val = this->n_crossover_events_dist(this->generator);
     time_tracker->add_time_in_random(start_time);
     return val;
 }

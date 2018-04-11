@@ -27,7 +27,10 @@ class Individual{
         void choose_mate();
         void set_allele(int locus, double value, int haplo);
         double get_allele(int locus, int haplo);
+
+
         double* make_gamete();
+        double* crossing_over();
 
         void set_haplotype(int haplo_num, double* haplotype);
         void reproduce(Individual* mate);

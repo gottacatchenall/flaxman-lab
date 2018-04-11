@@ -3,13 +3,14 @@
 #define GENETIC_MAP_H
 
 #include "include.h"
+#include <vector>
 
 
 // Genetic Map Struct
 typedef struct genetic_map_s{
-    int* chromo_map;
-    int* pref_loci;
-    int* fitness_loci;
+    std::vector<int> chromo_map;
+    std::vector<int> pref_loci;
+    std::vector<int> fitness_loci;
     int m_locus;
     int f_locus;
     int c_locus;

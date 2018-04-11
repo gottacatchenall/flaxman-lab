@@ -11,6 +11,7 @@ class Random{
         //double std_normal_gen;
         std::normal_distribution<double> std_normal_dist;
         std::poisson_distribution<int> n_offspring_dist;
+        std::poisson_distribution<int> n_crossover_events_dist;
     public:
         Random(int random_seed);
         double std_normal();
@@ -18,6 +19,8 @@ class Random{
         double uniform_float(double a, double b);
         int uniform_int(int a, int b);
         double beta(double alpha, double beta);
+
+        int n_crossover_events();
         int n_offspring();
 };
 
