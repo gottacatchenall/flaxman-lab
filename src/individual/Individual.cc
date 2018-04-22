@@ -13,19 +13,19 @@ Individual::Individual(Patch* patch, int sex){
     this->patch = patch;
 
     int n_loci = params->N_LOCI;
+    this->haplotype0 = new double[n_loci];
     this->haplotype1 = new double[n_loci];
-    this->haplotype2 = new double[n_loci];
 }
 
 void Individual::set_haplotype(int haplo_num, double* haplotype){
-    if (haplo_num == 1){
-        free(this->haplotype1);
-        this->haplotype1 = haplotype;
+    if (haplo_num == 0){
+        free(this->haplotype0);
+        this->haplotype0 = haplotype;
         return;
     }
-    else if (haplo_num == 2){
-        free(this->haplotype2);
-        this->haplotype2 = haplotype;
+    else if (haplo_num == 1){
+        free(this->haplotype1);
+        this->haplotype1 = haplotype;
         return;
     }
 
@@ -41,19 +41,23 @@ int Individual::get_sex(){
 }
 
 void Individual::set_allele(int locus, double value, int haplo){
-    if (haplo == 1){
-        this->haplotype1[locus] = value;
+    if (haplo == 0){
+        this->haplotype0[locus] = value;
     }
-    else{
-        this->haplotype2[locus] = value;
+    else if (haplo == 1){
+        this->haplotype1[locus] = value;
     }
 }
 
 double Individual::get_allele(int locus, int haplo){
-    if (haplo == 1){
+    if (haplo == 0){
+        return this->haplotype0[locus];
+    }
+    else if (haplo == 1){
         return this->haplotype1[locus];
     }
-    return this->haplotype2[locus];
+
+    assert(0 && "get_allele called with invalid haplo_num");
 }
 
 // ==========================================
@@ -79,11 +83,11 @@ double Individual::calc_fitness(){
         locus = genetic_map->fitness_loci[i];
         env_factor_val = this->patch->get_envFactor_value(i);
 
-        allele_val = this->get_allele(locus, 1);
+        allele_val = this->get_allele(locus, 0);
         diff = env_factor_val - allele_val;
         fitness += this->fitness_gaussian(diff);
 
-        allele_val = this->get_allele(locus, 2);
+        allele_val = this->get_allele(locus, 1);
         diff = env_factor_val - allele_val;
         fitness += this->fitness_gaussian(diff);
     }
@@ -126,11 +130,11 @@ double Individual::calc_pref(Patch* patch){
         locus = genetic_map->pref_loci[i];
         env_factor_val = patch->get_envFactor_value(i);
 
-        allele_val = this->get_allele(locus, 1);
+        allele_val = this->get_allele(locus, 0);
         diff = abs(allele_val - env_factor_val);
         pref = pref * diff;
 
-        allele_val = this->get_allele(locus, 2);
+        allele_val = this->get_allele(locus, 1);
         diff = abs(allele_val - env_factor_val);
         pref = pref * diff;
     }
@@ -190,12 +194,11 @@ double* Individual::make_gamete(){
 
 double* Individual::crossing_over(){
     double* gamete = new double[params->N_LOCI];
-
     int n_loci = params->N_LOCI;
     int n_crossover_events = random_gen->n_crossover_events();
-
     std::vector<int> crossing_over_points;
 
+    // Generate a random permutation of unique loci to be the crossover points
     int r;
     bool exists;
     for(int i = 0; i < n_crossover_events; i++){
@@ -206,6 +209,7 @@ double* Individual::crossing_over(){
         crossing_over_points.push_back(r);
     }
 
+    // Sort crossing_over_points
     std::sort(crossing_over_points.begin(), crossing_over_points.end());
 
     int curr_crossover = 0;
@@ -213,13 +217,19 @@ double* Individual::crossing_over(){
     int current_haplo = random_gen->uniform_int(0,1);
 
     for (int i = 0; i < n_loci; i++){
+
+        // Check if at start of a new chromosome
         if (i == genetic_map->chromo_map[curr_chromo]){
             curr_chromo++;
             current_haplo = random_gen->uniform_int(0,1);
         }
+
         if (n_crossover_events > 0){
+            // Check if at a crossover point
             if (i == crossing_over_points[curr_crossover]){
                 curr_crossover++;
+
+                // switch haplo
                 current_haplo = !(current_haplo);
             }
         }

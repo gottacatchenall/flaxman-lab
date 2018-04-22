@@ -23,6 +23,7 @@ class Logger;
 class Fractal;
 class Random;
 class TimeTracker;
+class GeneTracker;
 
 // Externs
 extern Random* random_gen;
@@ -31,3 +32,4 @@ extern Logger* logger;
 extern params_s* params;
 extern genetic_map_s* genetic_map;
 extern TimeTracker* time_tracker;
+extern GeneTracker* gene_tracker;

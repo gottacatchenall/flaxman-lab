@@ -11,8 +11,8 @@ class Individual{
         int sex;
         Patch* patch;
 
+        double* haplotype0;
         double* haplotype1;
-        double* haplotype2;
     public:
         Individual(Patch* patch, int sex);
         int get_id();

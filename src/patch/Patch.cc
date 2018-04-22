@@ -54,7 +54,7 @@ void Patch::mating(){
 
     int rand_index, n_offspring, sex;
     Individual *male, *offspring;
-    double *haplo1, *haplo2;
+    double *haplo0, *haplo1;
 
     for (Individual* female: females){
         rand_index = random_gen->uniform_int(0, males.size()-1);
@@ -63,10 +63,10 @@ void Patch::mating(){
         n_offspring = random_gen->n_offspring();
 
         for (int i = 0; i < n_offspring; i++){
-            haplo1 = female->make_gamete();
-            haplo2 = male->make_gamete();
+            haplo0 = female->make_gamete();
+            haplo1 = male->make_gamete();
 
-            // coin flip to determine sex 
+            // coin flip to determine sex
             if (random_gen->uniform_int(0,1) == 0){
                 sex = MALE;
             }
@@ -75,8 +75,8 @@ void Patch::mating(){
             }
 
             offspring = new Individual(this, sex);
+            offspring->set_haplotype(0, haplo0);
             offspring->set_haplotype(1, haplo1);
-            offspring->set_haplotype(2, haplo2);
             this->add_offspring(offspring);
         }
     }

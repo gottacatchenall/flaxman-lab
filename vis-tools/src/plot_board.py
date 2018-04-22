@@ -66,9 +66,9 @@ def show_w_indivs(figure, ax, m, pop_map, save=False, ani=False):
                 for j in range(len(pop)):
                     n = pop[i][j]
                     if (n > 0):
-                        rad = float(n)/float(len(pop)) * .45
-                        if rad < 0.15:
-                            rad = 0.15
+                        rad = float(n_indiv)/float(5)
+                        if rad < 0.2:
+                            rad = 0.2
                         c = Circle((i,j), radius=rad, edgecolor='purple', facecolor='purple', alpha=0.5)
                         ax.add_patch(c)
             patches.append(ax.add_patch(c))
@@ -81,9 +81,9 @@ def show_w_indivs(figure, ax, m, pop_map, save=False, ani=False):
             for j in range(len(pop)):
                 n_indiv = pop[i][j]
                 if (n_indiv > 0):
-                    rad = float(n_indiv)/float(50) * .45
-                    if rad < 0.15:
-                        rad = 0.15
+                    rad = float(n_indiv)/float(15) * .05
+                    if rad < 0.03:
+                        rad = 0.03
                     c = Circle((i,j), radius=rad, edgecolor='purple', facecolor='purple', alpha=0.5)
                     ax.add_patch(c)
         im = plt.imshow(m[0], interpolation='none', aspect='equal', cmap="gist_earth")
@@ -109,5 +109,5 @@ def show_w_indivs(figure, ax, m, pop_map, save=False, ani=False):
         if save:
             ani.save('map.mp4', dpi=300)
 
-    time_text = ax.text(0, size+3, 'Generation: 0', fontsize=12)
+    time_text = ax.text(0, size, 'Generation: 0', fontsize=12)
     plt.show()
