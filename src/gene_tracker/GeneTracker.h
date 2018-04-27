@@ -2,13 +2,32 @@
 #define GENETRACKER_H
 
 #include "include.h"
+#include "params_struct.h"
 #include <vector>
 
 typedef struct allele{
+    allele(int l, double val){
+        locus = l;
+        allele_val = val;
+
+        freq_map = new int*[params->BOARD_SIZE];
+        for (int i = 0; i < params->BOARD_SIZE; i++){
+            freq_map[i] = new int[params->BOARD_SIZE];
+        }
+
+    };
+
+    ~allele(){
+        for (int i = 0; i < params->BOARD_SIZE; i++){
+            delete freq_map[i];
+        }
+        delete freq_map;
+    }
+
     int locus;
-    int allele_val;
+    double allele_val;
     int n_observed_total;
-    std::vector<std::vector<int>> freq_map;
+    int** freq_map;
 } allele;
 
 

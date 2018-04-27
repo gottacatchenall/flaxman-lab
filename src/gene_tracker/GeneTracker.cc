@@ -23,9 +23,12 @@ void GeneTracker::update_tracker(int locus, double allele_val, int x, int y){
 
     if (allele_struct){
         allele_struct->n_observed_total++;
-        //allele_struct->freq_map;
+        allele_struct->freq_map[x][y]++;
     }
     else{
-        // make new allele struct
+        allele* new_allele = new allele(locus, allele_val);
+        new_allele->n_observed_total++;
+        new_allele->freq_map[x][y]++;
+        this->allele_map[locus].push_back(new_allele);
     }
 }
