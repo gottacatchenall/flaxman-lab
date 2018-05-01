@@ -2,7 +2,8 @@
 #include "params_struct.h"
 
 GeneTracker::GeneTracker(){
-    this->allele_map = new std::vector<allele*>[params->N_LOCI];
+    int n_loci = params->N_LOCI;
+    this->allele_map = new std::vector<allele*>[n_loci];
 }
 
 allele* GeneTracker::find_allele(int locus, double allele_val){
@@ -18,7 +19,6 @@ allele* GeneTracker::find_allele(int locus, double allele_val){
 }
 
 void GeneTracker::update_tracker(int locus, double allele_val, int x, int y){
-
     allele* allele_struct = this->find_allele(locus, allele_val);
 
     if (allele_struct){
@@ -30,5 +30,17 @@ void GeneTracker::update_tracker(int locus, double allele_val, int x, int y){
         new_allele->n_observed_total++;
         new_allele->freq_map[x][y]++;
         this->allele_map[locus].push_back(new_allele);
+    }
+}
+
+void GeneTracker::erase_data(){
+    int n_loci = params->N_LOCI;
+    std::vector<allele*> allele_vec;
+
+    for (int locus = 0; locus < n_loci; locus++){
+        allele_vec = this->allele_map[locus];
+        for(allele* al: allele_vec) {
+            delete al;
+        }
     }
 }

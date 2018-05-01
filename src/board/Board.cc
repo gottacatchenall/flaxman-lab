@@ -156,24 +156,6 @@ void Board::setup_initial_alleles(){
     }
 }
 
-void Board::log_gen(int gen){
-    // get all indivs and log
-    //bool write_data = !(gen % 100);
-    bool write_data = 1;
-    Patch* patch;
-    if (write_data){
-        std::vector<std::vector<int>> map(this->BOARD_SIZE,std::vector<int>(this->BOARD_SIZE));
-        for (int i = 0; i < this->BOARD_SIZE; i++){
-            for (int j = 0; j < this->BOARD_SIZE; j++){
-                patch = this->get_patch(i,j);
-                map[i][j] = patch->get_n_indiv();
-            }
-        }
-
-        logger->write_generation_data(gen, map);
-    }
-}
-
 void Board::migrate(){
     Patch* patch;
     double start_time = time_tracker->get_start_time();
@@ -261,6 +243,28 @@ void Board::mating(){
     }
 
     time_tracker->add_time_in_mating(start_time);
+}
+
+void Board::census_pop(int gen){
+    double start_time = time_tracker->get_start_time();
+
+    Patch* patch;
+    int n;
+    std::vector<std::vector<int>> map(this->BOARD_SIZE,std::vector<int>(this->BOARD_SIZE));
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            patch = this->get_patch(i,j);
+            n = patch->get_n_indiv();
+            map[i][j] = n;
+
+            if (n > 0){
+
+            }
+        }
+    }
+
+    logger->write_generation_data(gen, map);
+    time_tracker->add_time_in_census(start_time);
 }
 
 void Board::next_gen(int gen){

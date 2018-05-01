@@ -3,6 +3,7 @@
 #include "Random.h"
 #include "Patch.h"
 #include "params_struct.h"
+#include "GeneTracker.h"
 #include "genetic_map.h"
 
 int Individual::id_counter = 0;
@@ -58,6 +59,28 @@ double Individual::get_allele(int locus, int haplo){
     }
 
     assert(0 && "get_allele called with invalid haplo_num");
+}
+
+
+// ==========================================
+// Census
+// ==========================================
+void Individual::census_indiv(){
+    int n_loci = params->N_LOCI;
+    int x = this->patch->get_x();
+    int y = this->patch->get_y();
+
+    int locus;
+    double allele;
+
+    printf("made it here\n");
+
+    for (locus = 0; locus < n_loci; locus++){
+        allele = this->get_allele(locus, 0);
+        gene_tracker->update_tracker(locus, allele, x, y);
+        allele = this->get_allele(locus, 1);
+        gene_tracker->update_tracker(locus, allele, x, y);
+    }
 }
 
 // ==========================================

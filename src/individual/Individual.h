@@ -34,6 +34,8 @@ class Individual{
 
         void set_haplotype(int haplo_num, double* haplotype);
         void reproduce(Individual* mate);
+
+        void census_indiv();
 };
 
 #endif

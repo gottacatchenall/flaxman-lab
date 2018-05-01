@@ -118,6 +118,18 @@ std::vector<Patch*> Patch::get_surrounding_patches(){
 }
 
 // ==========================================
+// Census
+// ==========================================
+
+void Patch::census_patch(){
+    std::vector<Individual*> indivs = this->get_all_individuals();
+    for (Individual* indiv : indivs){
+        indiv->census_indiv();
+    }
+}
+
+
+// ==========================================
 // Setup initial population
 // ==========================================
 

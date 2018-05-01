@@ -37,6 +37,7 @@ class GeneTracker{
     public:
         GeneTracker();
         void update_tracker(int locus, double allele_val, int x, int y);
+        void erase_data();
         allele* find_allele(int locus, double allele_val);
 };
 

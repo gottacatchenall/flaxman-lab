@@ -33,6 +33,8 @@ class Patch{
         void selection();
         std::vector<Patch*> get_surrounding_patches();
 
+        void census_patch();
+
         void setup_initial_alleles();
         std::vector<double> generate_allele_freq_from_beta(int n_alleles);
         std::vector<int> get_num_with_each_allele(std::vector<double> props, int n_alleles, int n_this_locus);

@@ -28,13 +28,13 @@ class Board{
         int get_envFactor_value(int x, int y, int envFactor);
         void allocate_individuals();
         void setup_initial_alleles();
-        void log_gen(int gen);
         void mark_patch_occupied(Patch* patch);
         void mark_patch_unoccupied(Patch* patch);
 
 
         void migrate();
         void selection();
+        void census_pop(int gen);
         void mating();
         void next_gen(int gen);
 

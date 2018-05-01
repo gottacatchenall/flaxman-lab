@@ -6,6 +6,7 @@
 #include "Board.h"
 #include "Random.h"
 #include "Fractal.h"
+#include "GeneTracker.h"
 #include "TimeTracker.h"
 
 #include <string>
@@ -17,7 +18,7 @@ Random* random_gen;
 params_s* params;
 Logger* logger;
 Fractal* fractal;
-
+GeneTracker* gene_tracker;
 
 int main(int argc, char* argv[]){
 
@@ -26,6 +27,8 @@ int main(int argc, char* argv[]){
     // Setup custom parameters
     params = new params_s;
     get_options(argc, argv, params);
+
+    gene_tracker = new GeneTracker();
 
     #if __DEBUG__
         printf("Running in __DEBUG__ mode! This enables inline unit testing/validation, but will significantly slow performance.\n\n");
@@ -56,9 +59,11 @@ int main(int argc, char* argv[]){
     int i;
     int n_gen = params->N_GENERATIONS;
     for (i = 0; i < n_gen; i++){
-        board->log_gen(i);
         board->migrate();
         board->selection();
+
+        board->census_pop(i);
+
         board->mating();
         board->next_gen(i);
 
