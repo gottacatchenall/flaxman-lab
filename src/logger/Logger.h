@@ -26,12 +26,15 @@ class Logger{
         void make_fragment_directory();
         void make_generations_directory();
         std::string make_gen_directory(int gen);
-        std::string make_patch_directory(std::string gen_dir, int x, int y);
+        std::string make_patch_directory(std::string gen_dir);
         void make_symlinks_to_vis_tools();
         void write_metadata();
         void write_envFactor(EnvFactor* envFactor);
         void write_fragment_map(Fragment* fragment);
         void write_fragmentation_data(int gen, int x, int y);
+        std::string get_patch_file(std::string patch_dir_path, int x, int y);
+        void write_patch_data(std::string patch_dir_path, int x, int y, int locus, double allele_val, double freq);
+        void write_generation_map(std::string gen_dir_path, std::vector<std::vector<int>> map);
         void write_generation_data(int gen, std::vector<std::vector<int>> map);
 };
 

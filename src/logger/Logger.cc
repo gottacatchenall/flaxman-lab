@@ -3,6 +3,7 @@
 #include "Fragment.h"
 #include "Individual.h"
 #include "TimeTracker.h"
+#include "GeneTracker.h"
 
 Logger::Logger(std::string dir){
     double start_time = time_tracker->get_start_time();
@@ -77,8 +78,8 @@ std::string Logger::make_gen_directory(int gen){
     return gen_dir_path;
 }
 
-std::string Logger::make_patch_directory(std::string gen_dir, int x, int y){
-    std::string patch_dir_path = gen_dir + "patch" + std::to_string(x) + "_" + std::to_string(y) + "/";
+std::string Logger::make_patch_directory(std::string gen_dir){
+    std::string patch_dir_path = gen_dir + "patches/";
     mkdir(patch_dir_path.c_str(), 0700);
     return patch_dir_path;
 }
@@ -200,14 +201,9 @@ void Logger::write_fragmentation_data(int gen, int x, int y){
     time_tracker->add_time_in_logger(start_time);
 }
 
-
-void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map){
-    double start_time = time_tracker->get_start_time();
-    std::string gen_dir_path = this->make_gen_directory(gen);
-    //std::string patch_dir_path = this->make_patch_directory(gen_dir_path, patch_x, patch_y);
-
+void Logger::write_generation_map(std::string gen_dir_path, std::vector<std::vector<int>> map){
     std::ofstream indivs_file;
-    std::string file_path = gen_dir_path + std::to_string(gen) + ".csv";
+    std::string file_path = gen_dir_path + "generation_map.csv";
 
     indivs_file.open(file_path.c_str(), std::fstream::app);
 
@@ -225,6 +221,56 @@ void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map){
         }
         indivs_file << "\n";
     }
+
+}
+
+std::string Logger::get_patch_file(std::string patch_dir_path, int x, int y){
+    return patch_dir_path + std::to_string(x) + "_" + std::to_string(y) + ".csv";
+}
+
+
+void Logger::write_patch_data(std::string patch_dir_path, int x, int y, int locus, double allele_val, double freq){
+    std::string patch_file_path = this->get_patch_file(patch_dir_path, x, y);
+
+    std::ofstream patch_file;
+    patch_file.open(patch_file_path.c_str(), std::fstream::app);
+
+    patch_file << std::to_string(locus) + "," + std::to_string(allele_val) + "," + std::to_string(freq) + "\n";
+
+}
+
+void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map){
+    double start_time = time_tracker->get_start_time();
+    std::string gen_dir_path = this->make_gen_directory(gen);
+    std::string patch_dir_path = this->make_patch_directory(gen_dir_path);
+
+    this->write_generation_map(gen_dir_path, map);
+
+    // locus by locus
+    int n_loci = params->N_LOCI;
+    int N = params->BOARD_SIZE;
+    int patch_size;
+    double freq;
+
+    std::vector<allele*> alleles;
+    for (int locus = 0; locus < n_loci; locus++){
+        alleles = gene_tracker->get_locus_vector(locus);
+
+        for (allele* al: alleles){
+            for (int i = 0; i < N; i++){
+                for (int j = 0; j < N; j++){
+                    if (al->freq_map[i][j] > 0){
+                        patch_size = map[i][j];
+                        freq = double(al->freq_map[i][j])/ double(2*patch_size);
+                        this->write_patch_data(patch_dir_path, i, j, locus, al->allele_val, freq);
+                    }
+                }
+            }
+        }
+    }
+
+
+
 
     time_tracker->add_time_in_logger(start_time);
 }

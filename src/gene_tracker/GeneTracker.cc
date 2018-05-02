@@ -14,14 +14,16 @@ allele* GeneTracker::find_allele(int locus, double allele_val){
             return al;
         }
     }
-
     return NULL;
 }
 
 void GeneTracker::update_tracker(int locus, double allele_val, int x, int y){
-    allele* allele_struct = this->find_allele(locus, allele_val);
 
-    if (allele_struct){
+    // TODO
+        // something in erase data causes it to seg fault
+        // maybe don't erase and reset nums each census. lets you track lost alleles
+    allele* allele_struct = this->find_allele(locus, allele_val);
+    if (allele_struct != NULL){
         allele_struct->n_observed_total++;
         allele_struct->freq_map[x][y]++;
     }
@@ -33,14 +35,26 @@ void GeneTracker::update_tracker(int locus, double allele_val, int x, int y){
     }
 }
 
+std::vector<allele*> GeneTracker::get_locus_vector(int locus){
+    return this->allele_map[locus];
+}
+
 void GeneTracker::erase_data(){
     int n_loci = params->N_LOCI;
     std::vector<allele*> allele_vec;
+    int N = params->BOARD_SIZE;
 
     for (int locus = 0; locus < n_loci; locus++){
         allele_vec = this->allele_map[locus];
         for(allele* al: allele_vec) {
-            delete al;
+            // reset freq_map
+            for (int i = 0; i < N; i++){
+                for (int j = 0; j < N; j++){
+                    al->freq_map[i][j] = 0;
+                }
+            }
+
+            al->n_observed_total = 0;
         }
     }
 }

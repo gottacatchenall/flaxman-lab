@@ -8,6 +8,7 @@
 #include "Individual.h"
 #include "Fragment.h"
 #include "TimeTracker.h"
+#include "GeneTracker.h"
 #include "params_struct.h"
 
 // ===============================================
@@ -258,12 +259,14 @@ void Board::census_pop(int gen){
             map[i][j] = n;
 
             if (n > 0){
-
+                patch->census_patch();
             }
         }
     }
 
     logger->write_generation_data(gen, map);
+
+    gene_tracker->erase_data();
     time_tracker->add_time_in_census(start_time);
 }
 

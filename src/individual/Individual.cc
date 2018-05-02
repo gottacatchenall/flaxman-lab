@@ -73,8 +73,6 @@ void Individual::census_indiv(){
     int locus;
     double allele;
 
-    printf("made it here\n");
-
     for (locus = 0; locus < n_loci; locus++){
         allele = this->get_allele(locus, 0);
         gene_tracker->update_tracker(locus, allele, x, y);
