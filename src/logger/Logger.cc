@@ -253,6 +253,7 @@ void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map){
     double freq;
 
     std::vector<allele*> alleles;
+
     for (int locus = 0; locus < n_loci; locus++){
         alleles = gene_tracker->get_locus_vector(locus);
 
@@ -268,9 +269,6 @@ void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map){
             }
         }
     }
-
-
-
 
     time_tracker->add_time_in_logger(start_time);
 }

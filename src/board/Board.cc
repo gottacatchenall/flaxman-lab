@@ -27,38 +27,39 @@ Board::Board (){
     // =======================================
     // EnvFactor Initialization
     // =======================================
-    this->envFactors = new EnvFactor*[this->N_ENV_FACTORS];
-    for (int i = 0; i < this->N_ENV_FACTORS; i++){
-        this->envFactors[i] = new EnvFactor(i);
-    }
 
-    // Write EnvFactor
-    for (int i = 0; i < this->N_ENV_FACTORS; i++){
-        logger->write_envFactor(this->envFactors[i]);
-    }
+        this->envFactors = new EnvFactor*[this->N_ENV_FACTORS];
+        for (int i = 0; i < this->N_ENV_FACTORS; i++){
+            this->envFactors[i] = new EnvFactor(i);
+        }
+
+        // Write EnvFactor
+        for (int i = 0; i < this->N_ENV_FACTORS; i++){
+            logger->write_envFactor(this->envFactors[i]);
+        }
 
     // =======================================
     // Grid Initialization
     // =======================================
 
-    // Initiallize Grid 2D-Array
-    this->grid = new Patch**[this->BOARD_SIZE];
-    for (int i = 0; i < this->BOARD_SIZE; i++) {
-        this->grid[i] = new Patch*[this->BOARD_SIZE];
-    }
-
-    // Initiallize Patches
-    for (int i = 0; i < this->BOARD_SIZE; i++){
-        for (int j = 0; j < this->BOARD_SIZE; j++){
-            this->grid[i][j] = new Patch(this, i, j);
+        // Initiallize Grid 2D-Array
+        this->grid = new Patch**[this->BOARD_SIZE];
+        for (int i = 0; i < this->BOARD_SIZE; i++) {
+            this->grid[i] = new Patch*[this->BOARD_SIZE];
         }
-    }
+
+        // Initiallize Patches
+        for (int i = 0; i < this->BOARD_SIZE; i++){
+            for (int j = 0; j < this->BOARD_SIZE; j++){
+                this->grid[i][j] = new Patch(this, i, j);
+            }
+        }
 
     // =======================================
     // Fragment Map Initialization
     // =======================================
-    this->fragment = new Fragment();
-    logger->write_fragment_map(this->fragment);
+        this->fragment = new Fragment();
+        logger->write_fragment_map(this->fragment);
 
     #if __DEBUG__
         // Check that Fragment map cover amount is between the supplied parameters
@@ -67,55 +68,17 @@ Board::Board (){
     time_tracker->add_time_in_setup(start_time);
 }
 
+
 // ===============================================
-// Getters and Setters
+// Initialization
 // ===============================================
-
-Patch* Board::get_patch(int x, int y){
-    return this->grid[x][y];
-}
-
-std::vector<Patch*> Board::get_surrounding_patches(int x, int y){
-    int migration_dist = params->MIGRATION_DISTANCE;
-    std::vector<Patch*> surrounding_patches;
-
-    for (int i = -1*migration_dist; i <= migration_dist; i++){
-        for (int j = -1*migration_dist; j <= migration_dist; j++){
-            if (!(i == 0 && j == 0) && this->on_board(x+i, y+j)){
-                surrounding_patches.push_back(this->get_patch(x+i, y+j));
-            }
-        }
-    }
-
-    return surrounding_patches;
-}
-
-int Board::get_envFactor_value(int x, int y, int envFactor){
-    return this->envFactors[envFactor]->get_cell_value(x,y);
-}
+    // these methods are only called once: after the board is constructed  but before the sim begins
 
 
-bool Board::on_board(int x, int y){
-    if (x < 0 || x >= this->BOARD_SIZE || y < 0 || y >= this->BOARD_SIZE){
-        return false;
-    }
-    return true;
-}
-
-void Board::mark_patch_occupied(Patch* patch){
-    int hash_key = (long int) patch;
-    if (this->occupied_patches.find(hash_key) == this->occupied_patches.end()){
-        this->occupied_patches.insert(std::pair<int, Patch*>(hash_key, patch));
-    }
-}
-
-void Board::mark_patch_unoccupied(Patch* patch){
-    int hash_key = (long int) patch;
-    if (this->occupied_patches.find(hash_key) != this->occupied_patches.end()){
-        this->occupied_patches.erase(hash_key);
-    }
-}
-
+/*  Board::allocate_individuals()
+        Allocates a total of N individuals into a maximum of P patches, where N = params->N_INDIVIDUALS,
+        and P = params->N_MAX_INIT_OCCUPIED_PATCHES.
+*/
 void Board::allocate_individuals(){
 
     // Pick locations of patches that will be initially occupied
@@ -148,6 +111,10 @@ void Board::allocate_individuals(){
     }
 }
 
+/* Board::setup_initial_alleles()
+    Sets up the initial genotype of all of the individuals. The distribution of alleles,
+    and the allelic values, and unique to each patch. 
+*/
 void Board::setup_initial_alleles(){
     Patch* patch;
     for (auto pair: this->occupied_patches){
@@ -157,18 +124,18 @@ void Board::setup_initial_alleles(){
     }
 }
 
+
+// ===============================================
+// Core Methods
+// ===============================================
+    // Each of these methods are called once per generation
+
 void Board::migrate(){
     Patch* patch;
     double start_time = time_tracker->get_start_time();
 
     #if __DEBUG__
-        // conservation of mass sanity check
-        int total_pop_before = 0;
-        for (int i = 0; i < this->BOARD_SIZE; i++){
-            for (int j = 0; j < this->BOARD_SIZE; j++){
-                total_pop_before += this->get_patch(i,j)->get_n_indiv();
-            }
-        }
+        int total_pop_before = this->check_num_of_indivs();
     #endif
 
 
@@ -176,7 +143,6 @@ void Board::migrate(){
         patch = obj.second;
         patch->migrate();
     }
-
 
     this->occupied_patches.clear();
     for (int i = 0; i < this->BOARD_SIZE; i++){
@@ -188,37 +154,11 @@ void Board::migrate(){
     }
 
     #if __DEBUG__
-        // conservation of mass sanity check
-        int total_pop_after = 0;
-        for (int i = 0; i < this->BOARD_SIZE; i++){
-            for (int j = 0; j < this->BOARD_SIZE; j++){
-                total_pop_after += this->get_patch(i,j)->get_n_indiv();
-            }
-        }
-
+        this->check_occupied_patches_vector();
+        int total_pop_after = this->check_num_of_indivs();
         assert(total_pop_after == total_pop_before && "num of indiv before and after migration is different!");
-
-        Patch* debug_patch;
-
-        // make sure all occupied patches are in occupied_patches and all unoccupied aren't
-        for (int i = 0; i < this->BOARD_SIZE; i++){
-            for (int j = 0; j < this->BOARD_SIZE; j++){
-                debug_patch = this->get_patch(i,j);
-                int hash_key = (long int) debug_patch;
-                int n = debug_patch->get_n_indiv();
-                if (n > 0){
-                    assert(this->occupied_patches.find(hash_key) != this->occupied_patches.end() && "occupied patch not in vector of occupied patches!");
-                }
-                else{
-                    if (this->occupied_patches.find(hash_key) != this->occupied_patches.end()){
-                        printf("debug patch n: %d\n", debug_patch->get_n_indiv());
-                    }
-                    assert(this->occupied_patches.find(hash_key) == this->occupied_patches.end() && "unoccupied patch in vector of occupied patches!");
-                }
-            }
-        }
-
     #endif
+
     time_tracker->add_time_in_migration(start_time);
 }
 
@@ -273,3 +213,119 @@ void Board::census_pop(int gen){
 void Board::next_gen(int gen){
     this->fragment->fragment_more(gen);
 }
+
+// ===============================================
+// Miscellaneous utility methods
+// ===============================================
+
+void Board::mark_patch_occupied(Patch* patch){
+    int hash_key = (long int) patch;
+    if (this->occupied_patches.find(hash_key) == this->occupied_patches.end()){
+        this->occupied_patches.insert(std::pair<int, Patch*>(hash_key, patch));
+    }
+}
+
+void Board::mark_patch_unoccupied(Patch* patch){
+    int hash_key = (long int) patch;
+    if (this->occupied_patches.find(hash_key) != this->occupied_patches.end()){
+        this->occupied_patches.erase(hash_key);
+    }
+}
+
+/*  Board::on_board(int x, int y)
+        Returns true if (x,y) is on the board, false if it isn't.
+*/
+bool Board::on_board(int x, int y){
+    if (x < 0 || x >= this->BOARD_SIZE || y < 0 || y >= this->BOARD_SIZE){
+        return false;
+    }
+    return true;
+}
+
+/*  Board::get_surrounding_patches(int x, int y)
+        Returns a vector of all patches a distance M or less from the patch (x,y), where
+        M = params->MIGRATION_DISTANCE.
+*/
+std::vector<Patch*> Board::get_surrounding_patches(int x, int y){
+    int migration_dist = params->MIGRATION_DISTANCE;
+    std::vector<Patch*> surrounding_patches;
+
+    for (int i = -1*migration_dist; i <= migration_dist; i++){
+        for (int j = -1*migration_dist; j <= migration_dist; j++){
+            if (!(i == 0 && j == 0) && this->on_board(x+i, y+j)){
+                surrounding_patches.push_back(this->get_patch(x+i, y+j));
+            }
+        }
+    }
+
+    return surrounding_patches;
+}
+
+// ===============================================
+// Setters and Getters
+// ===============================================
+
+/*  Board::get_patch(int x, int y)
+        Returns a pointer to the Patch object with location (x,y)
+*/
+Patch* Board::get_patch(int x, int y){
+    return this->grid[x][y];
+}
+
+
+/*  Board::get_envFactor_value(int x, int y, int envFactor)
+        Returns the value of the envFactor-th environmental factor at the location (x,y)
+*/
+int Board::get_envFactor_value(int x, int y, int envFactor){
+    return this->envFactors[envFactor]->get_cell_value(x,y);
+}
+
+
+// ===============================================
+// Testing and Validation
+// ===============================================
+#if __DEBUG__
+
+
+/*  Board::check_num_of_indivs()
+        Counts the number of individuals across all patches.
+        Used to make sure the same number of indivs exist before/after migration.
+*/
+int Board::check_num_of_indivs(){
+    int pop = 0;
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            pop += this->get_patch(i,j)->get_n_indiv();
+        }
+    }
+
+    return pop;
+}
+
+/*  Board::check_occupied_patches_vector()
+        Checks to make sure the vector this->occupied_patches only contains
+        patches that are occupied, and that there aren't any occupied patches that
+        aren't in the occupied_patches vector. .
+*/
+void Board::check_occupied_patches_vector(){
+    Patch* debug_patch;
+
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            debug_patch = this->get_patch(i,j);
+            int hash_key = (long int) debug_patch;
+            int n = debug_patch->get_n_indiv();
+            if (n > 0){
+                assert(this->occupied_patches.find(hash_key) != this->occupied_patches.end() && "occupied patch not in vector of occupied patches!");
+            }
+            else{
+                if (this->occupied_patches.find(hash_key) != this->occupied_patches.end()){
+                    printf("debug patch n: %d\n", debug_patch->get_n_indiv());
+                }
+                assert(this->occupied_patches.find(hash_key) == this->occupied_patches.end() && "unoccupied patch in vector of occupied patches!");
+            }
+        }
+    }
+}
+
+#endif

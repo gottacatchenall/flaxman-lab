@@ -44,10 +44,14 @@ int Individual::get_sex(){
 void Individual::set_allele(int locus, double value, int haplo){
     if (haplo == 0){
         this->haplotype0[locus] = value;
+        return;
     }
     else if (haplo == 1){
         this->haplotype1[locus] = value;
+        return;
     }
+
+    assert(0 && "set_allele called with invalid haplotype number");
 }
 
 double Individual::get_allele(int locus, int haplo){

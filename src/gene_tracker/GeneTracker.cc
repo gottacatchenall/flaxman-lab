@@ -20,6 +20,8 @@ allele* GeneTracker::find_allele(int locus, double allele_val){
 void GeneTracker::update_tracker(int locus, double allele_val, int x, int y){
 
     // TODO
+        // init doesn't set all alleles to non-zero value?
+            // every other allele?  
         // something in erase data causes it to seg fault
         // maybe don't erase and reset nums each census. lets you track lost alleles
     allele* allele_struct = this->find_allele(locus, allele_val);

@@ -31,7 +31,7 @@ int main(int argc, char* argv[]){
     gene_tracker = new GeneTracker();
 
     #if __DEBUG__
-        printf("Running in __DEBUG__ mode! This enables inline unit testing/validation, but will significantly slow performance.\n\n");
+        printf("Running in __DEBUG__ mode! This enables inline unit testing/validation, but will *significantly* slow performance. Running mpfm in this mode is discouraged unless you are debugging!\n\n");
     #endif
 
     // Setup Random Generator...

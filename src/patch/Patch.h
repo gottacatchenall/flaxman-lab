@@ -15,6 +15,7 @@ class Patch{
         Board* board;
 
         std::vector<int> envFactor_values;
+        
         // HASHTABLE of individuals on the tile.
         // KEY is the individual's id
         std::unordered_map<int, Individual*>* indivs;

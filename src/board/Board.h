@@ -22,21 +22,34 @@ class Board{
         std::unordered_map<int, Patch*> occupied_patches;
     public:
         Board();
-        Patch* get_patch(int x, int y);
-        std::vector<Patch*> get_surrounding_patches(int x, int y);
-        bool on_board(int x, int y);
-        int get_envFactor_value(int x, int y, int envFactor);
+
+        // Initialization
         void allocate_individuals();
         void setup_initial_alleles();
-        void mark_patch_occupied(Patch* patch);
-        void mark_patch_unoccupied(Patch* patch);
 
-
+        // Core methods
+            // These are each called once per generation
         void migrate();
         void selection();
-        void census_pop(int gen);
         void mating();
+        void census_pop(int gen);
         void next_gen(int gen);
+
+        // Miscellaneous utility methods
+        void mark_patch_occupied(Patch* patch);
+        void mark_patch_unoccupied(Patch* patch);
+        bool on_board(int x, int y);
+        std::vector<Patch*> get_surrounding_patches(int x, int y);
+
+        // Getters and Setters
+        Patch* get_patch(int x, int y);
+        int get_envFactor_value(int x, int y, int envFactor);
+
+        // Testing and Validation
+        #if __DEBUG__
+            int check_num_of_indivs();
+            void check_occupied_patches_vector();
+        #endif
 
 };
 

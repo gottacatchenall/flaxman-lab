@@ -178,6 +178,10 @@ void Patch::setup_initial_alleles(){
     int N_LOCI = params->N_LOCI;
     std::vector<Individual*> indiv = this->get_all_individuals();
 
+
+    // TODO this could be moved down to the individual level where alleles are
+    // drawn from the distribution but don't completely conform to the proportions.
+
     for (int locus = 0; locus < N_LOCI; locus++){
         int n_this_locus = 2*this->n_indiv;
         int n_alleles = expected_num_neutral_alleles(n_this_locus, params->MUTATION_RATE);
@@ -197,11 +201,24 @@ void Patch::setup_initial_alleles(){
 
         int allele_ct = 0;
         for (int i = 0; i < this->n_indiv; i++){
+            indiv[i]->set_allele(locus, allele_map[allele_ct], 0);
+            allele_ct++;
             indiv[i]->set_allele(locus, allele_map[allele_ct], 1);
             allele_ct++;
-            indiv[i]->set_allele(locus, allele_map[allele_ct], 2);
-            allele_ct++;
         }
+
+
+
+        #if __DEBUG__
+            // Check that no individuals have 0 or 1 as an allele
+            for (int i = 0; i < this->n_indiv; i++){
+                indiv[i]->set_allele(locus, allele_map[allele_ct], 0);
+                allele_ct++;
+                indiv[i]->set_allele(locus, allele_map[allele_ct], 1);
+                allele_ct++;
+            }
+        #endif
+
     }
 }
 
@@ -229,6 +246,10 @@ void Patch::empty_patch(){
         delete indiv;
     }
 
+
+    #if __DEBUG__
+        
+    #endif
 }
 
 
