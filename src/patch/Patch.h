@@ -15,7 +15,7 @@ class Patch{
         Board* board;
 
         std::vector<int> envFactor_values;
-        
+
         // HASHTABLE of individuals on the tile.
         // KEY is the individual's id
         std::unordered_map<int, Individual*>* indivs;
@@ -26,33 +26,32 @@ class Patch{
     public:
         Patch(Board *board, int x, int y);
 
-        void replace_old_gen();
-        void mating();
-
-        void migrate();
-
-        void selection();
-        std::vector<Patch*> get_surrounding_patches();
-
-        void census_patch();
-
+        // Initialization
         void setup_initial_alleles();
         std::vector<double> generate_allele_freq_from_beta(int n_alleles);
         std::vector<int> get_num_with_each_allele(std::vector<double> props, int n_alleles, int n_this_locus);
         std::vector<double> gen_alleles(int n_alleles);
 
+        // Core methods
+            // These are each called once per generation
+        void migrate();
+        void selection();
+        void census_patch();
+        void mating();
+        void replace_old_gen();
+
+        // Miscellaneous utility methods
+        std::vector<Patch*> get_surrounding_patches();
+        void add_individual(Individual* indiv);
+        void remove_individual(Individual* indiv);
+        void add_offspring(Individual* offspring);
+        std::vector<Individual*> get_all_individuals();
+        void empty_patch();
+
+        // Getters and Setters
         int get_x();
         int get_y();
         int get_envFactor_value(int envFactor);
-
-
-        void add_offspring(Individual* offspring);
-        void empty_patch();
-
-        void add_individual(Individual* indiv);
-        void remove_individual(Individual* indiv);
-
-        std::vector<Individual*> get_all_individuals();
         int get_n_indiv();
 };
 

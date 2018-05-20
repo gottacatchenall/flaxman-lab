@@ -21,8 +21,111 @@ Patch::Patch(Board *board, int x, int y){
 }
 
 // ==========================================
-// Mating
+// Initialization
 // ==========================================
+  // these methods are only called before the simulation begins on patches with individuals in them
+
+void Patch::setup_initial_alleles(){
+    int N_LOCI = params->N_LOCI;
+    std::vector<Individual*> indiv = this->get_all_individuals();
+
+
+    // TODO this could be moved down to the individual level where alleles are
+    // drawn from the distribution but don't completely conform to the proportions.
+
+    for (int locus = 0; locus < N_LOCI; locus++){
+        int n_this_locus = 2*this->n_indiv;
+        int n_alleles = expected_num_neutral_alleles(n_this_locus, params->MUTATION_RATE);
+        std::vector<double> props = this->generate_allele_freq_from_beta(n_alleles);
+        std::vector<int> num_per_allele = this->get_num_with_each_allele(props, n_alleles, n_this_locus);
+        std::vector<double> alleles = this->gen_alleles(n_alleles);
+
+        std::vector<double> allele_map;
+        for (int i = 0; i < n_alleles; i++){
+            int n = num_per_allele[i];
+            for (int j = 0; j < n; j++){
+                allele_map.push_back(alleles[i]);
+            }
+        }
+
+        random_shuffle(std::begin(allele_map), std::end(allele_map));
+
+        int allele_ct = 0;
+        for (int i = 0; i < this->n_indiv; i++){
+            indiv[i]->set_allele(locus, allele_map[allele_ct], 0);
+            allele_ct++;
+            indiv[i]->set_allele(locus, allele_map[allele_ct], 1);
+            allele_ct++;
+        }
+
+
+        #if __DEBUG__
+            // Check that no individuals have 0 or 1 as an allele
+            int zero, one;
+            for (int i = 0; i < this->n_indiv; i++){
+                zero = indiv[i]->get_allele(locus, 0);
+                one = indiv[i]->get_allele(locus, 1);
+                assert(zero != 0 && zero != 1 && one != 1 && one != 0);
+            }
+        #endif
+
+    }
+}
+
+std::vector<double> Patch::generate_allele_freq_from_beta(int n_alleles){
+    double rem = 1.0;
+    double p, prop;
+    std::vector<double> props;
+    for (int i = 0; i < n_alleles - 1; i++){
+        p = random_gen->beta(0.6, 1.7);
+        prop = rem * p;
+        rem -= prop;
+        props.push_back(prop);
+    }
+    props.push_back(rem);
+    return props;
+}
+
+std::vector<int> Patch::get_num_with_each_allele(std::vector<double> props, int n_alleles, int n_this_locus){
+    std::vector<int> num_per_allele;
+    for (int i = 0; i < n_alleles; i++){
+        num_per_allele.push_back(int(props[i]*n_this_locus));
+    }
+
+    int sum = 0;
+    for (auto& n : num_per_allele)
+        sum += n;
+
+    int index;
+    int resid = n_this_locus - sum;
+    for (int i = 0; i < resid; i++){
+        index = random_gen->uniform_int(0, n_alleles-1);
+        num_per_allele[i]++;
+    }
+    return num_per_allele;
+}
+
+std::vector<double> Patch::gen_alleles(int n_alleles){
+    std::vector<double> alleles;
+    for (int i = 0; i < n_alleles; i++){
+        alleles.push_back(random_gen->uniform_float(0.0, 1.0));
+    }
+    return alleles;
+}
+
+// ==========================================
+// Core Methods
+// ==========================================
+    // Each of these methods are called once per generation
+
+void Patch::migrate(){
+    std::vector<Patch*> surrounding_patches = this->get_surrounding_patches();
+    std::vector<Individual*> indivs = this->get_all_individuals();
+
+    for (Individual* indiv : indivs){
+      indiv->migrate(surrounding_patches);
+    }
+}
 
 void Patch::replace_old_gen(){
     this->empty_patch();
@@ -100,22 +203,6 @@ void Patch::selection(){
     }
 }
 
-// ==========================================
-// Migration
-// ==========================================
-
-void Patch::migrate(){
-    std::vector<Patch*> surrounding_patches = this->get_surrounding_patches();
-    std::vector<Individual*> indivs = this->get_all_individuals();
-
-    for (Individual* indiv : indivs){
-        indiv->migrate(surrounding_patches);
-    }
-}
-
-std::vector<Patch*> Patch::get_surrounding_patches(){
-    return this->board->get_surrounding_patches(this->x, this->y);
-}
 
 // ==========================================
 // Census
@@ -125,100 +212,6 @@ void Patch::census_patch(){
     std::vector<Individual*> indivs = this->get_all_individuals();
     for (Individual* indiv : indivs){
         indiv->census_indiv();
-    }
-}
-
-
-// ==========================================
-// Setup initial population
-// ==========================================
-
-std::vector<double> Patch::generate_allele_freq_from_beta(int n_alleles){
-    double rem = 1.0;
-    double p, prop;
-    std::vector<double> props;
-    for (int i = 0; i < n_alleles - 1; i++){
-        p = random_gen->beta(0.6, 1.7);
-        prop = rem * p;
-        rem -= prop;
-        props.push_back(prop);
-    }
-    props.push_back(rem);
-    return props;
-}
-
-std::vector<int> Patch::get_num_with_each_allele(std::vector<double> props, int n_alleles, int n_this_locus){
-    std::vector<int> num_per_allele;
-    for (int i = 0; i < n_alleles; i++){
-        num_per_allele.push_back(int(props[i]*n_this_locus));
-    }
-
-    int sum = 0;
-    for (auto& n : num_per_allele)
-        sum += n;
-
-    int index;
-    int resid = n_this_locus - sum;
-    for (int i = 0; i < resid; i++){
-        index = random_gen->uniform_int(0, n_alleles-1);
-        num_per_allele[i]++;
-    }
-    return num_per_allele;
-}
-
-std::vector<double> Patch::gen_alleles(int n_alleles){
-    std::vector<double> alleles;
-    for (int i = 0; i < n_alleles; i++){
-        alleles.push_back(random_gen->uniform_float(0.0, 1.0));
-    }
-    return alleles;
-}
-
-void Patch::setup_initial_alleles(){
-    int N_LOCI = params->N_LOCI;
-    std::vector<Individual*> indiv = this->get_all_individuals();
-
-
-    // TODO this could be moved down to the individual level where alleles are
-    // drawn from the distribution but don't completely conform to the proportions.
-
-    for (int locus = 0; locus < N_LOCI; locus++){
-        int n_this_locus = 2*this->n_indiv;
-        int n_alleles = expected_num_neutral_alleles(n_this_locus, params->MUTATION_RATE);
-        std::vector<double> props = this->generate_allele_freq_from_beta(n_alleles);
-        std::vector<int> num_per_allele = this->get_num_with_each_allele(props, n_alleles, n_this_locus);
-        std::vector<double> alleles = this->gen_alleles(n_alleles);
-
-        std::vector<double> allele_map;
-        for (int i = 0; i < n_alleles; i++){
-            int n = num_per_allele[i];
-            for (int j = 0; j < n; j++){
-                allele_map.push_back(alleles[i]);
-            }
-        }
-
-        random_shuffle(std::begin(allele_map), std::end(allele_map));
-
-        int allele_ct = 0;
-        for (int i = 0; i < this->n_indiv; i++){
-            indiv[i]->set_allele(locus, allele_map[allele_ct], 0);
-            allele_ct++;
-            indiv[i]->set_allele(locus, allele_map[allele_ct], 1);
-            allele_ct++;
-        }
-
-
-
-        #if __DEBUG__
-            // Check that no individuals have 0 or 1 as an allele
-            for (int i = 0; i < this->n_indiv; i++){
-                indiv[i]->set_allele(locus, allele_map[allele_ct], 0);
-                allele_ct++;
-                indiv[i]->set_allele(locus, allele_map[allele_ct], 1);
-                allele_ct++;
-            }
-        #endif
-
     }
 }
 
@@ -248,7 +241,7 @@ void Patch::empty_patch(){
 
 
     #if __DEBUG__
-        
+
     #endif
 }
 
@@ -271,6 +264,10 @@ void Patch::remove_individual(Individual* indiv){
 
 int Patch::get_n_indiv(){
     return this->indivs->size();
+}
+
+std::vector<Patch*> Patch::get_surrounding_patches(){
+    return this->board->get_surrounding_patches(this->x, this->y);
 }
 
 std::vector<Individual*> Patch::get_all_individuals(){
