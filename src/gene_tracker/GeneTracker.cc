@@ -17,21 +17,38 @@ allele* GeneTracker::find_allele(int locus, double allele_val){
     return NULL;
 }
 
+void GeneTracker::add_dependent_allele(allele* primary_allele, int dependent_locus, double dependent_allele_val, int x, int y){
+    assert(primary_allele != NULL);
+
+    dependent_allele* dep_al;
+
+    for (dependent_allele* al2 : primary_allele->loci[dependent_locus]){
+        if (al2->allele_val == dependent_allele_val){
+            dep_al = al2;
+            dep_al->freq_map[x][y]++;
+            dep_al->n_total++;
+            return;
+        }
+    }
+
+
+    dep_al = new dependent_allele(dependent_locus, dependent_allele_val);
+    primary_allele->loci[dependent_locus].push_back(dep_al);
+
+    dep_al->freq_map[x][y]++;
+    dep_al->n_total++;
+}
+
 void GeneTracker::update_tracker(int locus, double allele_val, int x, int y){
 
-    // TODO
-        // init doesn't set all alleles to non-zero value?
-            // every other allele?  
-        // something in erase data causes it to seg fault
-        // maybe don't erase and reset nums each census. lets you track lost alleles
     allele* allele_struct = this->find_allele(locus, allele_val);
     if (allele_struct != NULL){
-        allele_struct->n_observed_total++;
+        allele_struct->n_total++;
         allele_struct->freq_map[x][y]++;
     }
     else{
         allele* new_allele = new allele(locus, allele_val);
-        new_allele->n_observed_total++;
+        new_allele->n_total++;
         new_allele->freq_map[x][y]++;
         this->allele_map[locus].push_back(new_allele);
     }
@@ -46,17 +63,35 @@ void GeneTracker::erase_data(){
     std::vector<allele*> allele_vec;
     int N = params->BOARD_SIZE;
 
-    for (int locus = 0; locus < n_loci; locus++){
-        allele_vec = this->allele_map[locus];
+    for (int l1 = 0; l1 < n_loci; l1++){
+        allele_vec = this->allele_map[l1];
         for(allele* al: allele_vec) {
-            // reset freq_map
             for (int i = 0; i < N; i++){
                 for (int j = 0; j < N; j++){
                     al->freq_map[i][j] = 0;
                 }
             }
 
-            al->n_observed_total = 0;
+            al->n_total = 0;
+
+        /*    for (int l2 = l1+1; l2 < n_loci; l2++ ){
+                for (dependent_allele* al2: al->loci[l2]){
+                    delete al2;
+                }
+            }*/
+
+            for (int l2 = l1+1; l2 < n_loci; l2++ ){
+                for (dependent_allele* al2: al->loci[l2]){
+                    al2->n_total = 0;
+                    for (int i = 0; i < N; i++){
+                        for (int j = 0; j < N; j++){
+                            al2->freq_map[i][j] = 0;
+                        }
+                    }
+                }
+            }
+            //delete al;
         }
     }
+
 }

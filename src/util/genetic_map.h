@@ -11,6 +11,7 @@ typedef struct genetic_map_s{
     std::vector<int> chromo_map;
     std::vector<int> pref_loci;
     std::vector<int> fitness_loci;
+    std::vector<int> neutral_loci;
     int m_locus;
     int f_locus;
     int c_locus;

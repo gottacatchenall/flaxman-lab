@@ -11,9 +11,10 @@ class Patch{
         int x;
         int y;
         int n_indiv;
+        bool fragmented;
 
         Board* board;
-
+        double max_fitness;
         std::vector<int> envFactor_values;
 
         // HASHTABLE of individuals on the tile.
@@ -41,6 +42,8 @@ class Patch{
         void replace_old_gen();
 
         // Miscellaneous utility methods
+        void mark_patch_fragmented();
+        bool is_fragmented();
         std::vector<Patch*> get_surrounding_patches();
         void add_individual(Individual* indiv);
         void remove_individual(Individual* indiv);
@@ -49,6 +52,8 @@ class Patch{
         void empty_patch();
 
         // Getters and Setters
+        void set_max_fitness(double fitness);
+        double get_max_fitness();
         int get_x();
         int get_y();
         int get_envFactor_value(int envFactor);

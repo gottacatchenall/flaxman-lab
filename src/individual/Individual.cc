@@ -11,11 +11,17 @@ int Individual::id_counter = 0;
 Individual::Individual(Patch* patch, int sex){
     this->id = this->id_counter++;
     this->sex = sex;
+    this->w = 0.0;
     this->patch = patch;
 
     int n_loci = params->N_LOCI;
     this->haplotype0 = new double[n_loci];
     this->haplotype1 = new double[n_loci];
+}
+
+Individual::~Individual(){
+    delete this->haplotype0;
+    delete this->haplotype1;
 }
 
 void Individual::set_haplotype(int haplo_num, double* haplotype){
@@ -85,6 +91,30 @@ void Individual::census_indiv(){
     }
 }
 
+void Individual::census_dependent_alleles(){
+    // void add_dependent_allele(allele* primary_allele, int dependent_locus, double dependent_allele_val, int x, int y){
+    // gene_tracker->find_allele(int locus, double allele_val)
+    int n_loci = params->N_LOCI;
+    int x = this->patch->get_x();
+    int y = this->patch->get_y();
+
+    allele* al1_1;
+    allele* al1_2;
+
+    for (int l1 = 0; l1 < n_loci; l1++){
+        al1_1 = gene_tracker->find_allele(l1, this->get_allele(l1, 0));
+        al1_2 = gene_tracker->find_allele(l1, this->get_allele(l1, 1));
+
+        for (int l2 = l1+1; l2 < n_loci; l2++){
+            gene_tracker->add_dependent_allele(al1_1, l2, this->get_allele(l2, 0), x, y);
+            gene_tracker->add_dependent_allele(al1_1, l2, this->get_allele(l2, 1), x, y);
+            gene_tracker->add_dependent_allele(al1_2, l2, this->get_allele(l2, 0), x, y);
+            gene_tracker->add_dependent_allele(al1_2, l2, this->get_allele(l2, 1), x, y);
+        }
+    }
+
+}
+
 // ==========================================
 // Selection
 // ==========================================
@@ -95,30 +125,31 @@ double Individual::fitness_gaussian(double diff){
 
 double Individual::calc_fitness(){
     int n_fitness_loci = params->N_ENV_FACTORS;
-    double max_fitness = n_fitness_loci*2;
+    //double max_fitness = n_fitness_loci*2;
     int locus;
-    double env_factor_val, allele_val, diff;
+    double theta_i, x_i, s_i, w_i;
 
+    double w = 1.0;
+    double s_max_i = 0.1;
 
-    /* Additive fitness */
-
-    double fitness = 0.0;
 
     for (int i = 0; i < n_fitness_loci; i++){
         locus = genetic_map->fitness_loci[i];
-        env_factor_val = this->patch->get_envFactor_value(i);
+        theta_i = patch->get_envFactor_value(i);
 
-        allele_val = this->get_allele(locus, 0);
-        diff = env_factor_val - allele_val;
-        fitness += this->fitness_gaussian(diff);
+        x_i = this->get_allele(locus, 0);
+        s_i = s_max_i * exp(-(x_i - theta_i)*(x_i - theta_i));
+        w_i = 1.0 + s_i;
+        w = w * w_i;
 
-        allele_val = this->get_allele(locus, 1);
-        diff = env_factor_val - allele_val;
-        fitness += this->fitness_gaussian(diff);
+        x_i = this->get_allele(locus, 1);
+        s_i = s_max_i * exp(-(x_i - theta_i)*(x_i - theta_i));
+        w_i = 1.0 + s_i;
+        w = w * w_i;
     }
 
-    double norm_fitness = fitness/max_fitness;
-    return norm_fitness;
+    this->w = w;
+    return w;
 }
 
 double Individual::beverton_holt_prob(double k_prime){
@@ -130,8 +161,8 @@ double Individual::beverton_holt_prob(double k_prime){
     return prob;
 }
 
-bool Individual::selection(){
-    double fitness = this->calc_fitness();
+bool Individual::selection(double max_fit){
+    double fitness = double(this->w)/double(max_fit);
     double k_prime = double(params->CARRYING_CAPACITY * fitness);
     double prob = this->beverton_holt_prob(k_prime);
 
@@ -146,25 +177,37 @@ bool Individual::selection(){
 // ==========================================
 
 double Individual::calc_pref(Patch* patch){
-    double allele_val, env_factor_val;
+
+    int n_fitness_loci = params->N_ENV_FACTORS;
+    //double max_fitness = n_fitness_loci*2;
     int locus;
+    double theta_i, y_i, s_i, p_i;
+
     double pref = 1.0;
-    double diff;
-    int n_pref_loci= params->N_ENV_FACTORS;
-    for (int i = 0; i < n_pref_loci; i++){
-        locus = genetic_map->pref_loci[i];
-        env_factor_val = patch->get_envFactor_value(i);
+    double s_max_i = 0.1;
 
-        allele_val = this->get_allele(locus, 0);
-        diff = abs(allele_val - env_factor_val);
-        pref = pref * diff;
+    double theor_max = 1.0;
 
-        allele_val = this->get_allele(locus, 1);
-        diff = abs(allele_val - env_factor_val);
-        pref = pref * diff;
+    for (int i = 0; i < n_fitness_loci; i++){
+        theor_max = theor_max * 1.1;
     }
 
-    return pref;
+    for (int i = 0; i < n_fitness_loci; i++){
+        locus = genetic_map->pref_loci[i];
+        theta_i = patch->get_envFactor_value(i);
+
+        y_i = this->get_allele(locus, 0);
+        s_i = s_max_i * exp(-(y_i - theta_i)*(y_i - theta_i));
+        p_i = 1.0 + s_i;
+        pref = pref * p_i;
+
+        y_i = this->get_allele(locus, 1);
+        s_i = s_max_i * exp(-(y_i - theta_i)*(y_i - theta_i));
+        p_i = 1.0 + s_i;
+        pref = pref * p_i;
+    }
+
+    return float(pref)/float(theor_max);
 }
 
 void Individual::migrate(std::vector<Patch*> surrounding_patches){
@@ -242,7 +285,6 @@ double* Individual::crossing_over(){
     int current_haplo = random_gen->uniform_int(0,1);
 
     for (int i = 0; i < n_loci; i++){
-
         // Check if at start of a new chromosome
         if (i == genetic_map->chromo_map[curr_chromo]){
             curr_chromo++;
@@ -258,7 +300,15 @@ double* Individual::crossing_over(){
                 current_haplo = !(current_haplo);
             }
         }
-        gamete[i] = this->get_allele(i, current_haplo);
+
+
+        if (random_gen->uniform_float(0,1) < params->MUTATION_RATE){
+            gamete[i] = random_gen->uniform_float(0,1);
+        }
+
+        else{
+            gamete[i] = this->get_allele(i, current_haplo);
+        }
     }
 
     return gamete;

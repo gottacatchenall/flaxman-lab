@@ -35,7 +35,10 @@ class Logger{
         std::string get_patch_file(std::string patch_dir_path, int x, int y);
         void write_patch_data(std::string patch_dir_path, int x, int y, int locus, double allele_val, double freq);
         void write_generation_map(std::string gen_dir_path, std::vector<std::vector<int>> map);
-        void write_generation_data(int gen, std::vector<std::vector<int>> map);
+        void write_global_ld(std::string gen_dir_path, int l1, double al1_val, int l2, double al2_val, double ld);
+        void write_fitness_ld(std::string gen_dir_path, int l1, double al1_val, int l2, double al2_val, double ld);
+        void write_patch_ld();
+        void write_generation_data(int gen, std::vector<std::vector<int>> map, int n_total);
 };
 
 #endif

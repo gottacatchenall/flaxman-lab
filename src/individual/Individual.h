@@ -11,17 +11,19 @@ class Individual{
         int sex;
         Patch* patch;
 
+        double w;
         double* haplotype0;
         double* haplotype1;
     public:
         Individual(Patch* patch, int sex);
+        ~Individual();
         int get_id();
         int get_sex();
         void migrate(std::vector<Patch*> surrounding_patches);
         double fitness_gaussian(double diff);
         double beverton_holt_prob(double k_prime);
         double calc_fitness();
-        bool selection();
+        bool selection(double max_fit);
 
         double calc_pref(Patch* patch);
         void choose_mate();
@@ -36,6 +38,8 @@ class Individual{
         void reproduce(Individual* mate);
 
         void census_indiv();
+        void census_dependent_alleles();
+
 };
 
 #endif

@@ -38,10 +38,21 @@ genetic_map_s* generate_genetic_map(){
         }
     }
 
+    for (int i = 0; i < params->N_LOCI; i++){
+        for (int j = 0; j < params->N_ENV_FACTORS; j++){
+            if (map->fitness_loci[j] == i || map->pref_loci[j] == i){
+
+            }
+            else{
+                map->neutral_loci.push_back(i);
+            }
+        }
+    }
+
     std::sort(map->chromo_map.begin(), map->chromo_map.end());
     std::sort(map->pref_loci.begin(), map->pref_loci.end());
     std::sort(map->fitness_loci.begin(), map->fitness_loci.end());
-
+    std::sort(map->neutral_loci.begin(), map->neutral_loci.end());
 
     assert(map->chromo_map.size() == params->N_CHROMOSOMES);
     assert(map->pref_loci.size() == params->N_ENV_FACTORS);

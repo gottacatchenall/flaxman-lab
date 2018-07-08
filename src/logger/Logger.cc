@@ -4,6 +4,7 @@
 #include "Individual.h"
 #include "TimeTracker.h"
 #include "GeneTracker.h"
+#include "genetic_map.h"
 
 Logger::Logger(std::string dir){
     double start_time = time_tracker->get_start_time();
@@ -112,6 +113,11 @@ void Logger::make_symlinks_to_vis_tools(){
     std::string population_symlink_path = this->run_dir_path + "populations.py";
     std::string population_path = vis_tool_path + "populations.py";
     symlink(population_path.c_str(), population_symlink_path.c_str());
+
+    // ld.py
+    std::string ld_symlink_path = this->run_dir_path + "ld.py";
+    std::string ld_path = vis_tool_path + "ld.py";
+    symlink(ld_path.c_str(), ld_symlink_path.c_str());
 }
 
 void Logger::write_metadata(){
@@ -136,6 +142,17 @@ void Logger::write_metadata(){
 
     metadata_file << "ENV_FACTOR_CUTOFF: " << params->ENV_FACTOR_CUTOFF << "\n";
     metadata_file << "ENV_FACTOR_H_VALUE: " << params->ENV_FACTOR_H_VALUE << "\n";
+
+    metadata_file << "======================================\n";
+    metadata_file << "LOCI\n";
+    metadata_file << "======================================\n\n";
+
+    metadata_file << "FITNESS LOCI: [ ";
+
+    for (int i = 0; i < params->N_ENV_FACTORS; i++){
+        metadata_file << genetic_map->fitness_loci[i] << ", ";
+    }
+    metadata_file << "]\n";
 
     metadata_file.close();
 }
@@ -239,7 +256,25 @@ void Logger::write_patch_data(std::string patch_dir_path, int x, int y, int locu
 
 }
 
-void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map){
+void Logger::write_global_ld(std::string gen_dir_path, int l1, double al1_val, int l2, double al2_val, double ld){
+    std::string ld_file_path = gen_dir_path + "ld.csv";
+
+    std::ofstream ld_file;
+    ld_file.open(ld_file_path.c_str(), std::fstream::app);
+
+    ld_file << std::to_string(l1) + "," + std::to_string(al1_val) + "," + std::to_string(l2)  + "," + std::to_string(al2_val) + "," + std::to_string(ld) + "\n";
+}
+
+void Logger::write_fitness_ld(std::string gen_dir_path, int l1, double al1_val, int l2, double al2_val, double ld){
+    std::string ld_file_path = gen_dir_path + "fitness_ld.csv";
+
+    std::ofstream ld_file;
+    ld_file.open(ld_file_path.c_str(), std::fstream::app);
+
+    ld_file << std::to_string(l1) + "," + std::to_string(al1_val) + "," + std::to_string(l2)  + "," + std::to_string(al2_val) + "," + std::to_string(ld) + "\n";
+}
+
+void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map, int n_total){
     double start_time = time_tracker->get_start_time();
     std::string gen_dir_path = this->make_gen_directory(gen);
     std::string patch_dir_path = this->make_patch_directory(gen_dir_path);
@@ -251,19 +286,77 @@ void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map){
     int N = params->BOARD_SIZE;
     int patch_size;
     double freq;
-
     std::vector<allele*> alleles;
 
-    for (int locus = 0; locus < n_loci; locus++){
-        alleles = gene_tracker->get_locus_vector(locus);
+    double f_al1, f_al2, f_both, ld;
 
-        for (allele* al: alleles){
+    int k_val = params->N_ENV_FACTORS;
+    int l1,l2;
+    for (int i1 = 0; i1 < k_val; i1++){
+        l1 = genetic_map->fitness_loci[i1];
+        alleles = gene_tracker->get_locus_vector(l1);
+        for (int i2 = i1+1; i2 < k_val; i2++){
+            l2 = genetic_map->fitness_loci[i2];
+            for (allele* al1: alleles){
+                for (dependent_allele* al2 : al1->loci[l2]){
+                    // overall ld
+                    f_both = double(al2->n_total)/double(4*n_total);
+                    f_al1 = double(al1->n_total)/double(2*n_total);
+                    f_al2 = double(gene_tracker->find_allele(al2->locus, al2->allele_val)->n_total)/double(2*n_total);
+
+                    if (!(f_al1 >= 0.0 && f_al1 <= 1.0) || !((f_al2 >= 0.0 && f_al2 <= 1.0)) || !(f_both >= 0.0 && f_both <= 1.0)){
+                        printf("ld assert\n");
+                    }
+
+
+                    if (f_al1 != 0 && f_al2 != 0){
+                        ld = (f_al1 * f_al2) - f_both;
+                        this->write_fitness_ld(gen_dir_path, l1, al1->allele_val, l2, al2->allele_val, ld);
+                    }
+
+
+                }
+            }
+        }
+    }
+
+
+
+
+    for (int l1 = 0; l1 < n_loci; l1++){
+        alleles = gene_tracker->get_locus_vector(l1);
+        for (allele* al1: alleles){
+
             for (int i = 0; i < N; i++){
                 for (int j = 0; j < N; j++){
-                    if (al->freq_map[i][j] > 0){
+                    if (al1->freq_map[i][j] > 0){
                         patch_size = map[i][j];
-                        freq = double(al->freq_map[i][j])/ double(2*patch_size);
-                        this->write_patch_data(patch_dir_path, i, j, locus, al->allele_val, freq);
+                        freq = double(al1->freq_map[i][j])/ double(2*patch_size);
+                        this->write_patch_data(patch_dir_path, i, j, al1->locus, al1->allele_val, freq);
+                    }
+                }
+            }
+
+            for (int l2 = l1+1; l2 < n_loci; l2++){
+                for (dependent_allele* al2 : al1->loci[l2]){
+                    // overall ld
+                    f_both = double(al2->n_total)/double(4*n_total);
+                    f_al1 = double(al1->n_total)/double(2*n_total);
+                    f_al2 = double(gene_tracker->find_allele(al2->locus, al2->allele_val)->n_total)/double(2*n_total);
+
+                    if (!(f_al1 >= 0.0 && f_al1 <= 1.0) || !((f_al2 >= 0.0 && f_al2 <= 1.0)) || !(f_both >= 0.0 && f_both <= 1.0)){
+                        //assert(f_al1 >= 0.0 && f_al1 <= 1.0);
+                        //assert(f_al2 >= 0.0 && f_al2 <= 1.0);
+                        //assert(f_both >= 0.0 && f_both <= 1.0);
+                        printf("ld assert\n");
+                    }
+
+
+
+                    ld = (f_al1 * f_al2) - f_both;
+                    if (f_al1 != 0 && f_al2 != 0){
+                        ld = (f_al1 * f_al2) - f_both;
+                        this->write_global_ld(gen_dir_path, l1, al1->allele_val, l2, al2->allele_val, ld);
                     }
                 }
             }

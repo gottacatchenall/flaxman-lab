@@ -58,17 +58,28 @@ int main(int argc, char* argv[]){
 
     int i;
     int n_gen = params->N_GENERATIONS;
-    for (i = 0; i < n_gen; i++){
+
+
+    int fraglo = 2000;
+    int fraghi = 5000;
+
+    for (i = 0; i < n_gen+1; i++){
         board->migrate();
         board->selection();
 
-        board->census_pop(i);
+        if (i % 400 == 0){
+            board->census_pop(i);
+        }
 
         board->mating();
-        board->next_gen(i);
+
+        if (i > fraglo && i < fraghi){
+            board->next_gen(i);
+        }
+
 
         // Print gen to console
-        if (i % 100 == 0){
+        if (i % 10 == 0){
             printf("\t=== Generation: [%d / %d] === \r", i, n_gen);
             std::cout.flush();
         }

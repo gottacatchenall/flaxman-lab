@@ -10,7 +10,8 @@ def population_data(abs_path):
     os.chdir(abs_path)
     dirs = glob.glob('*')
     for dir in dirs:
-        file = dir + '/' + dir + '.csv'
+        print dir
+        file = dir + '/generation_map.csv'
         with open(file, 'rU') as p:
             m = np.genfromtxt(p, delimiter=',')
             maps.append({'gen': int(dir), 'map': m})

@@ -18,7 +18,6 @@ class EnvFactor{
         int get_cell_value(int x, int y);
         int get_id();
         int get_board_size();
-        void generate_fractal();
 };
 
 #endif

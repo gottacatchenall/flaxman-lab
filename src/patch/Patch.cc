@@ -9,10 +9,11 @@
 
 Patch::Patch(Board *board, int x, int y){
     this->n_indiv = 0;
+    this->max_fitness = 0.0;
     this->x = x;
     this->y = y;
     this->board = board;
-
+    this->fragmented = false;
     this->indivs = new std::unordered_map<int, Individual*>;
     this->next_gen = new std::unordered_map<int, Individual*>;
     for (int i = 0; i < params->N_ENV_FACTORS; i++){
@@ -36,6 +37,7 @@ void Patch::setup_initial_alleles(){
     for (int locus = 0; locus < N_LOCI; locus++){
         int n_this_locus = 2*this->n_indiv;
         int n_alleles = expected_num_neutral_alleles(n_this_locus, params->MUTATION_RATE);
+
         std::vector<double> props = this->generate_allele_freq_from_beta(n_alleles);
         std::vector<int> num_per_allele = this->get_num_with_each_allele(props, n_alleles, n_this_locus);
         std::vector<double> alleles = this->gen_alleles(n_alleles);
@@ -151,7 +153,11 @@ void Patch::mating(){
         }
     }
 
-    if (males.size() == 0 || females.size() == 0){
+    if (males.size() < 1 || females.size() < 1){
+        return;
+    }
+
+    if (males.size() + females.size() < 2){
         return;
     }
 
@@ -193,14 +199,25 @@ void Patch::mating(){
 
 void Patch::selection(){
     std::vector<Individual*> indivs = this->get_all_individuals();
+    double w;
     bool surv;
+
     for (Individual* indiv : indivs){
-        surv = indiv->selection();
+        w = indiv->calc_fitness();
+        if (w > this->max_fitness){
+            this->max_fitness = w;
+        }
+    }
+
+    for (Individual* indiv : indivs){
+        surv = indiv->selection(this->max_fitness);
         if (!surv){
             this->remove_individual(indiv);
             delete indiv;
         }
     }
+
+    this->set_max_fitness(0.0);
 }
 
 
@@ -213,11 +230,24 @@ void Patch::census_patch(){
     for (Individual* indiv : indivs){
         indiv->census_indiv();
     }
+
+    for (Individual* indiv : indivs){
+        indiv->census_dependent_alleles();
+    }
 }
 
 // ==========================================
 // Utility functions
 // ==========================================
+
+void Patch::mark_patch_fragmented(){
+    this->fragmented = true;
+    this->empty_patch();
+}
+
+bool Patch::is_fragmented(){
+    return this->fragmented;
+}
 
 int Patch::get_x(){
     return this->x;
@@ -245,6 +275,13 @@ void Patch::empty_patch(){
     #endif
 }
 
+
+void Patch::set_max_fitness(double fitness){
+    this->max_fitness = fitness;
+}
+double Patch::get_max_fitness(){
+    return this->max_fitness;
+}
 
 void Patch::add_offspring(Individual* offspring){
     std::pair<int, Individual*> value(offspring->get_id(), offspring);

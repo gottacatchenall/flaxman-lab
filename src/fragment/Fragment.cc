@@ -39,6 +39,46 @@ Fragment::Fragment(){
 int** Fragment::create_fragment_map(){
     int** map = fractal->generate_fractal(0.1, .2);
 
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            map[i][j] = 0;
+        }
+    }
+
+    int x,y;
+    std::vector<int> x_vals;
+    std::vector<int> y_vals;
+    bool new_coord;
+    double frac = 0.0;
+    double lower = params->FRAGMENT_AMOUNT_LOW;
+    while (frac < lower){
+        x = random_gen->uniform_int(0,this->BOARD_SIZE-1);
+        y = random_gen->uniform_int(0,this->BOARD_SIZE-1);
+        new_coord = true;
+        for (int i = 0; i < x_vals.size(); i++){
+            if (x_vals[i] == x && y_vals[i] == y){
+                new_coord = false;
+            }
+        }
+        if (new_coord){
+            x_vals.push_back(x);
+            y_vals.push_back(y);
+        }
+
+        frac = float(x_vals.size())/float(this->BOARD_SIZE*this->BOARD_SIZE);
+
+    }
+
+    for (int i = 0; i < x_vals.size(); i++){
+        x = x_vals[i];
+        y = y_vals[i];
+        map[x][y] = 1;
+    }
+
+
+    /*
+    int** map = fractal->generate_fractal(0.1, .2);
+
     int total = (this->BOARD_SIZE) * (this->BOARD_SIZE);
     int c = this->count_zeros(map);
     float frac = float(c) / float(total);
@@ -74,7 +114,7 @@ int** Fragment::create_fragment_map(){
         frac = float(c) / float(total);
         free(adj_map);
         it_count++;
-    }
+    }*/
 
     return map;
 }
@@ -104,7 +144,7 @@ void Fragment::setup_fragment_heap(){
     }
 }
 
-void Fragment::fragment_more(int gen){
+std::vector<int> Fragment::fragment_more(int gen){
     double ran = random_gen->uniform_float(0.0, 1.0);
     if (ran < this->FRAGMENT_PROBABILITY){
         if (this->fragment_heap.size() > 0){
@@ -112,11 +152,13 @@ void Fragment::fragment_more(int gen){
             this->fragment_heap.pop();
             this->set_cell_value(pt->x, pt->y, 0);
             logger->write_fragmentation_data(gen, pt->x, pt->y);
+            std::vector<int> point_vec(pt->x, pt->y);
             free(pt);
-            return;
+            return point_vec;
         }
     }
     logger->write_fragmentation_data(gen, -1, -1);
+    return std::vector<int>();
 }
 
 void Fragment::set_cell_value(int x, int y, int val){

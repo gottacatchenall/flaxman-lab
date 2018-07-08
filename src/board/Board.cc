@@ -83,37 +83,34 @@ void Board::allocate_individuals(){
 
     // Pick locations of patches that will be initially occupied
     int n_patches = params->N_MAX_INIT_OCCUPIED_PATCHES;
-    int x[n_patches];
-    int y[n_patches];
-
-    for (int i = 0; i < n_patches; i++){
-        x[i] = random_gen->uniform_int(0, this->BOARD_SIZE-1);
-        y[i] = random_gen->uniform_int(0, this->BOARD_SIZE-1);
-    }
-
-    // Put individuals in these patches
+    int x;
+    int y;
     int n_indiv = params->N_INDIVIDUALS;
     int random_index, sex;
     Individual* indiv;
 
-    for (int i = 0; i < n_indiv; i++){
-        random_index = random_gen->uniform_int(0, n_patches-1);
-        Patch* patch = this->get_patch(x[random_index], y[random_index]);
-        if (i < int(n_indiv/2)){
-            sex = FEMALE;
+    for (int i = 0; i < n_patches; i++){
+        x = random_gen->uniform_int(0, this->BOARD_SIZE-1);
+        y = random_gen->uniform_int(0, this->BOARD_SIZE-1);
+        for (int i = 0; i < n_indiv; i++){
+            random_index = random_gen->uniform_int(0, n_patches-1);
+            Patch* patch = this->get_patch(x, y);
+            if (i < int(n_indiv/2)){
+                sex = FEMALE;
+            }
+            else{
+                sex = MALE;
+            }
+            indiv = new Individual(patch, sex);
+            patch->add_individual(indiv);
+            this->mark_patch_occupied(patch);
         }
-        else{
-            sex = MALE;
-        }
-        indiv = new Individual(patch, sex);
-        patch->add_individual(indiv);
-        this->mark_patch_occupied(patch);
     }
 }
 
 /* Board::setup_initial_alleles()
     Sets up the initial genotype of all of the individuals. The distribution of alleles,
-    and the allelic values, and unique to each patch. 
+    and the allelic values, and unique to each patch.
 */
 void Board::setup_initial_alleles(){
     Patch* patch;
@@ -204,14 +201,21 @@ void Board::census_pop(int gen){
         }
     }
 
-    logger->write_generation_data(gen, map);
+    int n_total = this->get_total_num_indivs();
+
+    logger->write_generation_data(gen, map, n_total);
 
     gene_tracker->erase_data();
     time_tracker->add_time_in_census(start_time);
 }
 
 void Board::next_gen(int gen){
-    this->fragment->fragment_more(gen);
+    std::vector<int> fragment_point = this->fragment->fragment_more(gen);
+    if (!fragment_point.empty()){
+        if (this->on_board(fragment_point[0], fragment_point[1])){
+            this->get_patch(fragment_point[0], fragment_point[1])->mark_patch_fragmented();
+        }
+    }
 }
 
 // ===============================================
@@ -249,11 +253,15 @@ bool Board::on_board(int x, int y){
 std::vector<Patch*> Board::get_surrounding_patches(int x, int y){
     int migration_dist = params->MIGRATION_DISTANCE;
     std::vector<Patch*> surrounding_patches;
+    Patch* tmp;
 
     for (int i = -1*migration_dist; i <= migration_dist; i++){
         for (int j = -1*migration_dist; j <= migration_dist; j++){
             if (!(i == 0 && j == 0) && this->on_board(x+i, y+j)){
-                surrounding_patches.push_back(this->get_patch(x+i, y+j));
+                tmp = this->get_patch(x+i, y+j);
+                if (tmp->is_fragmented() == false){
+                    surrounding_patches.push_back(tmp);
+                }
             }
         }
     }
@@ -269,7 +277,11 @@ std::vector<Patch*> Board::get_surrounding_patches(int x, int y){
         Returns a pointer to the Patch object with location (x,y)
 */
 Patch* Board::get_patch(int x, int y){
-    return this->grid[x][y];
+    if (this->on_board(x,y)){
+        return this->grid[x][y];
+    }
+    printf("patch off board: %d %d \n", x,y);
+    return NULL;
 }
 
 
@@ -280,6 +292,16 @@ int Board::get_envFactor_value(int x, int y, int envFactor){
     return this->envFactors[envFactor]->get_cell_value(x,y);
 }
 
+int Board::get_total_num_indivs(){
+    int pop = 0;
+    for (int i = 0; i < this->BOARD_SIZE; i++){
+        for (int j = 0; j < this->BOARD_SIZE; j++){
+            pop += this->get_patch(i,j)->get_n_indiv();
+        }
+    }
+
+    return pop;
+}
 
 // ===============================================
 // Testing and Validation

@@ -4,6 +4,7 @@
 
 #include "include.h"
 #include <queue>
+#include <vector>
 
 typedef struct fragment_point{
     fragment_point(int x0, int y0, int key0){
@@ -40,7 +41,7 @@ class Fragment{
         Fragment();
         int** create_fragment_map();
         int count_zeros(int **map);
-        void fragment_more(int gen);
+        std::vector<int> fragment_more(int gen);
         void setup_fragment_heap();
         int get_board_size();
         void set_cell_value(int x, int y, int val);
