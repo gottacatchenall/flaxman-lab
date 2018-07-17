@@ -164,10 +164,16 @@ void Patch::mating(){
     int rand_index, n_offspring, sex;
     Individual *male, *offspring;
     double *haplo0, *haplo1;
+    bool parent_is_migrant;
 
     for (Individual* female: females){
+        parent_is_migrant = false;
         rand_index = random_gen->uniform_int(0, males.size()-1);
         male = males[rand_index];
+
+        if (female->is_migrant() || male->is_migrant()){
+            parent_is_migrant = true;
+        }
 
         n_offspring = random_gen->n_offspring();
 
@@ -183,7 +189,7 @@ void Patch::mating(){
                 sex = FEMALE;
             }
 
-            offspring = new Individual(this, sex);
+            offspring = new Individual(this, sex, parent_is_migrant);
             offspring->set_haplotype(0, haplo0);
             offspring->set_haplotype(1, haplo1);
             this->add_offspring(offspring);
@@ -302,6 +308,20 @@ void Patch::remove_individual(Individual* indiv){
 int Patch::get_n_indiv(){
     return this->indivs->size();
 }
+
+double Patch::calc_effective_migration_rate(){
+    std::vector<Individual*> indivs = this->get_all_individuals();
+    int ct = 0;
+    for (Individual* in : indivs){
+        if (in->is_parent_migrant()){
+            ct++;
+        }
+    }
+
+    return double(ct)/double(this->get_n_indiv());
+
+}
+
 
 std::vector<Patch*> Patch::get_surrounding_patches(){
     return this->board->get_surrounding_patches(this->x, this->y);

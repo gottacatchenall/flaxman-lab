@@ -241,6 +241,27 @@ void Logger::write_generation_map(std::string gen_dir_path, std::vector<std::vec
 
 }
 
+void Logger::write_effective_migration_rates(std::string gen_dir_path, std::vector<std::vector<double>> eff_mig_rates){
+    std::ofstream mig_file;
+    std::string file_path = gen_dir_path + "eff_migration.csv";
+    mig_file.open(file_path.c_str(), std::fstream::app);
+
+    int board_size = params->BOARD_SIZE;
+    double val;
+    std::string val_str;
+
+    for (int j = board_size-1; j >= 0; j--){
+        for (int i = 0; i < board_size; i++){
+            val = eff_mig_rates[i][j];
+            mig_file << std::to_string(val);
+            if (i < board_size- 1){
+                mig_file << ",";
+            }
+        }
+        mig_file << "\n";
+    }
+}
+
 std::string Logger::get_patch_file(std::string patch_dir_path, int x, int y){
     return patch_dir_path + std::to_string(x) + "_" + std::to_string(y) + ".csv";
 }
@@ -274,13 +295,13 @@ void Logger::write_fitness_ld(std::string gen_dir_path, int l1, double al1_val, 
     ld_file << std::to_string(l1) + "," + std::to_string(al1_val) + "," + std::to_string(l2)  + "," + std::to_string(al2_val) + "," + std::to_string(ld) + "\n";
 }
 
-void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map, int n_total){
+void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map, std::vector<std::vector<double>> eff_mig_rates, int n_total){
     double start_time = time_tracker->get_start_time();
     std::string gen_dir_path = this->make_gen_directory(gen);
     std::string patch_dir_path = this->make_patch_directory(gen_dir_path);
 
     this->write_generation_map(gen_dir_path, map);
-
+    this->write_effective_migration_rates(gen_dir_path, eff_mig_rates);
     // locus by locus
     int n_loci = params->N_LOCI;
     int N = params->BOARD_SIZE;

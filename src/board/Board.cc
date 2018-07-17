@@ -101,7 +101,7 @@ void Board::allocate_individuals(){
             else{
                 sex = MALE;
             }
-            indiv = new Individual(patch, sex);
+            indiv = new Individual(patch, sex, false);
             patch->add_individual(indiv);
             this->mark_patch_occupied(patch);
         }
@@ -189,10 +189,15 @@ void Board::census_pop(int gen){
     Patch* patch;
     int n;
     std::vector<std::vector<int>> map(this->BOARD_SIZE,std::vector<int>(this->BOARD_SIZE));
+    std::vector<std::vector<double>> eff_mig_rates(this->BOARD_SIZE,std::vector<double>(this->BOARD_SIZE));
+
+
     for (int i = 0; i < this->BOARD_SIZE; i++){
         for (int j = 0; j < this->BOARD_SIZE; j++){
             patch = this->get_patch(i,j);
             n = patch->get_n_indiv();
+
+            eff_mig_rates[i][j] = patch->calc_effective_migration_rate();
             map[i][j] = n;
 
             if (n > 0){
@@ -203,7 +208,7 @@ void Board::census_pop(int gen){
 
     int n_total = this->get_total_num_indivs();
 
-    logger->write_generation_data(gen, map, n_total);
+    logger->write_generation_data(gen, map, eff_mig_rates, n_total);
 
     gene_tracker->erase_data();
     time_tracker->add_time_in_census(start_time);

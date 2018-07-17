@@ -11,8 +11,10 @@ import matplotlib.pyplot as plt
 
 
 #fitness_loci = [ 5, 6, 12, 18, 18, 33, 36, 37, 55, 58, 60, 62, 68, 73, 74, 76 ]
-fitness_loci = [ 0, 1, 13, 28, 39, 40, 60, 70 ]
-n_loci = 80
+#fitness_loci = [ 0, 1, 13, 28, 39, 40, 60, 70 ]
+fitness_loci = [ 9, 28, 38 ]
+
+n_loci = 50
 
 all_data = []
 
@@ -66,7 +68,7 @@ def plot():
 
     plt.grid(lw=1)
     plt.xticks([0,2500,5000,7500,10000])
-    plt.ylim([0, 0.02])
+    plt.ylim([0, 0.1])
     plt.xlim([0,10000])
     #plt.axis('scaled')
 
@@ -89,10 +91,12 @@ def max_ld_by_locus():
         if ld > max_ld[l2]:
             max_ld[l2] = ld
 
-    for val in fitness_loci:
-        #plt.Rectangle((int(val),1),5,10,linewidth=1,alpha=0.7,edgecolor='grey',facecolor='grey')
-        plt.scatter(val,max_ld[val], color='black', linestyle='--')
-
+    try:
+        for val in fitness_loci:
+            #plt.Rectangle((int(val),1),5,10,linewidth=1,alpha=0.7,edgecolor='grey',facecolor='grey')
+            plt.scatter(val,max_ld[val], color='black', linestyle='--')
+    except:
+        pass
     plt.axhline(np.mean(max_ld), color='black', linestyle='--')
 
     plt.plot([i for i in range(len(max_ld))], max_ld)
@@ -108,5 +112,5 @@ ld_fitness = ld_data("fitness_ld.csv")
 
 ld.sort(key=lambda x: x['gen'])
 ld_fitness.sort(key=lambda x: x['gen'])
-#plot()
+plot()
 max_ld_by_locus()

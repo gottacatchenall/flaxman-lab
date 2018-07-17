@@ -49,6 +49,7 @@ class Patch{
         void remove_individual(Individual* indiv);
         void add_offspring(Individual* offspring);
         std::vector<Individual*> get_all_individuals();
+        double calc_effective_migration_rate();
         void empty_patch();
 
         // Getters and Setters

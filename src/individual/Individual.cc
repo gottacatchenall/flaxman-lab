@@ -8,10 +8,12 @@
 
 int Individual::id_counter = 0;
 
-Individual::Individual(Patch* patch, int sex){
+Individual::Individual(Patch* patch, int sex, bool parent_is_migrant){
     this->id = this->id_counter++;
     this->sex = sex;
     this->w = 0.0;
+    this->migrated = false;
+    this->parent_migrated = parent_is_migrant;
     this->patch = patch;
 
     int n_loci = params->N_LOCI;
@@ -235,6 +237,7 @@ void Individual::migrate(std::vector<Patch*> surrounding_patches){
     }
 
     if (this->patch != best_patch){
+        this->migrated = true;
         this->patch->remove_individual(this);
         best_patch->add_individual(this);
         this->patch = best_patch;
@@ -312,4 +315,13 @@ double* Individual::crossing_over(){
     }
 
     return gamete;
+}
+
+
+bool Individual::is_migrant(){
+    return this->migrated;
+}
+
+bool Individual::is_parent_migrant(){
+    return this->parent_migrated;
 }

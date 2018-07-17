@@ -67,7 +67,7 @@ int main(int argc, char* argv[]){
         board->migrate();
         board->selection();
 
-        if (i % 400 == 0){
+        if (i % 100 == 0){
             board->census_pop(i);
         }
 

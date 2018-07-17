@@ -11,11 +11,14 @@ class Individual{
         int sex;
         Patch* patch;
 
+        bool parent_migrated;
+        bool migrated;
+
         double w;
         double* haplotype0;
         double* haplotype1;
     public:
-        Individual(Patch* patch, int sex);
+        Individual(Patch* patch, int sex, bool parent_is_migrant);
         ~Individual();
         int get_id();
         int get_sex();
@@ -36,6 +39,9 @@ class Individual{
 
         void set_haplotype(int haplo_num, double* haplotype);
         void reproduce(Individual* mate);
+
+        bool is_migrant();
+        bool is_parent_migrant();
 
         void census_indiv();
         void census_dependent_alleles();
