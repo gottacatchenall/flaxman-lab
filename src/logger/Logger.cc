@@ -150,7 +150,11 @@ void Logger::write_metadata(){
     metadata_file << "FITNESS LOCI: [ ";
 
     for (int i = 0; i < params->N_ENV_FACTORS; i++){
-        metadata_file << genetic_map->fitness_loci[i] << ", ";
+        metadata_file << "[";
+        for (int j = 0; j <  params->N_LOCI_PER_ENV_FACTOR; j++){
+            metadata_file << genetic_map->fitness_loci[i][j] << ", ";
+            metadata_file << "]\n";
+        }
     }
     metadata_file << "]\n";
 
@@ -302,87 +306,89 @@ void Logger::write_generation_data(int gen, std::vector<std::vector<int>> map, s
 
     this->write_generation_map(gen_dir_path, map);
     this->write_effective_migration_rates(gen_dir_path, eff_mig_rates);
-    // locus by locus
-    int n_loci = params->N_LOCI;
-    int N = params->BOARD_SIZE;
-    int patch_size;
-    double freq;
-    std::vector<allele*> alleles;
 
-    double f_al1, f_al2, f_both, ld;
 
-    int k_val = params->N_ENV_FACTORS;
-    int l1,l2;
-    for (int i1 = 0; i1 < k_val; i1++){
-        l1 = genetic_map->fitness_loci[i1];
-        alleles = gene_tracker->get_locus_vector(l1);
-        for (int i2 = i1+1; i2 < k_val; i2++){
-            l2 = genetic_map->fitness_loci[i2];
+    if (gen % 50 == 0){
+        // locus by locus
+        int n_loci = params->N_LOCI;
+        int N = params->BOARD_SIZE;
+        int patch_size;
+        double freq;
+        std::vector<allele*> alleles;
+
+        double f_al1, f_al2, f_both, ld;
+
+        /*
+        int k_val = params->N_ENV_FACTORS;
+        int l1,l2;
+        for (int i1 = 0; i1 < k_val; i1++){
+            l1 = genetic_map->fitness_loci[i1];
+            alleles = gene_tracker->get_locus_vector(l1);
+            for (int i2 = i1+1; i2 < k_val; i2++){
+                l2 = genetic_map->fitness_loci[i2];
+                for (allele* al1: alleles){
+                    for (dependent_allele* al2 : al1->loci[l2]){
+                        // overall ld
+                        f_both = double(al2->n_total)/double(4*n_total);
+                        f_al1 = double(al1->n_total)/double(2*n_total);
+                        f_al2 = double(gene_tracker->find_allele(al2->locus, al2->allele_val)->n_total)/double(2*n_total);
+
+                        if (!(f_al1 >= 0.0 && f_al1 <= 1.0) || !((f_al2 >= 0.0 && f_al2 <= 1.0)) || !(f_both >= 0.0 && f_both <= 1.0)){
+                            printf("ld assert\n");
+                        }
+
+
+                        if (f_al1 != 0 && f_al2 != 0){
+                            ld = (f_al1 * f_al2) - f_both;
+                            this->write_fitness_ld(gen_dir_path, l1, al1->allele_val, l2, al2->allele_val, ld);
+                        }
+
+
+                    }
+                }
+            }
+        }
+        */
+
+        for (int l1 = 0; l1 < n_loci; l1++){
+            alleles = gene_tracker->get_locus_vector(l1);
             for (allele* al1: alleles){
-                for (dependent_allele* al2 : al1->loci[l2]){
-                    // overall ld
-                    f_both = double(al2->n_total)/double(4*n_total);
-                    f_al1 = double(al1->n_total)/double(2*n_total);
-                    f_al2 = double(gene_tracker->find_allele(al2->locus, al2->allele_val)->n_total)/double(2*n_total);
 
-                    if (!(f_al1 >= 0.0 && f_al1 <= 1.0) || !((f_al2 >= 0.0 && f_al2 <= 1.0)) || !(f_both >= 0.0 && f_both <= 1.0)){
-                        printf("ld assert\n");
-                    }
-
-
-                    if (f_al1 != 0 && f_al2 != 0){
-                        ld = (f_al1 * f_al2) - f_both;
-                        this->write_fitness_ld(gen_dir_path, l1, al1->allele_val, l2, al2->allele_val, ld);
-                    }
-
-
-                }
-            }
-        }
-    }
-
-
-
-
-    for (int l1 = 0; l1 < n_loci; l1++){
-        alleles = gene_tracker->get_locus_vector(l1);
-        for (allele* al1: alleles){
-
-            for (int i = 0; i < N; i++){
-                for (int j = 0; j < N; j++){
-                    if (al1->freq_map[i][j] > 0){
-                        patch_size = map[i][j];
-                        freq = double(al1->freq_map[i][j])/ double(2*patch_size);
-                        this->write_patch_data(patch_dir_path, i, j, al1->locus, al1->allele_val, freq);
+                for (int i = 0; i < N; i++){
+                    for (int j = 0; j < N; j++){
+                        if (al1->freq_map[i][j] > 0){
+                            patch_size = map[i][j];
+                            freq = double(al1->freq_map[i][j])/ double(2*patch_size);
+                            this->write_patch_data(patch_dir_path, i, j, al1->locus, al1->allele_val, freq);
+                        }
                     }
                 }
-            }
 
-            for (int l2 = l1+1; l2 < n_loci; l2++){
-                for (dependent_allele* al2 : al1->loci[l2]){
-                    // overall ld
-                    f_both = double(al2->n_total)/double(4*n_total);
-                    f_al1 = double(al1->n_total)/double(2*n_total);
-                    f_al2 = double(gene_tracker->find_allele(al2->locus, al2->allele_val)->n_total)/double(2*n_total);
+                for (int l2 = l1+1; l2 < n_loci; l2++){
+                    for (dependent_allele* al2 : al1->loci[l2]){
+                        // overall ld
+                        f_both = double(al2->n_total)/double(4*n_total);
+                        f_al1 = double(al1->n_total)/double(2*n_total);
+                        f_al2 = double(gene_tracker->find_allele(al2->locus, al2->allele_val)->n_total)/double(2*n_total);
 
-                    if (!(f_al1 >= 0.0 && f_al1 <= 1.0) || !((f_al2 >= 0.0 && f_al2 <= 1.0)) || !(f_both >= 0.0 && f_both <= 1.0)){
-                        //assert(f_al1 >= 0.0 && f_al1 <= 1.0);
-                        //assert(f_al2 >= 0.0 && f_al2 <= 1.0);
-                        //assert(f_both >= 0.0 && f_both <= 1.0);
-                        printf("ld assert\n");
-                    }
-
+                        if (!(f_al1 >= 0.0 && f_al1 <= 1.0) || !((f_al2 >= 0.0 && f_al2 <= 1.0)) || !(f_both >= 0.0 && f_both <= 1.0)){
+                            //assert(f_al1 >= 0.0 && f_al1 <= 1.0);
+                            //assert(f_al2 >= 0.0 && f_al2 <= 1.0);
+                            //assert(f_both >= 0.0 && f_both <= 1.0);
+                            printf("ld assert\n");
+                        }
 
 
-                    ld = (f_al1 * f_al2) - f_both;
-                    if (f_al1 != 0 && f_al2 != 0){
+
                         ld = (f_al1 * f_al2) - f_both;
-                        this->write_global_ld(gen_dir_path, l1, al1->allele_val, l2, al2->allele_val, ld);
+                        if (f_al1 != 0 && f_al2 != 0){
+                            ld = (f_al1 * f_al2) - f_both;
+                            this->write_global_ld(gen_dir_path, l1, al1->allele_val, l2, al2->allele_val, ld);
+                        }
                     }
                 }
             }
         }
     }
-
     time_tracker->add_time_in_logger(start_time);
 }

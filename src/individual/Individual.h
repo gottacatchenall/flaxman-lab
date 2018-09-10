@@ -20,32 +20,32 @@ class Individual{
     public:
         Individual(Patch* patch, int sex, bool parent_is_migrant);
         ~Individual();
-        int get_id();
-        int get_sex();
+
+        // Core methods
+            // These are called once per generation
         void migrate(std::vector<Patch*> surrounding_patches);
+        bool selection(double max_fit);
+        void census_indiv();
+        void census_dependent_alleles();
+
+        // Miscellaneous Utility Methods
         double fitness_gaussian(double diff);
         double beverton_holt_prob(double k_prime);
         double calc_fitness();
-        bool selection(double max_fit);
-
         double calc_pref(Patch* patch);
-        void choose_mate();
-        void set_allele(int locus, double value, int haplo);
-        double get_allele(int locus, int haplo);
-
 
         double* make_gamete();
         double* crossing_over();
 
         void set_haplotype(int haplo_num, double* haplotype);
-        void reproduce(Individual* mate);
 
+        // Getters and Setters
+        int get_id();
+        int get_sex();
+        double get_allele(int locus, int haplo);
+        void set_allele(int locus, double value, int haplo);
         bool is_migrant();
         bool is_parent_migrant();
-
-        void census_indiv();
-        void census_dependent_alleles();
-
 };
 
 #endif

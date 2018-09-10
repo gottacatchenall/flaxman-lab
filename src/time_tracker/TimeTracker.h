@@ -21,7 +21,6 @@ class TimeTracker{
         void add_time_in_selection(double start);
         void add_time_in_mating(double start);
         void add_time_in_random(double start);
-        void add_time_in_setup(double start);
         void add_time_in_census(double start);
         void print_times();
 };

@@ -19,8 +19,6 @@ Board::Board (){
     assert(params->BOARD_SIZE > 0 && "board size must be greater than 0!");
     assert(params->N_ENV_FACTORS > 0 && "the number of environmental factors must be greater than 0!");
 
-    double start_time = time_tracker->get_start_time();
-
     this->BOARD_SIZE = params->BOARD_SIZE;
     this->N_ENV_FACTORS = params->N_ENV_FACTORS;
 
@@ -65,7 +63,6 @@ Board::Board (){
         // Check that Fragment map cover amount is between the supplied parameters
     #endif
 
-    time_tracker->add_time_in_setup(start_time);
 }
 
 
@@ -127,6 +124,10 @@ void Board::setup_initial_alleles(){
 // ===============================================
     // Each of these methods are called once per generation
 
+/*  Board::migrate()
+        Allows individuals to migrate, and after that is done,
+        reassesses which patches are occupied
+*/
 void Board::migrate(){
     Patch* patch;
     double start_time = time_tracker->get_start_time();
@@ -159,6 +160,9 @@ void Board::migrate(){
     time_tracker->add_time_in_migration(start_time);
 }
 
+/*  Board::selection()
+        Individuals in occupied patches undergo selection
+*/
 void Board::selection(){
     double start_time = time_tracker->get_start_time();
 
@@ -171,6 +175,9 @@ void Board::selection(){
     time_tracker->add_time_in_selection(start_time);
 }
 
+/*  Board::mating()
+        Individuals in each occupied patch undergo a round of mating
+*/
 void Board::mating(){
     double start_time = time_tracker->get_start_time();
 
@@ -183,6 +190,9 @@ void Board::mating(){
     time_tracker->add_time_in_mating(start_time);
 }
 
+/*  Board::census_pop(int gen)
+        Censuses metapopulation and logs data for this generation
+*/
 void Board::census_pop(int gen){
     double start_time = time_tracker->get_start_time();
 
@@ -200,7 +210,7 @@ void Board::census_pop(int gen){
             eff_mig_rates[i][j] = patch->calc_effective_migration_rate();
             map[i][j] = n;
 
-            if (n > 0){
+            if (n > 0 && gen % 50 == 0){
                 patch->census_patch();
             }
         }
@@ -214,6 +224,9 @@ void Board::census_pop(int gen){
     time_tracker->add_time_in_census(start_time);
 }
 
+/*  Board::next_gen(int gen)
+        Further fragments landscape
+*/
 void Board::next_gen(int gen){
     std::vector<int> fragment_point = this->fragment->fragment_more(gen);
     if (!fragment_point.empty()){
@@ -227,6 +240,9 @@ void Board::next_gen(int gen){
 // Miscellaneous utility methods
 // ===============================================
 
+/*  Board::mark_patch_occupied(Patch* patch)
+        Adds the Patch* patch to the vector of occupied patches if it isn't already
+*/
 void Board::mark_patch_occupied(Patch* patch){
     int hash_key = (long int) patch;
     if (this->occupied_patches.find(hash_key) == this->occupied_patches.end()){
@@ -234,6 +250,9 @@ void Board::mark_patch_occupied(Patch* patch){
     }
 }
 
+/*  Board::mark_patch_unoccupied(Patch* patch)
+        Removes the Patch* patch from the vector of occupied patches
+*/
 void Board::mark_patch_unoccupied(Patch* patch){
     int hash_key = (long int) patch;
     if (this->occupied_patches.find(hash_key) != this->occupied_patches.end()){

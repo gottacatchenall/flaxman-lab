@@ -41,7 +41,7 @@ int main(int argc, char* argv[]){
     genetic_map = generate_genetic_map();
 
     // Setup Data Logger...
-    int path_buffer_size = 200;
+    int path_buffer_size = 1000;
     char dir_name[path_buffer_size];
     get_execuable_path(dir_name, path_buffer_size);
     logger = new Logger(std::string(dir_name));
@@ -56,31 +56,31 @@ int main(int argc, char* argv[]){
 
     printf("\n");
 
-    int i;
+    int gen;
     int n_gen = params->N_GENERATIONS;
 
 
-    int fraglo = 2000;
-    int fraghi = 5000;
+    int frag_lo = params->FRAGMENTATION_START;
+    int frag_hi = params->FRAGMENTATION_END;
+    int log_freq = params->LOG_FREQUENCY;
 
-    for (i = 0; i < n_gen+1; i++){
+    for (gen = 0; gen < n_gen+1; gen++){
         board->migrate();
         board->selection();
 
-        if (i % 100 == 0){
-            board->census_pop(i);
+        if (gen % log_freq == 0){
+            board->census_pop(gen);
         }
 
         board->mating();
 
-        if (i > fraglo && i < fraghi){
-            board->next_gen(i);
+        if (gen > frag_lo && gen < frag_hi){
+            board->next_gen(gen);
         }
 
-
         // Print gen to console
-        if (i % 10 == 0){
-            printf("\t=== Generation: [%d / %d] === \r", i, n_gen);
+        if (gen % 10 == 0){
+            printf("\t=== Generation: [%d / %d] === \r", gen, n_gen);
             std::cout.flush();
         }
     }

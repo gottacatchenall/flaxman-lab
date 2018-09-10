@@ -36,10 +36,6 @@ void TimeTracker::add_time_in_mating(double start){
     this->time_in_mating += float( clock () - start ) /  CLOCKS_PER_SEC;
 }
 
-void TimeTracker::add_time_in_setup(double start){
-    this->time_in_setup += float( clock () - start ) /  CLOCKS_PER_SEC;
-}
-
 void TimeTracker::add_time_in_census(double start){
     this->time_in_census += float( clock () - start ) /  CLOCKS_PER_SEC;
 }
@@ -48,7 +44,6 @@ void TimeTracker::add_time_in_census(double start){
 void TimeTracker::print_times(){
     double total_run_time = float( clock () - this->total_start_time ) /  CLOCKS_PER_SEC;
 
-    printf("\n\nTime in setup: %.2fsec\n", this->time_in_setup);
     printf("Time in migration: %.2fsec\n", this->time_in_migration);
     printf("Time in selection: %.2fsec\n", this->time_in_selection);
     printf("Time in mating: %.2fsec\n", this->time_in_mating);

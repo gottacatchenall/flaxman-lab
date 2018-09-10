@@ -10,6 +10,11 @@
 
 typedef struct params_s{
     params_s(){
+
+        LOG_FREQUENCY = LOG_FREQUENCY_DEFAULT;
+        FRAGMENTATION_START = FRAGMENTATION_START_DEFAULT;
+        FRAGMENTATION_END = FRAGMENTATION_END_DEFAULT;
+
         RANDOM_SEED_VALUE = RANDOM_SEED_VALUE_DEFAULT;
         RUN_DATA_DIR = "";
         BOARD_SIZE = BOARD_SIZE_DEFAULT;
@@ -22,6 +27,7 @@ typedef struct params_s{
 
         N_CHROMOSOMES = N_CHROMOSOMES_DEFAULT;
         N_LOCI = N_LOCI_DEFAULT;
+        N_LOCI_PER_ENV_FACTOR = N_LOCI_PER_ENV_FACTOR_DEFAULT;
 
         FRAGMENT_AMOUNT_LOW = FRAGMENT_AMOUNT_LOW_DEFAULT;
         FRAGMENT_AMOUNT_HI = FRAGMENT_AMOUNT_HI_DEFAULT;
@@ -44,6 +50,10 @@ typedef struct params_s{
         LINKAGE_MODE = LINKAGE_MODE_DEFAULT;
     }
 
+    int LOG_FREQUENCY;
+    int FRAGMENTATION_START;
+    int FRAGMENTATION_END;
+
     std::string RUN_DATA_DIR;
     int BOARD_SIZE;
     int N_ENV_FACTORS;
@@ -57,6 +67,7 @@ typedef struct params_s{
 
     int N_CHROMOSOMES;
     int N_LOCI;
+    int N_LOCI_PER_ENV_FACTOR;
 
     float FRAGMENT_AMOUNT_LOW;
     float FRAGMENT_AMOUNT_HI;

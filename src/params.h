@@ -1,11 +1,19 @@
 
 // -----------------------------------
+// Runtime
+// -----------------------------------
+
+#define LOG_FREQUENCY_DEFAULT 50 // the number of generations between census and logging
+#define FRAGMENTATION_START_DEFAULT 200 // the generation at which fragmentation begins
+#define FRAGMENTATION_END_DEFAULT 500   // the generation at which fragmentation ends
+
+// -----------------------------------
 // Board
 // -----------------------------------
 
 #define BOARD_SIZE_DEFAULT 16
-#define N_ENV_FACTORS_DEFAULT 3
-#define N_GENERATIONS_DEFAULT 10000
+#define N_ENV_FACTORS_DEFAULT 16
+#define N_GENERATIONS_DEFAULT 1000
 #define RANDOM_SEED_VALUE_DEFAULT time(NULL)
 
 #define CARRYING_CAPACITY_DEFAULT 300
@@ -46,7 +54,8 @@
 #define LINKAGE_MODE_DEFAULT NORMAL_LINKAGE
 
 #define N_CHROMOSOMES_DEFAULT 5
-#define N_LOCI_DEFAULT 50
+#define N_LOCI_DEFAULT 80
+#define N_LOCI_PER_ENV_FACTOR_DEFAULT 1
 #define MUTATION_RATE_DEFAULT 0.00001 // 10^-5
 
-#define GENOME_LENGTH_IN_CENTIMORGANS_DEFAULT 3
+#define GENOME_LENGTH_IN_CENTIMORGANS_DEFAULT 10

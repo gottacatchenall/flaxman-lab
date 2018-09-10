@@ -64,7 +64,7 @@ int** Fractal::generate_fractal(double H_VAL, double CUTOFF){
                 X[x][y] = this->f4(delta, X[x][y+d], X[x][y-d], X[x+d][y], X[x-d][y]);
             }
         }
-
+        
         D = D/2;
         d = d/2;
     }

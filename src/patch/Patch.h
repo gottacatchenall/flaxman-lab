@@ -37,22 +37,22 @@ class Patch{
             // These are each called once per generation
         void migrate();
         void selection();
-        void census_patch();
         void mating();
-        void replace_old_gen();
+        void census_patch();
 
         // Miscellaneous utility methods
-        void mark_patch_fragmented();
-        bool is_fragmented();
-        std::vector<Patch*> get_surrounding_patches();
         void add_individual(Individual* indiv);
         void remove_individual(Individual* indiv);
         void add_offspring(Individual* offspring);
-        std::vector<Individual*> get_all_individuals();
         double calc_effective_migration_rate();
+        void replace_old_gen();
         void empty_patch();
 
         // Getters and Setters
+        void mark_patch_fragmented();
+        bool is_fragmented();
+        std::vector<Patch*> get_surrounding_patches();
+        std::vector<Individual*> get_all_individuals();
         void set_max_fitness(double fitness);
         double get_max_fitness();
         int get_x();
