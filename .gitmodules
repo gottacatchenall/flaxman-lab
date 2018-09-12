@@ -1,0 +1,3 @@
+[submodule "fragmentation_model"]
+	path = fragmentation_model
+	url = https://github.com/gottacatchenall/ebio2040_project
