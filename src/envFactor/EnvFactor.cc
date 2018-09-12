@@ -13,14 +13,14 @@ EnvFactor::EnvFactor(int index){
     this->CUTOFF = params->ENV_FACTOR_CUTOFF;
 
     // Generate the Theta Map
-    this->envFactor_grid = fractal->generate_fractal(this->H_VALUE, this->CUTOFF);
+    this->envFactor_grid = fractal->generate_fractal(this->H_VALUE);
 
     #if __DEBUG__
         // Check that EnvFactor cover amount is between the supplied parameters
     #endif
 }
 
-int EnvFactor::get_cell_value(int x, int y){
+double EnvFactor::get_cell_value(int x, int y){
     return this->envFactor_grid[x][y];
 }
 

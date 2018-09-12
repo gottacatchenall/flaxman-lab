@@ -169,7 +169,7 @@ void Logger::write_envFactor(EnvFactor* envFactor){
     envFactor_file.open(envFactor_file_path.c_str());
 
     int board_size = envFactor->get_board_size();
-    int val;
+    double val;
     std::string val_str;
     for (int j = board_size-1; j >= 0; j--){
         for (int i = 0; i < board_size; i++){

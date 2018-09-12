@@ -7,7 +7,7 @@ Fractal::Fractal(){
     this->BOARD_SIZE = params->BOARD_SIZE;
 }
 
-int** Fractal::generate_fractal(double H_VAL, double CUTOFF){
+double** Fractal::generate_fractal(double H_VAL){
     double X[this->BOARD_SIZE+1][this->BOARD_SIZE+1];
 
     double delta = 1;
@@ -64,12 +64,49 @@ int** Fractal::generate_fractal(double H_VAL, double CUTOFF){
                 X[x][y] = this->f4(delta, X[x][y+d], X[x][y-d], X[x+d][y], X[x-d][y]);
             }
         }
-        
+
         D = D/2;
         d = d/2;
     }
 
     int n = this->BOARD_SIZE;
+    double** grid = new double*[n];
+    for (int i = 0; i < n; i++){
+        grid[i] = new double[n];
+    }
+
+
+    double min = X[0][0];
+    double max = X[0][0];
+
+
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < n; j++){
+            if (X[i][j] > max){
+                max = X[i][j];
+            }
+            if (X[i][j] < min){
+                min = X[i][j];
+            }
+        }
+    }
+
+    if (min > 0){
+        min = -1*min;
+    }
+
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < n; j++){
+            grid[i][j] = double(max - X[i][j])/(max-min);
+        }
+    }
+
+    return grid;
+}
+
+int** Fractal::create_binary_map_from_fractal(double** fractal, double CUTOFF){
+    int n = this->BOARD_SIZE;
+
     int** grid = new int*[n];
     for (int i = 0; i < n; i++){
         grid[i] = new int[n];
@@ -77,7 +114,7 @@ int** Fractal::generate_fractal(double H_VAL, double CUTOFF){
 
     for (int i = 0; i < n; i++){
         for (int j = 0; j < n; j++){
-            if (X[i][j] > CUTOFF){
+            if (fractal[i][j] > CUTOFF){
                 grid[i][j] = 0;
             }
             else{

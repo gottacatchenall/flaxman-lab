@@ -22,6 +22,7 @@
 // Environmental Factors
 // -----------------------------------
 
+#define BINARY_ENV_FACTORS_DEFAULT 0 
 #define ENV_FACTOR_H_VALUE_DEFAULT .8
 #define ENV_FACTOR_CUTOFF_DEFAULT 0.1
 

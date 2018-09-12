@@ -11,11 +11,11 @@ class EnvFactor{
         int BOARD_SIZE;
         double H_VALUE;
         double CUTOFF;
-        int** envFactor_grid;
+        double** envFactor_grid;
     public:
         EnvFactor(int index);
         void set_cell_value(int x, int y, int val);
-        int get_cell_value(int x, int y);
+        double get_cell_value(int x, int y);
         int get_id();
         int get_board_size();
 };

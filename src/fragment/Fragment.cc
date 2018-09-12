@@ -6,7 +6,6 @@
 #include "params_struct.h"
 
 Fragment::Fragment(){
-
     assert(params->FRAGMENT_AMOUNT_LOW < 1 && params->FRAGMENT_AMOUNT_LOW > 0);
     assert(params->FRAGMENT_AMOUNT_HI < 1 && params->FRAGMENT_AMOUNT_HI > 0);
     assert(params->FRAGMENT_AMOUNT_LOW <= params->FRAGMENT_AMOUNT_HI);
@@ -37,8 +36,7 @@ Fragment::Fragment(){
 }
 
 int** Fragment::create_fragment_map(){
-    int** map = fractal->generate_fractal(0.1, .2);
-
+    int** map = fractal->create_binary_map_from_fractal(fractal->generate_fractal(0.1), 0.2);
     for (int i = 0; i < this->BOARD_SIZE; i++){
         for (int j = 0; j < this->BOARD_SIZE; j++){
             map[i][j] = 0;
@@ -64,9 +62,7 @@ int** Fragment::create_fragment_map(){
             x_vals.push_back(x);
             y_vals.push_back(y);
         }
-
         frac = float(x_vals.size())/float(this->BOARD_SIZE*this->BOARD_SIZE);
-
     }
 
     for (int i = 0; i < x_vals.size(); i++){
@@ -74,47 +70,6 @@ int** Fragment::create_fragment_map(){
         y = y_vals[i];
         map[x][y] = 1;
     }
-
-
-    /*
-    int** map = fractal->generate_fractal(0.1, .2);
-
-    int total = (this->BOARD_SIZE) * (this->BOARD_SIZE);
-    int c = this->count_zeros(map);
-    float frac = float(c) / float(total);
-
-    int total_its = 10;
-    int it_count = 0;
-    int** adj_map;
-
-    // Based on a sample of running this alg 10,000 times, the average number of
-    // iterations to reach a value between 0.3 and 0.4 was 3.8.
-    // The max iteration value of 10 is reached only rarely, ~2.3% of the time.
-
-    while((frac < this->FRAGMENT_AMOUNT_LOW|| frac > this->FRAGMENT_AMOUNT_HI) && it_count < total_its){
-        adj_map = fractal->generate_fractal(this->FRAGMENT_H_VALUE, 1);
-
-        for (int i = 0; i < this->BOARD_SIZE; i++){
-            for (int j = 0; j < this->BOARD_SIZE; j++){
-                if (adj_map[i][j] == 0){
-                    if (frac < this->FRAGMENT_AMOUNT_LOW){
-                        map[i][j] = 0;
-                    }
-                    else if (frac > this->FRAGMENT_AMOUNT_HI){
-                        map[i][j] = 1;
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < this->BOARD_SIZE; i++){
-            free(adj_map[i]);
-        }
-        c = this->count_zeros(map);
-        frac = float(c) / float(total);
-        free(adj_map);
-        it_count++;
-    }*/
 
     return map;
 }

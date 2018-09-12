@@ -312,7 +312,7 @@ Patch* Board::get_patch(int x, int y){
 /*  Board::get_envFactor_value(int x, int y, int envFactor)
         Returns the value of the envFactor-th environmental factor at the location (x,y)
 */
-int Board::get_envFactor_value(int x, int y, int envFactor){
+double Board::get_envFactor_value(int x, int y, int envFactor){
     return this->envFactors[envFactor]->get_cell_value(x,y);
 }
 

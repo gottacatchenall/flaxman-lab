@@ -43,7 +43,7 @@ class Board{
 
         // Getters and Setters
         Patch* get_patch(int x, int y);
-        int get_envFactor_value(int x, int y, int envFactor);
+        double get_envFactor_value(int x, int y, int envFactor);
         int get_total_num_indivs();
 
         // Testing and Validation
