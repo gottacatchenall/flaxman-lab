@@ -15,7 +15,7 @@ class Patch{
 
         Board* board;
         double max_fitness;
-        std::vector<int> envFactor_values;
+        std::vector<double> envFactor_values;
 
         // HASHTABLE of individuals on the tile.
         // KEY is the individual's id
@@ -57,7 +57,7 @@ class Patch{
         double get_max_fitness();
         int get_x();
         int get_y();
-        int get_envFactor_value(int envFactor);
+        double get_envFactor_value(int envFactor);
         int get_n_indiv();
 };
 

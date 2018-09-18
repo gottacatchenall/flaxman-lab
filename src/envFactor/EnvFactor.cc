@@ -13,7 +13,28 @@ EnvFactor::EnvFactor(int index){
     this->CUTOFF = params->ENV_FACTOR_CUTOFF;
 
     // Generate the Theta Map
-    this->envFactor_grid = fractal->generate_fractal(this->H_VALUE);
+    if (params->BINARY_ENV_FACTORS){
+        int** map = fractal->create_binary_map_from_fractal(fractal->generate_fractal(this->H_VALUE), 0.5);
+
+        int n = this->BOARD_SIZE;
+        double** grid = new double*[n];
+        for (int i = 0; i < n; i++){
+            grid[i] = new double[n];
+        }
+
+
+        for (int i = 0; i < n; i++){
+            for (int j = 0; j < n; j++){
+                grid[i][j] = double(map[i][j]);
+            }
+        }
+
+        this->envFactor_grid = grid;
+    }
+    else{
+        this->envFactor_grid = fractal->generate_fractal(this->H_VALUE);
+    }
+
 
     #if __DEBUG__
         // Check that EnvFactor cover amount is between the supplied parameters

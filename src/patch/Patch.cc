@@ -373,7 +373,7 @@ double Patch::get_max_fitness(){
     return this->max_fitness;
 }
 
-int Patch::get_envFactor_value(int envFactor){
+double Patch::get_envFactor_value(int envFactor){
     return this->envFactor_values[envFactor];
 }
 

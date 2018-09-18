@@ -211,7 +211,7 @@ void Board::census_pop(int gen){
             map[i][j] = n;
 
             if (n > 0 && gen % 50 == 0){
-                patch->census_patch();
+                //patch->census_patch();
             }
         }
     }
@@ -281,7 +281,7 @@ std::vector<Patch*> Board::get_surrounding_patches(int x, int y){
 
     for (int i = -1*migration_dist; i <= migration_dist; i++){
         for (int j = -1*migration_dist; j <= migration_dist; j++){
-            if (!(i == 0 && j == 0) && this->on_board(x+i, y+j)){
+            if (this->on_board(x+i, y+j)){
                 tmp = this->get_patch(x+i, y+j);
                 if (tmp->is_fragmented() == false){
                     surrounding_patches.push_back(tmp);

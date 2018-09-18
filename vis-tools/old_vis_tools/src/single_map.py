@@ -5,7 +5,7 @@ import csv
 
 def plot_single_map(abs_path):
     with open(abs_path, 'rU') as p:
-        tmp = [list(map(int,rec)) for rec in csv.reader(p, delimiter=',')]
+        tmp = [list(map(float,rec)) for rec in csv.reader(p, delimiter=',')]
 
     board_size = len(tmp)
     m = np.zeros((board_size, board_size))

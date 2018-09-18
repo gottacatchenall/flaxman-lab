@@ -37,28 +37,51 @@ Individual::~Individual(){
 */
 void Individual::migrate(std::vector<Patch*> surrounding_patches){
 
-    if (random_gen->uniform_float(0.0, 1.0) < params->MIGRATION_TENDENCY){
-        return;
-    }
-
     double pref;
 
-    double min_pref = this->calc_pref(this->patch);
-    Patch* best_patch = this->patch;
+    int n_patches = surrounding_patches.size();
+    std::vector<double> patch_pref_vals;
+    std::vector<double> normalized_patch_pref_vals;
 
     for (Patch* patch : surrounding_patches){
         pref = this->calc_pref(patch);
-        if (pref < min_pref){
-            min_pref = pref;
-            best_patch = patch;
+        patch_pref_vals.push_back(pref);
+    }
+
+    double sum_of_pref = 0.0;
+
+    for (double val : patch_pref_vals){
+        sum_of_pref += val;
+    }
+
+    double sigma = params->PREFERENCE_STRENGTH;
+
+    for (double val : patch_pref_vals){
+        double tmp = val/double(sum_of_pref);
+        double tmp_w_noise = random_gen->normal(tmp, sigma);
+        normalized_patch_pref_vals.push_back(tmp_w_noise);
+    }
+
+    double max = 0.0;
+    double upper, val;
+    int index = normalized_patch_pref_vals.size() - 1;
+
+
+    for (int i = 0; i < normalized_patch_pref_vals.size(); i++){
+        val = normalized_patch_pref_vals[i];
+        if (val > max){
+            index = i;
+            max = val;
         }
     }
 
-    if (this->patch != best_patch){
+    Patch* new_patch = surrounding_patches[index];
+
+    if (this->patch != new_patch){
         this->migrated = true;
         this->patch->remove_individual(this);
-        best_patch->add_individual(this);
-        this->patch = best_patch;
+        new_patch->add_individual(this);
+        this->patch = new_patch;
     }
 }
 
@@ -213,6 +236,7 @@ double Individual::calc_pref(Patch* patch){
             locus = genetic_map->pref_loci[i][j];
 
             y_i = this->get_allele(locus, 0);
+
             s_i = s_max_i * exp(-(y_i - theta_i)*(y_i - theta_i));
             p_i = 1.0 + s_i;
             pref = pref * p_i;
@@ -327,7 +351,7 @@ void Individual::set_haplotype(int haplo_num, double* haplotype){
 }
 
 // ==========================================
-// Getters and Setters 
+// Getters and Setters
 // ==========================================
 
 int Individual::get_id(){
