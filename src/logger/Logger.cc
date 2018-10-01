@@ -133,30 +133,10 @@ void Logger::write_metadata(){
     metadata_file << "PARAMETER VALUES\n";
     metadata_file << "======================================\n\n";
 
-    metadata_file << "BOARD_SIZE: " << params->BOARD_SIZE << "\n";
-    metadata_file << "N_ENV_FACTORS: " << params->N_ENV_FACTORS << "\n";
+    //this->data_dir_path
+    std::ifstream  src(this->data_dir_path + "../src/params.h", std::ios::binary);
 
-    metadata_file << "FRAGMENT_AMOUNT_LOW: " << params->FRAGMENT_AMOUNT_LOW << "\n";
-    metadata_file << "FRAGMENT_AMOUNT_HI: " << params->FRAGMENT_AMOUNT_HI << "\n";
-    metadata_file << "FRAGMENT_H_VALUE: " << params->FRAGMENT_H_VALUE << "\n";
-
-    metadata_file << "ENV_FACTOR_CUTOFF: " << params->ENV_FACTOR_CUTOFF << "\n";
-    metadata_file << "ENV_FACTOR_H_VALUE: " << params->ENV_FACTOR_H_VALUE << "\n";
-
-    metadata_file << "======================================\n";
-    metadata_file << "LOCI\n";
-    metadata_file << "======================================\n\n";
-
-    metadata_file << "FITNESS LOCI: [ ";
-
-    for (int i = 0; i < params->N_ENV_FACTORS; i++){
-        metadata_file << "[";
-        for (int j = 0; j <  params->N_LOCI_PER_ENV_FACTOR; j++){
-            metadata_file << genetic_map->fitness_loci[i][j] << ", ";
-            metadata_file << "]\n";
-        }
-    }
-    metadata_file << "]\n";
+    metadata_file << src.rdbuf();
 
     metadata_file.close();
 }

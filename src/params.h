@@ -11,25 +11,25 @@
 // Board
 // -----------------------------------
 
-#define BOARD_SIZE_DEFAULT 8
+#define BOARD_SIZE_DEFAULT 8                // !
 #define N_ENV_FACTORS_DEFAULT 5
 #define N_GENERATIONS_DEFAULT 1000
 #define RANDOM_SEED_VALUE_DEFAULT time(NULL)
 
-#define CARRYING_CAPACITY_DEFAULT 200
+#define CARRYING_CAPACITY_DEFAULT 300       // !
 
 // -----------------------------------
 // Migration
 // -----------------------------------
 
-#define PREFERENCE_STRENGTH_DEFAULT 0.03
+#define PREFERENCE_STRENGTH_DEFAULT 0.00   // !
 
 // -----------------------------------
 // Environmental Factors
 // -----------------------------------
 
-#define BINARY_ENV_FACTORS_DEFAULT 0
-#define ENV_FACTOR_H_VALUE_DEFAULT .2
+#define BINARY_ENV_FACTORS_DEFAULT 0      //  !
+#define ENV_FACTOR_H_VALUE_DEFAULT 0.8    //  !
 #define ENV_FACTOR_CUTOFF_DEFAULT 0.1
 
 // -----------------------------------
@@ -48,7 +48,7 @@
 #define N_INDIVIDUALS_DEFAULT 300
 #define INDIVIDUALS_INITIAL_GENOME_DEFAULT INDIVIDUALS_RANDOM_GENOTYPE
 #define N_MAX_INIT_OCCUPIED_PATCHES_DEFAULT 5
-#define MIGRATION_DISTANCE_DEFAULT 1
+#define MIGRATION_DISTANCE_DEFAULT 1        // !
 
 #define SELECTION_STRENGTH_DEFAULT 0.1
 #define AVG_NUM_OFFSPRING_PER_FEMALE_DEFAULT 3
@@ -62,6 +62,6 @@
 #define N_CHROMOSOMES_DEFAULT 5
 #define N_LOCI_DEFAULT 80
 #define N_LOCI_PER_ENV_FACTOR_DEFAULT 3
-#define MUTATION_RATE_DEFAULT 0.000001 // 10^-5
+#define MUTATION_RATE_DEFAULT 0.000001 // 10^-6
 
 #define GENOME_LENGTH_IN_CENTIMORGANS_DEFAULT 10
